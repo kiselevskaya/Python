@@ -1,4 +1,3 @@
-import string
 import re
 
 file = open('../00_text_files/war-and-peace-I.txt', 'rt')
@@ -13,4 +12,5 @@ for i in digits:
     if i is '0':
         new_file.write('\n')
 new_file.write('\n')
-new_file.close
+new_file.close()
+

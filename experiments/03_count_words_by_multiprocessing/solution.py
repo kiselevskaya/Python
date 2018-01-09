@@ -47,7 +47,7 @@ for i in range(thread_count):
     threads.append(thread)
     thread.start()
 
-q.join
+q.join()
 
 for i in range(thread_count):
     q.put(None)
