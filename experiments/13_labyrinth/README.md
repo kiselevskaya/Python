@@ -1,4 +1,5 @@
-Find exit from labyrinth
+Find exit from a labyrinth
+==========================
 
 Open <file>, read by rows and close.
 Create maze as a nested list.
