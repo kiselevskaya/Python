@@ -2,10 +2,8 @@
 
 import random
 import time
-import math
 
-
-month = 0.083  #1/12
+month = 0.083  # 1 / 12
 
 
 class Names:
@@ -13,29 +11,36 @@ class Names:
                  male='../00_text_files/male_names.txt'):
         self.female = female
         self.male = male
+        self.female_list = None
+        self.male_list = None
 
-    def get_female(self):
-        arr = []
-        for name in [l.split('\n') for l in open(self.female, 'rt')]:
-            arr.append(name[0])
-        name = random.choice(arr)
-        return name
+    def create_female_name(self):
+        if self.female_list is None:
+            self.female_list = []
+            for name in [l.split('\n') for l in open(self.female, 'rt')]:
+                self.female_list.append(name[0])
+        return random.choice(self.female_list)
 
-    def get_male(self):
+    def create_male_name(self):
         arr = []
         for name in [l.split('\n') for l in open(self.male, 'rt')]:
             arr.append(name[0])
-        name = random.choice(arr)
-        return name
+        return random.choice(arr)
+
+    def create_name(self, gender):
+        if gender == 'female':
+            return self.create_female_name()
+        elif gender == 'male':
+            return self.create_male_name()
 
 
 class Animal(Names):
-    def __init__(self, gender=None, name=None, age=None, weight=None,
+    def __init__(self, gender, name, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
         super().__init__()
         global month
-        self.gender = gender
-        self.name = name
+        self.gender = random.choice(['female', 'male']) if gender is None else gender
+        self.name = self.create_name(self.gender) if name is None else name
         self.age = age
         self.weight = weight
         self.lifespan = lifespan
@@ -43,23 +48,10 @@ class Animal(Names):
         self.species = species
         self.description = description
 
-    def get_gender(self, sex):
-        if self.gender is None:
-            if sex is None:
-                self.gender = random.choice(['female', 'male'])
-            else:
-                self.gender = sex
+    def get_gender(self):
         return self.gender
 
-    def get_name(self, sex, nick):
-        if self.name is None:
-            if nick is None:
-                if sex == 'female':
-                    self.name = self.get_female()
-                elif sex == 'male':
-                    self.name = self.get_male()
-            else:
-                self.name = nick
+    def get_name(self):
         return self.name
 
     def get_age(self, years, max_age):
@@ -137,9 +129,7 @@ class Animal(Names):
 class Wolf(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__()
-        self.gender = self.get_gender(gender)
-        self.name = self.get_name(self.gender, name)
+        super().__init__(gender, name)
         self.age = self.get_age(age, 16)
         self.weight = self.get_weight(weight, 0.5, 12)
         self.description = self.get_description(description, 'vegetarian')
@@ -151,9 +141,7 @@ class Wolf(Animal):
 class Parrot(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__()
-        self.gender = self.get_gender(gender)
-        self.name = self.get_name(self.gender, name)
+        super().__init__(gender, name)
         self.age = self.get_age(age, 15)
         self.weight = self.get_weight(weight, 0.3, 2)
         self.description = self.get_description(description, 'bites visitors')
@@ -165,9 +153,7 @@ class Parrot(Animal):
 class Raven(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__()
-        self.gender = self.get_gender(gender)
-        self.name = self.get_name(self.gender, name)
+        super().__init__(gender, name)
         self.age = self.get_age(age, 25)
         self.weight = self.get_weight(weight, 0.3, 2)
         self.description = self.get_description(description, 'doubts its existence')
@@ -179,9 +165,7 @@ class Raven(Animal):
 class Lizard(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__()
-        self.gender = self.get_gender(gender)
-        self.name = self.get_name(self.gender, name)
+        super().__init__(gender, name)
         self.age = self.get_age(age, 28)
         self.weight = self.get_weight(weight, 0.1, 3)
         self.description = self.get_description(description, 'sluggish')
@@ -193,9 +177,7 @@ class Lizard(Animal):
 class New(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__()
-        self.gender = self.get_gender(gender)
-        self.name = self.get_name(self.gender, name)
+        super().__init__(gender, name)
         self.age = self.get_age(age, 7)
         self.weight = self.get_weight(weight, 0.07, 0.19)
         self.description = self.get_description(description, 'secretive') 
@@ -226,6 +208,9 @@ class Shop:
         species = str(input('Enter species: '))
         new = New(gender, name, age, weight, lifespan, obesity, description, species)
         self.array.append(new)
+
+    def get_animals(self):
+        return self.array
 
     def options(self):
         x = None
@@ -266,7 +251,26 @@ class Shop:
                 self.array.append(new)
 
 
-if __name__ == '__main__':
+def time_later(zoo):
+    print('\n', 'Some time later'.center(71))
+    animals = zoo.get_animals()
+    for animal in animals:
+        animal.aging()
+        animal.growth()
+        if animal.old_age() or animal.too_fat():
+            animals.pop(animals.index(animal))
+    zoo.incident()
+    zoo.reproduction()
+    time.sleep(2)
+
+
+def simulate(zoo):
+    while True:
+        time_later(zoo)
+        zoo.get_list()
+
+
+def main():
     animals = []
     wolf = Wolf('male', weight=10)
     lizard = Lizard()
@@ -278,18 +282,8 @@ if __name__ == '__main__':
     zoo = Shop(animals)
     zoo.get_list()
 
-    def time_later(beasts, shop):
-        print('\n', 'Some time later'.center(71))
-        for beast in beasts:
-            beast.aging()
-            beast.growth()
-            if beast.old_age() or beast.too_fat():
-                beasts.pop(beasts.index(beast))
-        shop.incident()
-        shop.reproduction()
-        time.sleep(2)
+    simulate(zoo)
 
-    while True:
-        time_later(animals, zoo)
-        zoo.get_list()
 
+if __name__ == '__main__':
+    main()
