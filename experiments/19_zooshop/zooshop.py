@@ -35,18 +35,19 @@ class Names:
 
 
 class Animal(Names):
-    def __init__(self, gender, name, age=None, weight=None,
-                 lifespan=None, obesity=None, description=None, species=None):
+    def __init__(self, gender, name, age=None, max_age=None, weight=None, min_weight=None,
+                 max_weight=None, lifespan=None, life_limit=None, obesity=None, fat_limit=None,
+                 description=None, feature=None, species=None, kind=None):
         super().__init__()
         global month
         self.gender = random.choice(['female', 'male']) if gender is None else gender
         self.name = self.create_name(self.gender) if name is None else name
-        self.age = age
-        self.weight = weight
-        self.lifespan = lifespan
-        self.obesity = obesity
-        self.species = species
-        self.description = description
+        self.age = round(random.uniform(month, max_age), 2) if age is None else age
+        self.weight = round(random.uniform(min_weight, max_weight), 2) if weight is None else weight
+        self.lifespan = life_limit if lifespan is None else lifespan
+        self.obesity = fat_limit if obesity is None else obesity
+        self.species = kind if species is None else species
+        self.description = feature if description is None else description
 
     def get_gender(self):
         return self.gender
@@ -54,52 +55,22 @@ class Animal(Names):
     def get_name(self):
         return self.name
 
-    def get_age(self, years, max_age):
-        if self.age is None:
-            if years is None:
-                self.age = round(random.uniform(month, max_age), 2)
-            else:
-                self.age = years
+    def get_age(self):
         return self.age
 
-    def get_weight(self, tons, min_weight, max_weight):
-        if self.weight is None:
-            if tons is None:
-                self.weight = round(random.uniform(min_weight, max_weight), 2)
-            else:
-                self.weight = tons
+    def get_weight(self):
         return self.weight
 
-    def get_description(self, definition, feature):
-        if self.description is None:
-            if definition is None:
-                self.description = feature
-            else:
-                self.description = definition
+    def get_description(self):
         return self.description
 
-    def get_species(self, sort, kind):
-        if self.species is None:
-            if sort is None:
-                self.species = kind
-            else:
-                self.species = sort
+    def get_species(self):
         return self.species
 
-    def get_obesity(self, fatness, fat):
-        if self.obesity is None:
-            if fatness is None:
-                self.obesity = fat
-            else:
-                self.obesity = fatness
+    def get_obesity(self):
         return self.obesity
 
-    def get_lifespan(self, ages, limit):
-        if self.lifespan is None:
-            if ages is None:
-                self.lifespan = limit
-            else:
-                self.lifespan = ages
+    def get_lifespan(self):
         return self.lifespan
 
     def __repr__(self):
@@ -117,73 +88,48 @@ class Animal(Names):
 
     def old_age(self):
         if self.age >= self.lifespan:
-            print('\n', ('{} {} DIED OF OLD AGE'.format(self.species, self.name)).center(83))
+            print('\n', ('{} {} ☠ DIED OF OLD AGE ☠'.format(self.species, self.name)).center(83))
             return True
 
     def too_fat(self):
         if self.weight >= self.obesity:
-            print('\n', ('{} {} DIED OF OBESITY'.format(self.species, self.name)).center(83))
+            print('\n', ('{} {} ☠ DIED OF OBESITY ☠'.format(self.species, self.name)).center(83))
             return True
 
 
 class Wolf(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__(gender, name)
-        self.age = self.get_age(age, 16)
-        self.weight = self.get_weight(weight, 0.5, 12)
-        self.description = self.get_description(description, 'vegetarian')
-        self.species = self.get_species(species, 'wolf')
-        self.obesity = self.get_obesity(obesity, 80)
-        self.lifespan = self.get_lifespan(lifespan, 75)
+        super().__init__(gender, name, age, 16, weight, 0.5, 8, lifespan, 75,
+                         obesity, 80, description, 'vegetarian', species, 'wolf')
 
 
 class Parrot(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__(gender, name)
-        self.age = self.get_age(age, 15)
-        self.weight = self.get_weight(weight, 0.3, 2)
-        self.description = self.get_description(description, 'bites visitors')
-        self.species = self.get_species(species, 'parrot')
-        self.obesity = self.get_obesity(obesity, 10)
-        self.lifespan = self.get_lifespan(lifespan, 65)
+        super().__init__(gender, name, age, 13, weight, 0.3, 2, lifespan, 65,
+                         obesity, 10, description, 'bites visitors', species, 'parrot')
 
 
 class Raven(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__(gender, name)
-        self.age = self.get_age(age, 25)
-        self.weight = self.get_weight(weight, 0.3, 2)
-        self.description = self.get_description(description, 'doubts its existence')
-        self.species = self.get_species(species, 'raven')
-        self.obesity = self.get_obesity(obesity, 9)
-        self.lifespan = self.get_lifespan(lifespan, 65)
+        super().__init__(gender, name, age, 15, weight, 0.3, 2, lifespan, 65,
+                         obesity, 9, description, 'doubts its existence', species, 'raven')
 
 
 class Lizard(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__(gender, name)
-        self.age = self.get_age(age, 28)
-        self.weight = self.get_weight(weight, 0.1, 3)
-        self.description = self.get_description(description, 'sluggish')
-        self.species = self.get_species(species, 'lizard')
-        self.obesity = self.get_obesity(obesity, 15)
-        self.lifespan = self.get_lifespan(lifespan, 50)
+        super().__init__(gender, name, age, 18, weight, 0.1, 3, lifespan, 50,
+                         obesity, 15, description, 'sluggish', species, 'lizard')
 
 
 class New(Animal):
     def __init__(self, gender=None, name=None, age=None, weight=None,
                  lifespan=None, obesity=None, description=None, species=None):
-        super().__init__(gender, name)
-        self.age = self.get_age(age, 7)
-        self.weight = self.get_weight(weight, 0.07, 0.19)
-        self.description = self.get_description(description, 'secretive') 
-        self.species = self.get_species(species, 'indefinite')
-        self.obesity = self.get_obesity(obesity, 12)
-        self.lifespan = self.get_lifespan(lifespan, 50)
+        super().__init__(gender, name, age, 7, weight, 0.07, 0.19, lifespan, 50,
+                         obesity, 12, description, 'secretive', species, 'indefinite')
 
 
 class Shop:
@@ -226,7 +172,7 @@ class Shop:
             hungry = random.choice(self.array)
             food = random.choice(self.array)
             if hungry != food and hungry.weight >= (food.weight*2):
-                print('\n ', ('{} {} SWALLOWED UP {} {}'.format(hungry.species, hungry.name,
+                print('\n ', ('{} {} ♻ SWALLOWED UP ♻ {} {}'.format(hungry.species, hungry.name,
                                                                 food.species, food.name)).center(83))
                 hungry.weight += food.weight
                 self.array.pop(self.array.index(food))
@@ -236,7 +182,7 @@ class Shop:
         y = random.choice(self.array)
         if x != y and x.gender != y.gender and abs(x.weight-y.weight) <= min(x.weight, y.weight):
             strength = random.randint(1, 4)
-            print('\n', ('{} NEWBORNS!'.format(strength)).center(83))
+            print('\n', ('{} ✷※ NEWBORNS! ※✷'.format(strength)).center(83))
             num = 0
             while num != strength:
                 num += 1
@@ -272,13 +218,13 @@ def simulate(zoo):
 
 def main():
     animals = []
-    wolf = Wolf('male', weight=10)
+    wolf = Wolf('male', weight=6)
     lizard = Lizard()
     raven = Raven()
     gonzo = Lizard()
     parrot = Parrot()
     animals.append(wolf)
-    animals.extend([lizard, lizard, raven, gonzo, parrot])
+    animals.extend([lizard, raven, gonzo, parrot])
     zoo = Shop(animals)
     zoo.get_list()
 
