@@ -2,8 +2,9 @@
 # factory.py
 
 
-import random
 from animals import *
+from names import *
+import random
 
 
 class AbstractFactory(object):
@@ -19,6 +20,9 @@ class AbstractFactory(object):
     def create_raven(self):
         pass
 
+    def create_crossborn(self, species, lifespan, obesity, description):
+        pass
+
 
 class PetFactory(AbstractFactory):
     def __init__(self):
@@ -32,6 +36,7 @@ class PetFactory(AbstractFactory):
         self.obesity = 15
         self.species = 'undefined'
         self.description = 'bites'
+        self.names_factory = Names()
 
     def set_male_gender(self):
         self.gender = 'male'
@@ -67,13 +72,29 @@ class PetFactory(AbstractFactory):
         self.description = description
 
     def create_wolf(self):
-        return Wolf('male', weight=6, age=round(random.uniform(self.min_age, self.max_age), 2))
+        return Wolf('male',
+                    weight=6,
+                    age=round(random.uniform(self.min_age, self.max_age), 2))
+
+    def create_lizard(self):
+        return Lizard()
 
     def create_parrot(self):
-        return Parrot()
+        gender = random.choice(('male', 'female'))
+        name = self.names_factory.create_name(self.gender)
+
+        return Parrot(gender=gender,
+                      name=name,
+                      age=round(random.uniform(month, 13), 2))
+
+    def create_raven(self):
+        return Raven()
+
+    def create_crossborn(self, species, lifespan, obesity, description):
+        return CrossBorn(species=species, lifespan=lifespan, obesity=obesity, description=description, age=0)
 
 
-def main():
+def pet_factory_tests():
     pet_factory = PetFactory()
     pet_factory.set_min_age(5)
     wlf = pet_factory.create_wolf()
@@ -83,4 +104,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    pet_factory_tests()

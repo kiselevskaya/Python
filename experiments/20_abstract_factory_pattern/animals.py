@@ -2,7 +2,6 @@
 # animals.py
 
 
-from names import *
 import random
 month = 0.083
 
@@ -18,11 +17,6 @@ class Animal(object):
         self.obesity = obesity
         self.species = species
         self.description = description
-        if self.gender is None:
-            self.gender = random.choice(('male', 'female'))
-        if self.name is None:
-            name = Names()
-            self.name = name.create_name(self.gender)
 
     def get_gender(self):
         return self.gender
@@ -77,12 +71,12 @@ class Animal(object):
 class Wolf(Animal):
     def __init__(self, gender=None, name=None, age=round(random.uniform(month, 16), 2),
                  weight=round(random.uniform(0.5, 16), 2), lifespan=75, obesity=80,
-                 description='vegetarian', species='wolf'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
+                 description='vegetarian'):
+        super().__init__(gender, name, age, weight, lifespan, obesity, description, 'wolf')
 
 
 class Parrot(Animal):
-    def __init__(self, gender=None, name=None, age=round(random.uniform(month, 13), 2),
+    def __init__(self, gender, name, age,
                  weight=round(random.uniform(0.3, 2), 2), lifespan=65, obesity=10,
                  description='bites visitors', species='parrot'):
         super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
@@ -102,10 +96,10 @@ class Lizard(Animal):
         super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
 
 
-class New(Animal):
-    def __init__(self, gender=None, name=None, age=round(random.uniform(month, 7), 2),
+class CrossBorn(Animal):
+    def __init__(self, species, gender=None, name=None, age=round(random.uniform(month, 7), 2),
                  weight=round(random.uniform(0.07, 0.19), 2), lifespan=50, obesity=12,
-                 description='secretive', species='indefinite'):
+                 description='secretive'):
         super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
 
 

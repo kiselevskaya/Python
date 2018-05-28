@@ -2,21 +2,29 @@
 # pet_shop.py
 
 
+from factory import *
 import random
 import time
-from .animals import *
 
 
 class Shop:
-    def __init__(self, arr):
-        self.arr = arr
-        self.title = ('{}{}{}{}{}{}'.format('Gender'.ljust(12), 'Name'.ljust(12), 'Age(years)'.ljust(12),
-                      'Weight(kg)'.ljust(12), 'Description'.ljust(23), 'Species'.ljust(12)))
+    def __init__(self, pet_factory, animals_array):
+        self.pet_factory = pet_factory
+        self.animals_array = animals_array
+        self.title = ('{}{}{}{}{}{}'.format('Gender'.ljust(12),
+                                            'Name'.ljust(12),
+                                            'Age(years)'.ljust(12),
+                                            'Weight(kg)'.ljust(12),
+                                            'Description'.ljust(23),
+                                            'Species'.ljust(12)))
 
     def get_list(self):
         print('\n', self.title, '\n')
-        for i in self.arr:
+        for i in self.animals_array:
             print(i)
+
+    def get_animals(self):
+        return self.animals_array
 
     def add_animal(self):
         gender = str(input('Enter gender: '))
@@ -27,8 +35,8 @@ class Shop:
         obesity = int(input('Enter obesity in kg: '))
         description = str(input('Enter description: '))
         species = str(input('Enter species: '))
-        new = New(gender, name, age, weight, lifespan, obesity, description, species)
-        self.arr.append(new)
+        new = self.pet_factory.create_crossborn(gender, name, age, weight, lifespan, obesity, description, species)
+        self.animals_array.append(new)
 
     def choose_options(self):
         x = None
@@ -40,18 +48,18 @@ class Shop:
                 self.add_animal()
 
     def incident(self):
-        if len(self.arr) >= 2:
-            hungry = random.choice(self.arr)
-            food = random.choice(self.arr)
+        if len(self.animals_array) >= 2:
+            hungry = random.choice(self.animals_array)
+            food = random.choice(self.animals_array)
             if hungry != food and hungry.weight >= (food.weight*2):
                 print('\n ', ('{} {} ♻ SWALLOWED UP ♻ {} {}'.format(hungry.species, hungry.name,
                                                                     food.species, food.name)).center(83))
                 hungry.weight += food.weight
-                self.arr.pop(self.arr.index(food))
+                self.animals_array.pop(self.animals_array.index(food))
 
     def reproduction(self):
-        x = random.choice(self.arr)
-        y = random.choice(self.arr)
+        x = random.choice(self.animals_array)
+        y = random.choice(self.animals_array)
         if x != y and x.gender != y.gender and abs(x.weight-y.weight) <= min(x.weight, y.weight):
             strength = random.randint(1, 4)
             print('\n', ('{} ✷※ NEWBORNS! ※✷'.format(strength)).center(83))
@@ -65,8 +73,11 @@ class Shop:
                     kind = x.species
                 else:
                     kind = '{}-{}'.format(x.species, y.species)
-                new = New(age=0, lifespan=max_age, obesity=fatness, description=feature, species=kind)
-                self.arr.append(new)
+                new = self.pet_factory.create_crossborn(lifespan=max_age,
+                                                        obesity=fatness,
+                                                        description=feature,
+                                                        species=kind)
+                self.animals_array.append(new)
 
 
 def time_later(zoo):
@@ -82,24 +93,25 @@ def time_later(zoo):
     time.sleep(2)
 
 
-# def simulate(zoo):
-#     while True:
-#         time_later(zoo)
-#         zoo.get_list()
+def simulate(zoo):
+    while True:
+        time_later(zoo)
+        zoo.get_list()
 
 
 def main():
     animals = []
-    wolf = Wolf('male', weight=6)
-    lizard = Lizard()
-    raven = Raven()
-    gonzo = Lizard()
-    parrot = Parrot()
+    pet_factory = PetFactory()
+    wolf = pet_factory.create_wolf()
+    lizard = pet_factory.create_lizard()
+    raven = pet_factory.create_raven()
+    gonzo = pet_factory.create_lizard()
+    parrot = pet_factory.create_parrot()
     animals.append(wolf)
     animals.extend([lizard, raven, gonzo, parrot])
-    # zoo = Shop(animals)
-    # zoo.get_list()
-    # # simulate(zoo)
+    zoo = Shop(pet_factory, animals)
+    zoo.get_list()
+    simulate(zoo)
 
 
 if __name__ == '__main__':
