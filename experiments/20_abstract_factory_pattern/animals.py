@@ -7,16 +7,19 @@ month = 0.083
 
 
 class Animal(object):
-    def __init__(self, gender, name, age, weight, lifespan, obesity, description, species):
+    def __init__(self, species, gender, name, age, weight, lifespan, obesity, description):
         global month
+        self.species = species
         self.gender = gender
         self.name = name
         self.age = age
         self.weight = weight
         self.lifespan = lifespan
         self.obesity = obesity
-        self.species = species
         self.description = description
+
+    def get_species(self):
+        return self.species
 
     def get_gender(self):
         return self.gender
@@ -32,9 +35,6 @@ class Animal(object):
 
     def get_description(self):
         return self.description
-
-    def get_species(self):
-        return self.species
 
     def get_obesity(self):
         return self.obesity
@@ -69,43 +69,33 @@ class Animal(object):
 
 
 class Wolf(Animal):
-    def __init__(self, gender=None, name=None, age=round(random.uniform(month, 16), 2),
-                 weight=round(random.uniform(0.5, 16), 2), lifespan=75, obesity=80,
-                 description='vegetarian'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, 'wolf')
+    def __init__(self, gender, name, age, weight, lifespan, obesity, description):
+        super().__init__('wolf', gender, name, age, weight, lifespan, obesity, description)
 
 
 class Parrot(Animal):
-    def __init__(self, gender, name, age,
-                 weight=round(random.uniform(0.3, 2), 2), lifespan=65, obesity=10,
-                 description='bites visitors', species='parrot'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
+    def __init__(self, gender, name, age, weight, lifespan, obesity, description):
+        super().__init__('parrot', gender, name, age, weight, lifespan, obesity, description)
 
 
 class Raven(Animal):
-    def __init__(self, gender=None, name=None, age=round(random.uniform(month, 15), 2),
-                 weight=round(random.uniform(0.3, 2), 2), lifespan=65, obesity=9,
-                 description='doubts its existence', species='raven'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
+    def __init__(self, gender, name, age, weight, lifespan, obesity, description):
+        super().__init__('raven', gender, name, age, weight, lifespan, obesity, description)
 
 
 class Lizard(Animal):
-    def __init__(self, gender=None, name=None, age=round(random.uniform(month, 18), 2),
-                 weight=round(random.uniform(0.1, 3), 2), lifespan=50, obesity=15,
-                 description='sluggish', species='lizard'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
+    def __init__(self, gender, name, age, weight, lifespan, obesity, description):
+        super().__init__('lizard', gender, name, age, weight, lifespan, obesity, description)
 
 
 class CrossBorn(Animal):
-    def __init__(self, species, gender=None, name=None, age=round(random.uniform(month, 7), 2),
-                 weight=round(random.uniform(0.07, 0.19), 2), lifespan=50, obesity=12,
-                 description='secretive'):
-        super().__init__(gender, name, age, weight, lifespan, obesity, description, species)
+    def __init__(self, species, gender, name, age, weight, lifespan, obesity, description):
+        super().__init__(species, gender, name, age, weight, lifespan, obesity, description)
 
 
 if __name__ == '__main__':
-    w = Wolf()
-    if w is None:
+    p = Parrot('male', 'Valera', 16, 4, 50, 10, 'bites')
+    if p is None:
         print("ERROR")
     else:
-        print(w)
+        print(p)
