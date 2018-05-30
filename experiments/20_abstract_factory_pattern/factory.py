@@ -168,10 +168,11 @@ class PetFactory(AbstractFactory):
                          description=description)
 
 
-def pet_factory_tests():
+def pet_factory_tests():  # unit testing, python
     pet_factory = PetFactory()
     wlf = pet_factory.create_wolf()
     prt = pet_factory.create_parrot()
+#   wlf.get_age() > 3
     print(wlf)
     print(prt)
 

@@ -91,11 +91,3 @@ class Lizard(Animal):
 class CrossBorn(Animal):
     def __init__(self, species, gender, name, age, weight, lifespan, obesity, description):
         super().__init__(species, gender, name, age, weight, lifespan, obesity, description)
-
-
-if __name__ == '__main__':
-    p = Parrot('male', 'Valera', 16, 4, 50, 10, 'bites')
-    if p is None:
-        print("ERROR")
-    else:
-        print(p)

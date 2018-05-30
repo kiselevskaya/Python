@@ -2,9 +2,7 @@
 # pet_shop.py
 
 
-from factory import *
 import random
-import time
 
 
 class Shop:
@@ -20,28 +18,6 @@ class Shop:
 
     def get_animals(self):
         return self.animals_array
-
-    # make separate file
-    def add_animal(self):
-        species = str(input('Enter species: '))
-        gender = str(input('Enter gender: '))
-        name = str(input('Enter animal name: '))
-        age = int(input('Enter age in years(float): '))
-        weight = float(input('Enter animal weight: '))
-        lifespan = int(input('Enter lifespan in years: '))
-        obesity = int(input('Enter obesity in kg: '))
-        description = str(input('Enter description: '))
-        new = self.pet_factory.create_cross_born(species, gender, name, age, weight, lifespan, obesity, description)
-        self.animals_array.append(new)
-
-    def choose_options(self):
-        user_choice = None
-        while user_choice != 0 or user_choice != 1:
-            user_choice = int(input('\n Enter 0 to see all animals or 1 to add one more: '))
-            if user_choice == 0:
-                self.get_list()
-            elif user_choice == 1:
-                self.add_animal()
 
     def incident(self):
         if len(self.animals_array) >= 2:
@@ -90,30 +66,3 @@ def print_shop(shop):
     print('\n', shop.title, '\n')
     for i in shop.get_animals():
         print(i)
-
-
-def simulate(shop):
-    while True:
-        print('\n', 'Some time later'.center(83))
-        shop.ticker()
-        time.sleep(2)
-        print_shop(shop)
-
-
-def main():
-    animals = []
-    pet_factory = PetFactory()
-    wolf = pet_factory.create_wolf()
-    lizard = pet_factory.create_lizard()
-    raven = pet_factory.create_raven()
-    gonzo = pet_factory.create_lizard()
-    parrot = pet_factory.create_parrot()
-    animals.append(wolf)
-    animals.extend([lizard, raven, gonzo, parrot])
-    shop = Shop(pet_factory, animals)
-    print_shop(shop)
-    simulate(shop)
-
-
-if __name__ == '__main__':
-    main()
