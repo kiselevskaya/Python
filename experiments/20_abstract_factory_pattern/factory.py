@@ -29,7 +29,7 @@ class PetFactory(AbstractFactory):
         self.species = 'undefined'
         self.gender = None
         self.name = None
-        self.min_age = 1
+        self.min_age = month
         self.max_age = 7
         self.min_weight = 0.1
         self.max_weight = 3
@@ -166,16 +166,3 @@ class PetFactory(AbstractFactory):
                          lifespan=lifespan,
                          obesity=obesity,
                          description=description)
-
-
-def pet_factory_tests():  # unit testing, python
-    pet_factory = PetFactory()
-    wlf = pet_factory.create_wolf()
-    prt = pet_factory.create_parrot()
-#   wlf.get_age() > 3
-    print(wlf)
-    print(prt)
-
-
-if __name__ == '__main__':
-    pet_factory_tests()
