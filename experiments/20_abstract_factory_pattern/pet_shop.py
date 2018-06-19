@@ -5,10 +5,21 @@
 import random
 
 
+class AbstractRandomFactory(object):
+    def choice(self, array):
+        pass
+
+
+class RealRandomFactory(AbstractRandomFactory):
+    def choice(self, array):
+        return random.choice(array)
+
+
 class Shop:
-    def __init__(self, pet_factory, animals_array):
+    def __init__(self, pet_factory, animals_array, random_factory=RealRandomFactory()):
         self.pet_factory = pet_factory
         self.animals_array = animals_array
+        self.random_factory = random_factory
         self.title = ('{}{}{}{}{}{}'.format('Gender'.ljust(12),
                                             'Name'.ljust(12),
                                             'Age(years)'.ljust(12),
@@ -21,8 +32,8 @@ class Shop:
 
     def incident(self):
         if len(self.animals_array) >= 2:
-            hungry = random.choice(self.animals_array)
-            food = random.choice(self.animals_array)
+            hungry = self.random_factory.choice(self.animals_array)
+            food = self.random_factory.choice(self.animals_array)
             if hungry != food and hungry.weight >= (food.weight*2):
                 hungry.weight += food.weight
                 print('\n ', ('{} {} ♻ swallowed up ♻ {} {}'.format(hungry.species, hungry.name,
@@ -30,8 +41,8 @@ class Shop:
                 self.animals_array.pop(self.animals_array.index(food))
 
     def reproduction(self):
-        x = random.choice(self.animals_array)
-        y = random.choice(self.animals_array)
+        x = self.random_factory.choice(self.animals_array)
+        y = self.random_factory.choice(self.animals_array)
         if x != y and x.gender != y.gender and abs(x.weight-y.weight) <= min(x.weight, y.weight):
             strength = random.randint(1, 4)
             print('\n', ('{} ※ newborns ※'.format(strength)).center(83))
