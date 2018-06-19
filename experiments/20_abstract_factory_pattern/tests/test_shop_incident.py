@@ -35,6 +35,7 @@ class IncidentTestCase(unittest.TestCase):
 
     @repeat(10)
     def test_incident_food_not_in_animals(self):
+        self.setUp()
         self.assertEqual(5, len(self.shop.get_animals()))
         self.shop.incident()
         self.assertEqual(4, len(self.shop.get_animals()))

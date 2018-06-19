@@ -34,6 +34,7 @@ class ReproductionTestCase(unittest.TestCase):
 
     @repeat(10)
     def test_reproduction(self):
+        self.setUp()
         self.assertEqual(5, len(self.shop.get_animals()))
         self.shop.reproduction()
         self.assertGreater(len(self.shop.get_animals()), 5)
