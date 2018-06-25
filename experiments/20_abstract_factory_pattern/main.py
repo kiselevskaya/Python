@@ -8,15 +8,7 @@ from pet_shop import *
 import time
 
 
-def simulate(shop):
-    while True:
-        print('\n', 'Some time later'.center(83))
-        shop.ticker()
-        time.sleep(2)
-        print_shop(shop)
-
-
-def main():
+def create_shop():
     animals = []
     pet_factory = PetFactory()
     wolf = pet_factory.create_wolf()
@@ -26,6 +18,19 @@ def main():
     parrot = pet_factory.create_parrot()
     animals.extend([wolf, lizard, raven, gonzo, parrot])
     shop = Shop(pet_factory, animals)
+    return shop
+
+
+def simulate(shop):
+    while True:
+        print('\n', 'Some time later'.center(83))
+        shop.ticker()
+        time.sleep(2)
+        print_shop(shop)
+
+
+def main():
+    shop = create_shop()
     print_shop(shop)
     simulate(shop)
 
