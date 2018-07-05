@@ -57,14 +57,14 @@ class Animal(object):
 
     def old_age(self):
         if self.age >= self.lifespan:
-            print('\n', '☠RIP☠'.center(83))
-            print('\n', ('{} {} was too old'.format(self.species, self.name)).center(83))
+            # print('\n', '☠RIP☠'.center(83))
+            # print('\n', ('{} {} was too old'.format(self.species, self.name)).center(83))
             return True
 
     def too_fat(self):
         if self.weight >= self.obesity:
-            print('\n', '☠RIP☠'.center(83))
-            print('\n', ('{} {} was too fat'.format(self.species, self.name)).center(83))
+            # print('\n', '☠RIP☠'.center(83))
+            # print('\n', ('{} {} was too fat'.format(self.species, self.name)).center(83))
             return True
 
 
