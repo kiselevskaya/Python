@@ -5,6 +5,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from main import *
 import time
 import os
+from collections import OrderedDict
+import json
 from threading import Thread, Lock
 
 PORT = 8000
@@ -23,12 +25,16 @@ class Server(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/":
-            self.get_index_html()
+            self.get_index_html("/html/index.html")
+        if self.path == "/scr.js":
+            self.get_index_html("/html/scr.js")
         if self.path == "/zoo_shop_state":
             self.zoo_shop_state()
+        if self.path == "/zoo_shop_logs":
+            self.zoo_shop_logs()
 
-    def get_index_html(self):
-        f = open(os.getcwd() + "/html/index.html")
+    def get_index_html(self, path):
+        f = open(os.getcwd() + path)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -55,13 +61,18 @@ class Server(BaseHTTPRequestHandler):
         mu.release()
         self.wfile.write("</table>".encode())
 
-    # def do_HEAD(self):
-    #     self._set_headers()
-
-    # def do_POST(self):
-    #     # Doesn't do anything with posted data
-    #     self._set_headers()
-        # self.wfile.write("<html><body><h1>POST!</h1></body></html>".encode())
+    def zoo_shop_logs(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(' '.encode())
+        mu.acquire()
+        try:
+            for log in shop.get_logs():
+                self.wfile.write('{}'.format(log).encode())
+        except IndexError:
+            self.wfile.write('The number of animals has not changed'.encode())
+        mu.release()
 
 
 def check_shop(httpd):
