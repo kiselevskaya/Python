@@ -43,35 +43,40 @@ class Server(BaseHTTPRequestHandler):
 
     def zoo_shop_state(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write('<h2 style="text-align:left; color:green;">Pet Shop</h2>'.encode())
-        self.wfile.write("<table>".encode())
+        # self.wfile.write(json.dumps('Pet Shop', indent=4).encode())
+        res = []
         mu.acquire()
         try:
             localtime = time.asctime(time.localtime(time.time()))
-            self.wfile.write('<tr style="color:blue;"><th colspan="3">{}</th><th></th><th></th><th></th></tr>'.format(localtime).encode())
-            self.wfile.write('<tr><th> </th><th> </th><th> </th><th> </th><th> </th><th> </th></tr>'.encode())
-            self.wfile.write('<tr><th>Gender</th><th>Name</th><th>Age(years)</th><th>Weight</th><th>Description</th><th>Species</th></tr>'.encode())
+            # self.wfile.write(json.dumps(localtime, indent=4).encode())
             for i in shop.get_animals():
-                self.wfile.write('<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(i.gender, i.name, round(i.age, 2), round(i.weight, 2), i.description, i.species).encode())
-            self.wfile.write('<tr><th> </th><th> </th><th> </th><th> </th><th> </th><th> </th></tr>'.encode())
+                keys = ['species', 'gender', 'name', 'age', 'weight', 'lifespan', 'obesity', 'description']
+                values = [i.species, i.gender, i.name, round(i.age, 2), round(i.weight, 2), i.lifespan, i.obesity, i.description]
+                dictionary = OrderedDict(zip(keys, values))
+                res.append(dictionary)
+                data = {'title': 'Pet Shop', 'localtime': localtime, 'animals': res}
+            self.wfile.write(json.dumps(data, indent=4).encode())
         except IndexError:
-            self.wfile.write('<tr><th></th><th></th><th colspan="2">Pet Shop is empty</th><th></th><th></th></tr>'.encode())
+            self.wfile.write(json.dumps('Pet Shop is empty', indent=4).encode())
         mu.release()
-        self.wfile.write("</table>".encode())
 
     def zoo_shop_logs(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write(' '.encode())
         mu.acquire()
+        res = []
         try:
             for log in shop.get_logs():
-                self.wfile.write('{}'.format(log).encode())
+                keys = ['localtime', 'log']
+                values = [log[0], log[1]]
+                dictionary = OrderedDict(zip(keys, values))
+                res.append(dictionary)
+            self.wfile.write(json.dumps(res, indent=4).encode())
         except IndexError:
-            self.wfile.write('The number of animals has not changed'.encode())
+            self.wfile.write(json.dumps('The number of animals has not changed', indent=4).encode())
         mu.release()
 
 
