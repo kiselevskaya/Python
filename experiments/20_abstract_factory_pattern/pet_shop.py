@@ -4,6 +4,7 @@
 
 import random
 import time
+import json
 
 
 class AbstractRandomFactory(object):
@@ -44,7 +45,7 @@ class Shop:
                 localtime = time.asctime(time.localtime(time.time()))
                 log = '{} {} ♻ swallowed up ♻ {} {}'.format(hungry.species, hungry.name, food.species, food.name)
                 time_log = '{}: {}'.format(localtime, log)
-                print('\n ', log.center(83))
+                # print('\n ', log.center(83))
                 self.animals_array.pop(self.animals_array.index(food))
                 self.logs.append(time_log)
 
@@ -57,7 +58,7 @@ class Shop:
             log = '{} {} & {} {} have {} ※ newborns ※'.format(x.species, x.name, y.species, y.name, strength)
             time_log = '{}: {}'.format(localtime, log)
             self.logs.append(time_log)
-            print('\n', log.center(83))
+            # print('\n', log.center(83))
             num = 0
             while num != strength:
                 num += 1
@@ -94,6 +95,10 @@ class Shop:
 
 
 def print_shop(shop):
-    print('\n', shop.title, '\n')
+    localtime = time.asctime(time.localtime(time.time()))
+    print(json.dumps(localtime, indent=4))
     for i in shop.get_animals():
-        print(i)
+        keys = ['species', 'gender', 'name', 'age', 'weight', 'lifespan', 'obesity', 'description']
+        values = [i.species, i.gender, i.name, i.age, i.weight, i.lifespan, i.obesity, i.description]
+        dictionary = dict(zip(keys, values))
+        print(json.dumps(OrderedDict(dictionary), indent=4))
