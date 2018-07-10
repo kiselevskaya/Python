@@ -36,27 +36,26 @@ class Server(BaseHTTPRequestHandler):
     def get_index_html(self, path):
         f = open(os.getcwd() + path)
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header('Content-Type', 'text/html')
         self.end_headers()
         self.wfile.write(f.read().encode())
         f.close()
 
     def zoo_shop_state(self):
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        # self.send_header('Content-type', 'json')
+        self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        # self.wfile.write(json.dumps('Pet Shop', indent=4).encode())
         res = []
         mu.acquire()
         try:
             localtime = time.asctime(time.localtime(time.time()))
-            # self.wfile.write(json.dumps(localtime, indent=4).encode())
             for i in shop.get_animals():
                 keys = ['species', 'gender', 'name', 'age', 'weight', 'lifespan', 'obesity', 'description']
                 values = [i.species, i.gender, i.name, round(i.age, 2), round(i.weight, 2), i.lifespan, i.obesity, i.description]
                 dictionary = OrderedDict(zip(keys, values))
                 res.append(dictionary)
-                data = {'title': 'Pet Shop', 'localtime': localtime, 'animals': res}
+                data = {'title': 'Pet Shop', 'data_time': localtime, 'animals': res}
             self.wfile.write(json.dumps(data, indent=4).encode())
         except IndexError:
             self.wfile.write(json.dumps('Pet Shop is empty', indent=4).encode())
@@ -64,7 +63,7 @@ class Server(BaseHTTPRequestHandler):
 
     def zoo_shop_logs(self):
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-Type', 'application/json')
         self.end_headers()
         mu.acquire()
         res = []
