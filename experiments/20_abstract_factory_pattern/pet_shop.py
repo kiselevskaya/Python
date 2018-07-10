@@ -5,6 +5,7 @@
 import random
 import time
 import json
+from collections import OrderedDict
 
 
 class AbstractRandomFactory(object):
@@ -43,11 +44,9 @@ class Shop:
             if hungry != food and hungry.weight >= (food.weight*2):
                 hungry.weight += food.weight
                 localtime = time.asctime(time.localtime(time.time()))
-                log = '{} {} ♻ swallowed up ♻ {} {}'.format(hungry.species, hungry.name, food.species, food.name)
-                time_log = '{}: {}'.format(localtime, log)
-                # print('\n ', log.center(83))
+                log = '{} {} swallowed up {} {}'.format(hungry.species, hungry.name, food.species, food.name)
                 self.animals_array.pop(self.animals_array.index(food))
-                self.logs.append(time_log)
+                self.logs.append([localtime, log])
 
     def reproduction(self):
         x = self.random_factory.choice(self.animals_array)
@@ -55,10 +54,8 @@ class Shop:
         if x != y and x.gender != y.gender and abs(x.weight-y.weight) <= min(x.weight, y.weight):
             strength = random.randint(1, 4)
             localtime = time.asctime(time.localtime(time.time()))
-            log = '{} {} & {} {} have {} ※ newborns ※'.format(x.species, x.name, y.species, y.name, strength)
-            time_log = '{}: {}'.format(localtime, log)
-            self.logs.append(time_log)
-            # print('\n', log.center(83))
+            log = '{} {} & {} {} have {} newborns'.format(x.species, x.name, y.species, y.name, strength)
+            self.logs.append([localtime, log])
             num = 0
             while num != strength:
                 num += 1
@@ -82,13 +79,13 @@ class Shop:
             animal.growth()
             if animal.old_age():
                 localtime = time.asctime(time.localtime(time.time()))
-                log = '{}: ☠RIP☠ {} {} was {} years old, it was too old for {}.'.format(localtime, animal.species, animal.name, animal.age, animal.species)
-                self.logs.append(log)
+                log = 'RIP {} {} was {} years old, it was too old for {}.'.format(animal.species, animal.name, animal.age, animal.species)
+                self.logs.append([localtime, log])
                 animals.pop(animals.index(animal))  # to check
             elif animal.too_fat():
                 localtime = time.asctime(time.localtime(time.time()))
-                log = '{}: ☠RIP☠ {} {} weighted {} kg, it was too fat for {}.'.format(localtime, animal.species, animal.name, animal.weight, animal.species)
-                self.logs.append(log)
+                log = 'RIP {} {} weighted {} kg, it was too fat for {}.'.format(animal.species, animal.name, animal.weight, animal.species)
+                self.logs.append([localtime, log])
                 animals.pop(animals.index(animal))
         self.incident()
         self.reproduction()
@@ -102,3 +99,9 @@ def print_shop(shop):
         values = [i.species, i.gender, i.name, i.age, i.weight, i.lifespan, i.obesity, i.description]
         dictionary = dict(zip(keys, values))
         print(json.dumps(OrderedDict(dictionary), indent=4))
+
+    for log in shop.get_logs():
+        keys = ['localtime', 'log']
+        values = [log[0], log[1]]
+        logs = dict(zip(keys, values))
+        print(json.dumps(OrderedDict(logs), indent=4))
