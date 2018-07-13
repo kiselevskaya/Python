@@ -32,6 +32,8 @@ class Server(BaseHTTPRequestHandler):
             self.zoo_shop_state()
         if self.path == "/zoo_shop_logs":
             self.zoo_shop_logs()
+        if self.path == "/table_animals.js":
+            self.get_index_html("/html/table_animals.js")
 
     def get_index_html(self, path):
         f = open(os.getcwd() + path)
