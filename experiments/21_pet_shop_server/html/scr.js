@@ -1,5 +1,6 @@
 
 
+
 function update_log() {
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -21,16 +22,17 @@ function update_log() {
 function update_content() {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        // console.log(this.readyState, this.status);
+        console.log(this.readyState, this.status);
         if (this.readyState == 4 && this.status == 200) {
-            // console.log("HELLO");
+            console.log("HELLO");
             let petShop = JSON.parse(xhttp.response);
 
-//            console.log(xhttp.response);
-//            console.log(petShop);
+            console.log(xhttp.response);
+            console.log(petShop);
 
             parseTitle(petShop);
-            parseAnimals(petShop);
+//            parseAnimals(petShop);
+            tableAnimals(petShop)
             update_log();
         } else
             if (this.readyState == 4 && this.status != 200)
@@ -47,12 +49,10 @@ function parseTitle(jsonObj) {
     let myH1 = document.createElement('h1');
     myH1.textContent = jsonObj['title'];
     content.appendChild(myH1);
-//
-//        header.appendChild(myH1);
-//
-//        let myPara = document.createElement('p');
-//        myPara.textContent = jsonObj['data_time'];
-//        header.appendChild(myPara);
+
+    let myPara = document.createElement('p');
+    myPara.textContent = jsonObj['data_time'];
+    content.appendChild(myPara);
 }
 
 function parseAnimals(jsonObj) {
@@ -70,9 +70,9 @@ function parseAnimals(jsonObj) {
 
         myH2.textContent = animals[i].name;
         myPara1.textContent = animals[i].species + ': ' + animals[i].name;
-        myPara2.textContent = 'gender: ' + animals[i].gender;
-        myPara3.textContent = 'age: ' + animals[i].age + ' years';
-        myPara4.textContent = 'weight: ' + animals[i].weight + ' kg';
+        myPara2.textContent = animals[i].gender;
+        myPara3.textContent = animals[i].age + ' years';
+        myPara4.textContent = animals[i].weight + ' kg';
         myPara5.textContent = animals[i].description;
 
         myArticle.appendChild(myH2);
@@ -85,6 +85,7 @@ function parseAnimals(jsonObj) {
         content.appendChild(myArticle);
     }
 }
+
 
 
 
