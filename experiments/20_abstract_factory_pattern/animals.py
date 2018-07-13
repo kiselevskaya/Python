@@ -48,7 +48,7 @@ class Animal(object):
                                       str(self.description).ljust(23), str(self.species).ljust(12)))
 
     def aging(self):
-        self.age += 3*month
+        self.age += month
         return self.age
 
     def growth(self):
@@ -57,14 +57,10 @@ class Animal(object):
 
     def old_age(self):
         if self.age >= self.lifespan:
-            # print('\n', '☠RIP☠'.center(83))
-            # print('\n', ('{} {} was too old'.format(self.species, self.name)).center(83))
             return True
 
     def too_fat(self):
         if self.weight >= self.obesity:
-            # print('\n', '☠RIP☠'.center(83))
-            # print('\n', ('{} {} was too fat'.format(self.species, self.name)).center(83))
             return True
 
 
