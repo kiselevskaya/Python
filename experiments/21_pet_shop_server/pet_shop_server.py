@@ -16,13 +16,6 @@ mu = Lock()
 
 class Server(BaseHTTPRequestHandler):
 
-    def _set_headers(self):
-        # Send response status code
-        self.send_response(200)
-        # Send headers
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
     def do_GET(self):
         if self.path == "/":
             self.get_index_html("/html/index.html")
@@ -57,7 +50,7 @@ class Server(BaseHTTPRequestHandler):
                 values = [i.species, i.gender, i.name, round(i.age, 2), round(i.weight, 2), i.lifespan, i.obesity, i.description]
                 dictionary = OrderedDict(zip(keys, values))
                 res.append(dictionary)
-                data = {'title': 'Pet Shop', 'data_time': localtime, 'animals': res}
+            data = {'title': 'Pet Shop', 'data_time': localtime, 'animals': res}
             self.wfile.write(json.dumps(data, indent=4).encode())
         except IndexError:
             self.wfile.write(json.dumps('Pet Shop is empty', indent=4).encode())
@@ -91,7 +84,7 @@ def check_shop(httpd):
         animal_len = len(shop.get_animals())
         shop.ticker()
         mu.release()
-    httpd.server_close()
+    httpd.shutdown()
 
 
 def main():

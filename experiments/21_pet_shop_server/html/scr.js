@@ -1,6 +1,5 @@
 
 
-
 function update_log() {
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -22,17 +21,18 @@ function update_log() {
 function update_content() {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        console.log(this.readyState, this.status);
+        // console.log(this.readyState, this.status);
         if (this.readyState == 4 && this.status == 200) {
-            console.log("HELLO");
+            //console.log("HELLO");
             let petShop = JSON.parse(xhttp.response);
 
-            console.log(xhttp.response);
-            console.log(petShop);
+            //console.log(xhttp.response);
+            //console.log(petShop);
 
             parseTitle(petShop);
 //            parseAnimals(petShop);
-            tableAnimals(petShop)
+
+            tableAnimals(petShop);
             update_log();
         } else
             if (this.readyState == 4 && this.status != 200)
@@ -41,6 +41,7 @@ function update_content() {
     xhttp.open("GET", "/zoo_shop_state");
     xhttp.send();
 }
+
 
 function parseTitle(jsonObj) {
     let content = document.getElementById("content");
