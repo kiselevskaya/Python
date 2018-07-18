@@ -27,6 +27,8 @@ class Server(BaseHTTPRequestHandler):
             self.zoo_shop_logs()
         if self.path == "/table_animals.js":
             self.get_index_html("/html/table_animals.js")
+        if self.path == "/style.css":
+            self.get_index_html("/css/style.css")
 
     def get_index_html(self, path):
         f = open(os.getcwd() + path)
@@ -38,7 +40,6 @@ class Server(BaseHTTPRequestHandler):
 
     def zoo_shop_state(self):
         self.send_response(200)
-        # self.send_header('Content-type', 'json')
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         res = []
@@ -60,8 +61,8 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        mu.acquire()
         res = []
+        mu.acquire()
         try:
             for log in shop.get_logs():
                 keys = ['localtime', 'log']

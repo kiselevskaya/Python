@@ -2,11 +2,9 @@
 function tableAnimals(jsonObj) {
     let animals = jsonObj['animals'];
     let content = document.getElementById("content");
-//    content.innerHTML = "";
 
     let table = document.createElement('table');
     table.width = "100%";
-//    table.id = 'itemData';
 
     let thead = document.createElement('thead');
     table.appendChild(thead);
