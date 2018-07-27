@@ -37,7 +37,6 @@ function update_content() {
     xhttp.send();
 }
 
-
 function parseTitle(jsonObj) {
     let content = document.getElementById("content");
     content.innerHTML = "";

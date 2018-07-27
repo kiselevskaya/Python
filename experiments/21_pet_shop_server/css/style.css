@@ -10,6 +10,8 @@ body {
 
 h1 {
   text-align: center;
+  background-color: #ccdfac;
+  /*background-image: url("moss.jpg");*/
   font-variant: small-caps;
   color: #E53D0F;
 }

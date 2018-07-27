@@ -8,6 +8,7 @@ import os
 from collections import OrderedDict
 import json
 from threading import Thread, Lock
+import base64
 
 PORT = 8000
 shop = create_shop()
@@ -28,7 +29,25 @@ class Server(BaseHTTPRequestHandler):
         if self.path == "/table_animals.js":
             self.get_index_html("/html/table_animals.js")
         if self.path == "/style.css":
-            self.get_index_html("/css/style.css")
+            self.get_index_css("/css/style.css")
+        if self.path == "/favicon.ico":
+            self.get_icon("/html/favicon.ico")
+
+    def get_icon(self, path):
+        f = open((os.getcwd() + path), 'rb')
+        self.send_response(200)
+        self.send_header('Content-Type', 'image/x-icon')
+        self.end_headers()
+        self.wfile.write(base64.b64decode(f.read()))
+        f.close()
+
+    def get_index_css(self, path):
+        f = open(os.getcwd() + path)
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/css')
+        self.end_headers()
+        self.wfile.write(f.read().encode())
+        f.close()
 
     def get_index_html(self, path):
         f = open(os.getcwd() + path)
