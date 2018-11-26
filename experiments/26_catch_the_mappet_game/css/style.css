@@ -1,0 +1,172 @@
+
+
+body {
+    background-image: url("cactus.jpg");
+    background-repeat: repeat;
+}
+
+header {
+    color: #00505d;
+    text-align: center;
+    font-size: 130%;
+    font-weight: bold;
+    border-radius: 60%;
+    background: rgba(242, 255, 194, 0.9);
+    width: 50%;
+    margin: auto;
+}
+
+main {
+    margin-top: 6%;
+}
+
+nav {
+    float: left;
+    margin-left: 6%;
+    width: 12%;
+}
+
+#btn-start {
+    color: #00505d;
+    text-align: center;
+    font-size: 100%;
+    font-weight: bold;
+    background: #cee123;
+    border: 3px solid #fff;
+    border-radius: 100%;
+    box-shadow: 0 -2px 0 3px #a8b819 inset, 0 5px 5px rgba(65, 8, 8, 0.17), 0 15px rgba(255, 255, 255, 0.25) inset;
+    height: 75px;
+    width: 75px;
+    margin-left: 35%;
+}
+#btn-start:hover {
+    background: #e1d623;
+    box-shadow: 0 -2px 0 3px #93b501 inset, 0 5px 5px rgba(0, 0, 0, 0.17), 0 15px rgba(255, 255, 255, 0.32) inset;
+}
+
+#level {
+    margin-left: -10%;
+    margin-top: 30%;
+    background: rgba(255,255,204, 0.9);
+    outline:1px solid #ffcc99;
+    width:230px;
+    height:60px;
+    padding: 0.01%;
+    color: #6100cf;
+    font-size: 300%;
+    text-align: center;
+}
+
+section {
+    float: left;
+    margin-left: 8.5%;
+}
+
+#container {
+    position: relative;
+    width: 48%;
+    width:600px;
+    height:600px;
+    box-shadow: -2px -3px 2px 3px #ace600 inset, 10px 15px 0 rgba(0, 0, 0, 0.17), 0 5px rgba(255, 255, 255, 0.32) inset;
+    background: rgba(236, 255, 211, 0.9);
+}
+
+#cookie {
+    position: absolute;
+    left:250px;
+    top:250px;
+    width:50px;
+    height:50px;
+}
+
+aside {
+    float: left;
+    margin-left: 6%;
+    width: 20%;
+}
+
+#score-block {
+    background: rgba(255,255,204, 0.9);
+    outline:1px solid #ffcc99;
+    width:210px;
+    height:100px;
+}
+
+#score-score {
+    padding-top: 3%;
+    padding-left: 5%;
+
+    color: #005c00;
+    text-align: center;
+    font-size: 180%;
+    font-weight: bold;
+}
+
+#score {
+    display : inline-block;
+    width : 33%;
+    margin-top: -15%;
+    color: #00ad00;
+    text-align: center;
+    font-size: 330%;
+    font-weight: bold;
+}
+
+#slash {
+    display : inline-block;
+    margin-top: -15%;
+    text-align: center;
+    font-size: 330%;
+    font-weight: bold;
+}
+
+#missed {
+    display : inline-block;
+    width : 33%;
+    margin-top: -15%;
+    color: #fb0033;
+    text-align: center;
+    font-size: 330%;
+    font-weight: bold;
+}
+
+#logs {
+    margin-top: 10%;
+    margin-left: -13%;
+    background: rgba(255,255,204, 0.9);
+    outline:1px solid #ffcc99;
+    width:280px;
+    height:300px;
+}
+
+#time_pos {
+    color: #005c00;
+    text-align: center;
+    font-size: 200%;
+    font-weight: bold;
+}
+
+p {
+    color: #003300;
+    text-align: left;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#gameover {
+    position:absolute;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom:0;
+    margin:auto;
+}
+
+#won {
+    position:absolute;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom:0;
+    margin:auto;
+}

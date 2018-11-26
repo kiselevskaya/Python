@@ -1,0 +1,52 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="xhr_img.js"></script>
+    <title>Catch The Muppet</title>
+</head>
+
+<body onload="javascript:update_content()">
+<header>
+</header>
+
+<main>
+<nav>
+<div id="left-part">
+    <button id="btn-start" type="button" onclick="start()">START</button>
+</div>
+<div>
+    <h2 id="level">LEVEL 1</h2>
+</div>
+</nav>
+
+<section>
+<div id="container" onclick="modifyScore(event)">
+     <img id="background" src="wallpaper.png" />
+     <img id="cookie" src="cookie.png" />
+</div>
+</section>
+
+<aside>
+<div id="score-block">
+    <h2 id="score-score">SCORE</h2>
+    <section id="score">0</section>
+    <section id="slash">/</section>
+    <aside id="missed">0</aside>
+</div>
+
+<div id="logs">
+    <h2 id="time_pos">Time / Position</h2>
+    <div id="time_pos_log"></div>
+</div>
+</aside>
+</main>
+
+<footer>
+</footer>
+</body>
+</html>
