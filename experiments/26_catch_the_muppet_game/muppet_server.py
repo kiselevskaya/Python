@@ -28,6 +28,9 @@ class Server(BaseHTTPRequestHandler):
         if self.path == "/get_position":
             self.get_position()
 
+        if self.path == "/get_muppet":
+            self.get_muppet()
+
         if self.path == "/favicon.ico":
             self.get_icon("/html/favicon.ico")
 
@@ -72,7 +75,6 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'image/jpg')
         self.end_headers()
-        # self.wfile.write(base64.b64decode(f.read()))
         self.wfile.write(f.read())
         f.close()
 
@@ -81,7 +83,6 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'image/png')
         self.end_headers()
-        # self.wfile.write(base64.b64decode(f.read()))
         self.wfile.write(f.read())
         f.close()
 
@@ -90,6 +91,13 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         data = {'time': time.time()-start_time, 'pos': (muppet.pos[0], muppet.pos[1])}
+        self.wfile.write(json.dumps(data, indent=4).encode())
+
+    def get_muppet(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        data = {'muppet': muppet.image, 'x': muppet.pos[0], 'y': muppet.pos[1]}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
 
@@ -102,3 +110,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print(os.getcwd())
