@@ -38,7 +38,8 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'image/x-icon')
         self.end_headers()
-        self.wfile.write(base64.b64decode(f.read()))
+        # self.wfile.write(base64.b64decode(f.read()))
+        self.wfile.write(f.read())
         f.close()
 
     def get_index_css(self, path):
