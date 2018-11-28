@@ -1,10 +1,9 @@
 
 
-function update_content() {
+function start() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            $css("style.css");
             let muppet = JSON.parse(xhr.response);
             parseLogs(muppet);
             update_pos()
@@ -22,15 +21,12 @@ function update_pos(){
         if (this.readyState == 4 && this.status == 200) {
             let muppet = JSON.parse(xhr.response);
             parseMuppet(muppet);
-
-            setTimeout(function(){
-                update_content();
-            }, 5000);
+            start();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
     }
-    xhr.open("GET", "/get_muppet");
+    xhr.open("GET", "/get_position");
     xhr.send();
 }
 
@@ -48,35 +44,10 @@ function parseLogs(jsonObj) {
     logs.appendChild(myMuppet);
 }
 
-
 function parseMuppet(jsonObj) {
-    let muppet = document.getElementById("muppet");
-    muppet.src = jsonObj['muppet'];
+    let img = document.getElementById("muppet");
+    img.src = jsonObj['muppet'];
 
-    muppet.style.left = jsonObj['x'];
-    muppet.style.top = jsonObj['y'];
-    muppet.appendChild(muppet);
+    img.style.left = jsonObj['x']+'px';
+    img.style.top = jsonObj['y']+'px';
 }
-
-
-(function() {
-  let loadedFiles = {};
-  this.$css = function(filename) {
-    if (loadedFiles[filename]) {
-      return;
-    }
-    loadedFiles[filename] = true;
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", filename, true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        let head = document.getElementsByTagName("head")[0];
-        let styleTag = document.createElement("style");
-        let style = document.createTextNode(xhr.responseText);
-        styleTag.appendChild(style);
-        head.appendChild(styleTag);
-      }
-    };
-    xhr.send(null);
-  };
-})();

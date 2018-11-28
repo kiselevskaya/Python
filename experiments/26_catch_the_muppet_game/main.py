@@ -2,6 +2,7 @@
 
 from game_logic import *
 
+
 logs = []
 
 
@@ -9,7 +10,7 @@ def simulate(muppet):
     while True:
         time.sleep(2)
         muppet.animate()
-        logs.append(['Time since start: {}. Muppet position: {}'.format(time.time()-start_time, muppet)])
+        logs.append(['Time since start: {}. Muppet position and name: {}'.format(time.time()-start_time, muppet)])
         print(logs[-1])
 
 

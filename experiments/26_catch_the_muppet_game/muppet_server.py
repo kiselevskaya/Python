@@ -11,7 +11,6 @@ import os
 
 PORT = 8000
 # muppets = ["elmo.png", "big-bird.png", "oscar.png", "abby.png", "count-von-count.png", "bert.png", "kermit.png", "grover.png", "ernie.png", "cookie.png"]
-simulate(muppet)
 
 
 class Server(BaseHTTPRequestHandler):
@@ -25,11 +24,11 @@ class Server(BaseHTTPRequestHandler):
         if self.path == "/style.css":
             self.get_index_css("/css/style.css")
 
+        if self.path == "/xhr_style.js":
+            self.get_index_html("/html/xhr_style.js")
+
         if self.path == "/get_position":
             self.get_position()
-
-        if self.path == "/get_muppet":
-            self.get_muppet()
 
         if self.path == "/favicon.ico":
             self.get_icon("/html/favicon.ico")
@@ -90,14 +89,9 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        data = {'time': time.time()-start_time, 'pos': (muppet.pos[0], muppet.pos[1])}
-        self.wfile.write(json.dumps(data, indent=4).encode())
-
-    def get_muppet(self):
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
-        data = {'muppet': muppet.image, 'x': muppet.pos[0], 'y': muppet.pos[1]}
+        # muppet.animate()
+        start()
+        data = {'time': time.time()-start_time, 'pos': (muppet.pos[0], muppet.pos[1]), 'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
 
@@ -110,4 +104,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    print(os.getcwd())
