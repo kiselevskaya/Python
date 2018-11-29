@@ -1,17 +1,21 @@
 
 
-import math
+from main import *
 import time
+# import math
 # import random
+mouse_pos = None
 
-start_time = time.time()
-t = 0
-scale = (2 / (3 - math.cos(60*t)))*9
-step = 4
-increment = 2*math.pi/step
-theta = increment
 
 started = False
+start_time = time.time()
+
+width = 600
+height = 600
+img_size = 50
+center = [width/2 - img_size/2, height/2 - img_size/2]
+muppets = ["elmo.png", "big-bird.png", "oscar.png", "abby.png", "count-von-count.png", "bert.png", "kermit.png", "grover.png", "ernie.png", "cookie.png"];
+muppet = Muppet(center, muppets[-1], 2)
 
 
 def reset():
@@ -40,59 +44,26 @@ def timeout():
         return muppet
 
 
-class Graphics:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
+speed = 10
+score = [0, 0]
+multiple = 1
+level = multiple
+new_level = 3 * multiple
+logs = ["Zero missed yet"]
 
 
-lemniscate = Graphics(scale * math.cos(t/30)*30, scale * math.sin(2*t/30)*30 / 2)
-spiral = Graphics(theta * math.cos(theta), theta * math.sin(theta))
-
-
-width = 600
-height = 600
-img_size = 50
-center = [width/2 - img_size/2, height/2 - img_size/2]
-
-
-class Muppet(object):
-    def __init__(self, pos, image, t, graph=spiral):
-        self.pos = [pos[0], pos[1]]
-        self.image = image
-        self.t = t
-        self.graph = graph
-
-    def __str__(self):
-        return '{}, {}, {}'.format(self.pos[0], self.pos[1], self.image)
-
-    def get_x(self):
-        return self.pos[0]
-
-    def get_y(self):
-        return self.pos[1]
-
-    def animate(self):
-        self.pos[0] += self.graph.x
-        self.pos[1] += self.graph.y
-        self.t += 1
-        return self.pos
-
-
-muppets = ["elmo.png", "big-bird.png", "oscar.png", "abby.png", "count-von-count.png", "bert.png", "kermit.png", "grover.png", "ernie.png", "cookie.png"];
-muppet = Muppet(center, muppets[-1], t)
-# muppet = Muppet(center, random.choice(muppets))
-
-
-# def main():
-#     start()
-#
-#
-# if __name__ == '__main__':
-#     main()
+def modify_score():
+    global multiple, new_level, score, speed
+    if muppet.pos[0] <= mouse_pos[0] <= muppet.pos[0]+50:
+        if muppet.pos[1] <= mouse_pos[1] <= muppet.pos[1]+50:
+            score[0] += 1
+            if score[0] == new_level:
+                multiple += 1
+                speed += 10
+                try:
+                    muppet.image = muppets[muppets.index(muppet.image)+1]
+                except IndexError:
+                    muppet.image = muppets[0]
+    else:
+        score[1] += 1
+        logs.append('{} time you miss on: {} sec.'.format(score[1], (time.time()-start_time)/1000))
