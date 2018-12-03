@@ -1,6 +1,6 @@
 
 
-//  When click on START button
+//  I. When click on START button
 function start() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -8,17 +8,12 @@ function start() {
             let muppet = JSON.parse(xhr.response);
             //  Return certain image of muppet in a right position
             parseMuppet(muppet);
-            //
-            update_score()
-            update_level()
-            //  Return time in sec of all missed shots
-            update_logs()
+            start();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
     }
     xhr.open("GET", "/get_muppet");
-//    xhr.open("GET", "/get_logs");
     xhr.send();
 }
 
@@ -33,17 +28,26 @@ function parseMuppet(jsonObj) {
 }
 
 
-function update_score() {
+//  II.
+function update_score(event) {
     let xhr = new XMLHttpRequest();
+    let muppet = document.getElementById("muppet")
+    let aim = event.target;
+    if (aim === muppet){
+        xhr.open("GET", "/get_caught");
+    } else {
+        xhr.open("GET", "/get_missed");
+    }
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let score = JSON.parse(xhr.response);
             parseScore(score);
+            update_level()
+            update_logs();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
     }
-    xhr.open("GET", "/get_score");
     xhr.send();
 }
 
@@ -57,12 +61,13 @@ function parseScore(jsonObj) {
 }
 
 
+//  III.
 function update_level() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            let muppet = JSON.parse(xhr.response);
-            parseLevel(muppet);
+            let level = JSON.parse(xhr.response);
+            parseLevel(level);
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -73,18 +78,18 @@ function update_level() {
 
 
 function parseLevel(jsonObj){
-    let level = document.getElementById("level");
-    level.innerHTML = jsonObj['level'];
+    let newLevel = document.getElementById("level");
+    newLevel.innerHTML = "LEVEL " + jsonObj["level"];
 }
 
 
+//  IV.
 function update_logs() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let muppet = JSON.parse(xhr.response);
             parseLogs(muppet);
-            start();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -100,5 +105,6 @@ function parseLogs(jsonObj) {
 
     let myLogs = document.createElement('p');
     myLogs.textContent = jsonObj['logs'];
+    myLogs.innerHTML = myLogs.innerHTML.replace(/,/g, "<br />")
     logs.appendChild(myLogs);
 }

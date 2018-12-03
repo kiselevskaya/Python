@@ -10,34 +10,36 @@ import os
 # import base64
 
 PORT = 8000
-muppets = ["elmo.png", "big-bird.png", "oscar.png", "abby.png", "count-von-count.png", "bert.png", "kermit.png", "grover.png", "ernie.png", "cookie.png"]
-other_png = ["wallpaper.png", "game_over.png", "won.png", "cactus.jpg"]
+muppets = ['elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png', 'cookie.png']
+other_png = ['wallpaper.png', 'game_over.png', 'won.png', 'cactus.jpg']
 
 
 class Server(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == "/":
-            self.get_index_html("/html/index.html")
-        if self.path == "/style.css":
-            self.get_index_css("/css/style.css")
-        if self.path == "/favicon.ico":
-            self.get_icon("/html/favicon.ico")
-        if self.path == "/xhr_img.js":
-            self.get_index_html("/html/xhr_img.js")
-        if self.path == "/xhr_style.js":
-            self.get_index_html("/html/xhr_style.js")
+        if self.path == '/':
+            self.get_index_html('/html/index.html')
+        if self.path == '/style.css':
+            self.get_index_css('/css/style.css')
+        if self.path == '/favicon.ico':
+            self.get_icon('/html/favicon.ico')
+        if self.path == '/xhr_img.js':
+            self.get_index_html('/html/xhr_img.js')
+        if self.path == '/xhr_style.js':
+            self.get_index_html('/html/xhr_style.js')
         if self.path[1:] in other_png:
-            self.get_image("/images" + self.path)
+            self.get_image('/images' + self.path)
         if self.path[1:] in muppets:
-            self.get_png("/images" + self.path)
+            self.get_png('/images' + self.path)
 
-        if self.path == "/get_muppet":
+        if self.path == '/get_muppet':
             self.get_muppet()
-        if self.path == "/get_score":
-            self.get_score()
-        if self.path == "/get_logs":
+        if self.path == '/get_caught':
+            self.get_caught()
+        if self.path == '/get_missed':
+            self.get_missed()
+        if self.path == '/get_logs':
             self.get_logs()
-        if self.path == "/get_level":
+        if self.path == '/get_level':
             self.get_level()
 
     def get_index_html(self, path):
@@ -88,11 +90,19 @@ class Server(BaseHTTPRequestHandler):
         data = {'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
-    def get_score(self):
+    def get_caught(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        start()
+        modify_score(True)
+        data = {'caught': score[0], 'missed': score[1]}
+        self.wfile.write(json.dumps(data, indent=4).encode())
+
+    def get_missed(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        modify_score(False)
         data = {'caught': score[0], 'missed': score[1]}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
@@ -100,23 +110,21 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        start()
-        data = {'logs': '\n'.join(logs)}
+        data = {'logs': logs}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_level(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        start()
-        data = {'level': "LEVEL " + str(level)}
+        data = {'level': level}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
 
 def main():
     handler = Server
-    httpd = HTTPServer(("localhost", PORT), handler)
-    print("serving at port", PORT)
+    httpd = HTTPServer(('localhost', PORT), handler)
+    print('serving at port', PORT)
     httpd.serve_forever()
 
 
