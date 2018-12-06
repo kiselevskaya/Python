@@ -1,14 +1,34 @@
 
 
-//  I. When click on START button
-function start() {
+//  I. Start button
+function update_start() {
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+//            update_muppet();
+            console.log(JSON.parse(xhr.response)["started"])
+//            let muppet = JSON.parse(xhr.response);
+//            parseMuppet(muppet);
+//            update_score();
+//            update_level();
+//            update_logs();
+        } else
+            if (this.readyState == 4 && this.status != 200)
+                alert("LOST");
+    }
+    xhr.open("GET", "/get_start");
+    xhr.send();
+}
+
+
+//  II. Follows muppet position
+function update_muppet() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let muppet = JSON.parse(xhr.response);
-            //  Return certain image of muppet in a right position
             parseMuppet(muppet);
-            start();
+            update_muppet();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -28,7 +48,7 @@ function parseMuppet(jsonObj) {
 }
 
 
-//  II.
+//  III. Update score and call level and logs updates
 function update_score(event) {
     let xhr = new XMLHttpRequest();
     let muppet = document.getElementById("muppet")
@@ -61,7 +81,7 @@ function parseScore(jsonObj) {
 }
 
 
-//  III.
+//  IV. Updates level if necessary
 function update_level() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -83,7 +103,7 @@ function parseLevel(jsonObj){
 }
 
 
-//  IV.
+//  V. Update logs changes if necessary
 function update_logs() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {

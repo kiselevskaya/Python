@@ -30,7 +30,8 @@ class Server(BaseHTTPRequestHandler):
             self.get_image('/images' + self.path)
         if self.path[1:] in muppets:
             self.get_png('/images' + self.path)
-
+        if self.path == '/get_start':
+            self.get_start()
         if self.path == '/get_muppet':
             self.get_muppet()
         if self.path == '/get_caught':
@@ -82,11 +83,19 @@ class Server(BaseHTTPRequestHandler):
         self.wfile.write(f.read())
         f.close()
 
+    def get_start(self):
+        start()
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        data = {'started': started, 'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
+        self.wfile.write(json.dumps(data, indent=4).encode())
+
     def get_muppet(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        start()
+        simulation()
         data = {'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
