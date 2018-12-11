@@ -48,4 +48,4 @@ class Muppet(object):
     def animate(self):
         self.pos[0] += self.graph.x
         self.pos[1] += self.graph.y
-        return self.pos
+        return self

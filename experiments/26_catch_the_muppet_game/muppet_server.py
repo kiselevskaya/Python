@@ -84,11 +84,11 @@ class Server(BaseHTTPRequestHandler):
         f.close()
 
     def get_start(self):
-        start()
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        data = {'started': started, 'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
+        started = new_game()
+        data = {'start': started}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_muppet(self):
@@ -96,7 +96,7 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         simulation()
-        data = {'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image}
+        data = {'x': muppet.pos[0], 'y': muppet.pos[1], 'muppet': muppet.image, 'isStarted': start, 'game_over': game_over}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_caught(self):

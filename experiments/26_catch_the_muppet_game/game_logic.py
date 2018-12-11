@@ -4,10 +4,9 @@ from main import *
 import time
 # import math
 # import random
-mouse_pos = None
 
 
-started = False
+start = False
 game_over = False
 start_time = time.time()
 
@@ -26,9 +25,16 @@ level = [1]
 constant = 1
 
 
+def new_game():
+    global start
+    if not start:
+        reset()
+    return start
+
+
 def reset():
-    global started, game_over, started_time, muppet, speed, score, multiple, logs, level, t
-    started = True
+    global start, game_over, started_time, muppet, speed, score, multiple, logs, level, t
+    start = True
     game_over = False
     speed = 10
     score = [0, 0]
@@ -42,14 +48,9 @@ def reset():
     t = 0
 
 
-def start():
-    if not started:
-        reset()
-
-
 def modify_score(event):
-    global multiple, score, speed, started, game_over
-    if not game_over and started:
+    global multiple, score, speed, start, game_over
+    if not game_over and start:
         if event:
             score[0] += 1
             if score[0] == constant*multiple and multiple < len(muppets):
@@ -62,23 +63,24 @@ def modify_score(event):
                 except IndexError:
                     muppet.image = muppets[0]
             else:
-                started = False
+                start = False
                 game_over = True
         else:
             score[1] += 1
             logs.append('{} time you miss on: {} sec.'.format(score[1], int(round((time.time()-start_time)))))
             if score[1] == len(muppets):
-                started = False
+                start = False
                 game_over = True
     return multiple
 
 
 def simulation():
     global t
-    while started and not game_over:
+    print(start, game_over)
+    if start and not game_over:
         muppet.animate()
         t += 1
 
 
-if __name__ == '__main__':
-    simulation()
+# if __name__ == '__main__':
+#     simulation()

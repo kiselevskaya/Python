@@ -5,13 +5,11 @@ function update_start() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-//            update_muppet();
-            console.log(JSON.parse(xhr.response)["started"])
-//            let muppet = JSON.parse(xhr.response);
-//            parseMuppet(muppet);
-//            update_score();
-//            update_level();
-//            update_logs();
+            let start = JSON.parse(xhr.response);
+            if (start['start']){
+//                console.log('seems it works');
+                update_muppet();
+            }
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -21,6 +19,16 @@ function update_start() {
 }
 
 
+//function parseLog(jsonObj) {
+//    let logs = document.getElementById("time_log");
+//    logs.innerHTML = "";
+//
+//    let myLogs = document.createElement('p');
+//    myLogs.textContent = jsonObj['start'];
+//    logs.appendChild(myLogs);
+//}
+
+
 //  II. Follows muppet position
 function update_muppet() {
     let xhr = new XMLHttpRequest();
@@ -28,6 +36,7 @@ function update_muppet() {
         if (this.readyState == 4 && this.status == 200) {
             let muppet = JSON.parse(xhr.response);
             parseMuppet(muppet);
+            console.log(muppet['muppet']);
             update_muppet();
         } else
             if (this.readyState == 4 && this.status != 200)
@@ -45,6 +54,13 @@ function parseMuppet(jsonObj) {
 //    img.style.height = 70+'px';
     img.style.left = jsonObj['x']+'px';
     img.style.top = jsonObj['y']+'px';
+
+    let logs = document.getElementById("time_log");
+    logs.innerHTML = "";
+
+//    let myLogs = document.createElement('p');
+//    myLogs.textContent = jsonObj['isStarted', 'game_over'];
+//    logs.appendChild(myLogs);
 }
 
 
@@ -128,3 +144,5 @@ function parseLogs(jsonObj) {
     myLogs.innerHTML = myLogs.innerHTML.replace(/,/g, "<br />")
     logs.appendChild(myLogs);
 }
+
+
