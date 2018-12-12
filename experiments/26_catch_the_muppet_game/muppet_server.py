@@ -88,7 +88,7 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         started = new_game()
-        data = {'start': started}
+        data = {'start': started, 'caught': score[0], 'missed': score[1]}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_muppet(self):
@@ -103,30 +103,32 @@ class Server(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        modify_score(True)
-        data = {'caught': score[0], 'missed': score[1]}
+        count = modify_score(True)
+        data = {'caught': count[0], 'missed': count[1]}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_missed(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        modify_score(False)
-        data = {'caught': score[0], 'missed': score[1]}
+        count = modify_score(False)
+        data = {'caught': count[0], 'missed': count[1]}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_logs(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        data = {'logs': logs}
+        time_log = return_logs()
+        data = {'logs': time_log}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
     def get_level(self):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-        data = {'level': level}
+        scale = return_level()
+        data = {'level': scale}
         self.wfile.write(json.dumps(data, indent=4).encode())
 
 

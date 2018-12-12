@@ -1,15 +1,17 @@
 
 
-//  I. Start button
+//  I. Start button (reset game)
 function update_start() {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let start = JSON.parse(xhr.response);
-            if (start['start']){
-//                console.log('seems it works');
+            if (start["start"]){
                 update_muppet();
             }
+            update_level();
+            update_logs();
+            parseScore(start);
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -19,16 +21,6 @@ function update_start() {
 }
 
 
-//function parseLog(jsonObj) {
-//    let logs = document.getElementById("time_log");
-//    logs.innerHTML = "";
-//
-//    let myLogs = document.createElement('p');
-//    myLogs.textContent = jsonObj['start'];
-//    logs.appendChild(myLogs);
-//}
-
-
 //  II. Follows muppet position
 function update_muppet() {
     let xhr = new XMLHttpRequest();
@@ -36,7 +28,6 @@ function update_muppet() {
         if (this.readyState == 4 && this.status == 200) {
             let muppet = JSON.parse(xhr.response);
             parseMuppet(muppet);
-            console.log(muppet['muppet']);
             update_muppet();
         } else
             if (this.readyState == 4 && this.status != 200)
@@ -49,18 +40,11 @@ function update_muppet() {
 
 function parseMuppet(jsonObj) {
     let img = document.getElementById("muppet");
-    img.src = jsonObj['muppet'];
+    img.src = jsonObj["muppet"];
 //    img.style.width = 70+'px';
 //    img.style.height = 70+'px';
-    img.style.left = jsonObj['x']+'px';
-    img.style.top = jsonObj['y']+'px';
-
-    let logs = document.getElementById("time_log");
-    logs.innerHTML = "";
-
-//    let myLogs = document.createElement('p');
-//    myLogs.textContent = jsonObj['isStarted', 'game_over'];
-//    logs.appendChild(myLogs);
+    img.style.left = jsonObj["x"]+"px";
+    img.style.top = jsonObj["y"]+"px";
 }
 
 
@@ -78,8 +62,9 @@ function update_score(event) {
         if (this.readyState == 4 && this.status == 200) {
             let score = JSON.parse(xhr.response);
             parseScore(score);
-            update_level()
+            update_level();
             update_logs();
+//            update_end();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -90,10 +75,10 @@ function update_score(event) {
 
 function parseScore(jsonObj) {
     let caught = document.getElementById("score");
-    caught.innerHTML = jsonObj['caught'];
+    caught.innerHTML = jsonObj["caught"];
 
     let missed = document.getElementById("missed");
-    missed.innerHTML = jsonObj['missed'];
+    missed.innerHTML = jsonObj["missed"];
 }
 
 
@@ -139,10 +124,32 @@ function parseLogs(jsonObj) {
     let logs = document.getElementById("time_log");
     logs.innerHTML = "";
 
-    let myLogs = document.createElement('p');
-    myLogs.textContent = jsonObj['logs'];
+    let myLogs = document.createElement("p");
+    myLogs.textContent = jsonObj["logs"];
     myLogs.innerHTML = myLogs.innerHTML.replace(/,/g, "<br />")
     logs.appendChild(myLogs);
 }
 
 
+////  VI. End game image
+//function update_end() {
+//    let xhr = new XMLHttpRequest();
+//    xhr.onreadystatechange = function() {
+//        if (this.readyState == 4 && this.status == 200) {
+//            let end = JSON.parse(xhr.response);
+//            parseEnd(end);
+//        } else
+//            if (this.readyState == 4 && this.status != 200)
+//                alert("LOST");
+//    }
+//    xhr.open("GET", "/get_end");
+//    xhr.send();
+//}
+//
+//
+//function parseEnd(){
+//    let gameOver = document.getElementById("end");
+//    gameOver.src = jsonObj["game_over"]
+//
+//    dameOver.appendChild()
+//}
