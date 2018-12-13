@@ -64,7 +64,7 @@ function update_score(event) {
             parseScore(score);
             update_level();
             update_logs();
-//            update_end();
+            update_end();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
@@ -129,27 +129,3 @@ function parseLogs(jsonObj) {
     myLogs.innerHTML = myLogs.innerHTML.replace(/,/g, "<br />")
     logs.appendChild(myLogs);
 }
-
-
-////  VI. End game image
-//function update_end() {
-//    let xhr = new XMLHttpRequest();
-//    xhr.onreadystatechange = function() {
-//        if (this.readyState == 4 && this.status == 200) {
-//            let end = JSON.parse(xhr.response);
-//            parseEnd(end);
-//        } else
-//            if (this.readyState == 4 && this.status != 200)
-//                alert("LOST");
-//    }
-//    xhr.open("GET", "/get_end");
-//    xhr.send();
-//}
-//
-//
-//function parseEnd(){
-//    let gameOver = document.getElementById("end");
-//    gameOver.src = jsonObj["game_over"]
-//
-//    dameOver.appendChild()
-//}

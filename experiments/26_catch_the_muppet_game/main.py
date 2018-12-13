@@ -9,6 +9,7 @@ scale = (2 / (3 - math.cos(60*t)))*9
 step = 20
 increment = 2*math.pi/step
 theta = increment
+decrease = False
 
 
 class Graphics:
