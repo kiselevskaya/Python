@@ -18,7 +18,7 @@ center = [width/2 - img_size/2, height/2 - img_size/2]
 
 muppets = ['elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png', 'cookie.png']
 end_images = ['won.png', 'game_over.png']
-muppet = Muppet(center, muppets[-1], 2)
+muppet = Muppet(center, muppets[-1], 2, spiral)
 
 speed = 10
 score = [0, 0]
@@ -83,9 +83,9 @@ def modify_score(event):
 
 def simulation():
     global t
-    print(start, game_over)
     if start and not game_over:
         muppet.animate()
+        print(muppet)
         t += 1
 
 
@@ -97,21 +97,3 @@ def return_logs():
 def return_level():
     global level
     return level
-
-
-# def direction():
-#     global decrease, increment, theta
-#     if muppet.pos[0] > center[0] + width/2:
-#         decrease = True
-#     elif muppet.pos[1] > center[1] + width/2:
-#         decrease = True
-#     elif muppet.pos[0] < center[0] - height/2:
-#         decrease = True
-#     elif muppet.pos[1] < center[1] - height/2:
-#         decrease = True
-#     elif muppet.pos == center:
-#         decrease = False
-#     if not decrease:
-#         theta = theta + increment
-#     elif decrease:
-#         theta = theta - increment
