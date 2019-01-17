@@ -1,10 +1,9 @@
+# -*- coding: utf-8 -*-
+# game_logic.py
 
 
-from main import *
 import time
-import math
-# import random
-
+from main import *
 
 start = False
 game_over = False
@@ -16,16 +15,15 @@ height = 600
 img_size = 50
 center = [width/2 - img_size/2, height/2 - img_size/2]
 
-muppets = ['elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png', 'cookie.png']
-end_images = ['won.png', 'game_over.png']
-muppet = Muppet(center, muppets[-1], 2, spiral)
-
-speed = 10
 score = [0, 0]
 multiple = 1
 logs = []
 level = 1
 constant = 3
+
+muppets = ['cookie.png', 'elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png']
+end_images = ['won.png', 'game_over.png']
+muppet = Muppet(center, muppets[0])
 
 
 def new_game():
@@ -39,12 +37,12 @@ def reset():
     global start, game_over, start_time, muppet, speed, score, multiple, logs, level, t
     start = True
     game_over = False
-    speed = 10
+    speed = 30
     score = [0, 0]
     multiple = 1
     logs = []
     level = 1
-    muppet.image = muppets[-1]
+    muppet.image = muppets[0]
     muppet.pos[0] = center[0]
     muppet.pos[1] = center[1]
     start_time = time.time()
@@ -59,7 +57,6 @@ def modify_score(event):
             if score[0] == constant*multiple and multiple < len(muppets):
                 multiple += 1
                 level += 1
-                speed += 10
                 try:
                     muppet.image = muppets[1+muppets.index(muppet.image)]
                 except IndexError:
@@ -82,11 +79,8 @@ def modify_score(event):
 
 
 def simulation():
-    global t
     if start and not game_over:
         muppet.animate()
-        print(muppet)
-        t += 1
 
 
 def return_logs():

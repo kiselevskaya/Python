@@ -41,8 +41,6 @@ function update_muppet() {
 function parseMuppet(jsonObj) {
     let img = document.getElementById("muppet");
     img.src = jsonObj["muppet"];
-//    img.style.width = 70+'px';
-//    img.style.height = 70+'px';
     img.style.left = jsonObj["x"]+"px";
     img.style.top = jsonObj["y"]+"px";
 }
@@ -64,7 +62,6 @@ function update_score(event) {
             parseScore(score);
             update_level();
             update_logs();
-            update_end();
         } else
             if (this.readyState == 4 && this.status != 200)
                 alert("LOST");
