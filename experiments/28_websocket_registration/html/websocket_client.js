@@ -4,23 +4,19 @@ class WebSocketConnection {
     this.status_div = document.getElementById(status_id);
     this.username = username;
     this.password = password;
-
+    this.ws = new WebSocket("ws://127.0.0.1:6789/?username=" + username + "&password=" + password);
+    this.ws.onopen = function (event) {
+        console.log(event);
+        this.ws.send(JSON.stringify({"msg":"hello", "username":username}));
+    }.bind(this);
+    this.ws.onmessage = function (event) {
+        console.log(event);
+    }
+    this.ws.onerror = function (event) {
+        console.log(event);
+    };
+    this.ws.onclose = function (event) {
+        console.log(event);
+    };
   }
-}
-
-//var // log = document.querySelector('.log'),
-    // value = document.querySelector('.username'),
-//    var register = document.querySelector('.register');
-//    // ws = new WebSocket("ws://127.0.0.1:6789/");
-//
-//register.onclick = function (event) {
-//    log.console(register);
-//  //  ws.send(JSON.stringify({action: 'register'}));
-//};
-//ws.onmessage = function (event) {
-//        value.innerHTML = document.createTextNode(event.data);
-//};
-
-function register(form) {
-    console.log("ololol " + form.elements["username"].value);
 }

@@ -13,11 +13,9 @@
         var params = (new URL(document.location)).searchParams;
 
         if (params.has("username") && params.has("password")) {
-            console.log(params.get("username"));
-            console.log(params.get("password"));
             const websocket = new WebSocketConnection("websocket_status", params.get("username"), params.get("password"));
         } else {
-            document.getElementById("websocket_status").innerHTML = "NO PARAMSSSS!!!!";
+            document.getElementById("websocket_status").innerHTML = "Bad page request please start from index";
         }
     </script>
 </body>

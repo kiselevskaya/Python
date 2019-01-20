@@ -1,11 +1,26 @@
 import random
 import string
+import websockets
 
 
 class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+        self.websocket = None
+
+    async def process_websocket(self, websocket):
+        self.websocket = websocket
+        print("starting processing " + self.username)
+        while True:
+            try:
+                msg = await websocket.recv()
+                print("websocket from " + self.username + " -> " + msg)
+                await websocket.send(msg)
+            except websockets.exceptions.ConnectionClosed as e:
+                print(e)
+                break
+        self.websocket = None
 
 
 class GameLogic:
@@ -33,6 +48,11 @@ class GameLogic:
     @staticmethod
     def generate_password(username):
         return username + ''.join(random.choices(string.ascii_uppercase + string.digits, k=40))
+
+    async def process_websocket(self, username, websocket):
+        if username in self.users:
+            user = self.users[username]
+            user.process_websocket(websocket)
 
 
 if __name__ == '__main__':

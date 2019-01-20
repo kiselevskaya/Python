@@ -3,6 +3,8 @@ from game_logic import *
 import asyncio
 import os
 import urllib
+import websockets
+import threading
 
 game_logic = GameLogic()
 
@@ -87,21 +89,54 @@ class HttpHandler(BaseHTTPRequestHandler):
             self.wfile.write(message.encode())
 
 
+async def process_user_connection(websocket, path):
+    parsed_path = urllib.parse.urlparse(path)
+    query = urllib.parse.parse_qs(parsed_path.query)
+    if 'username' in query and 'password' in query:
+        username = query['username'][0]
+        password = query['password'][0]
+        if game_logic.check_user(username, password):
+            await game_logic.process_websocket(username, websocket)
+        print("user " + username + " logged off")
+    websocket.close()
+
+
 def http_server():
     port = 8081
     httpd = HTTPServer(('localhost', port), HttpHandler)
-    print('serving at port', port)
+    print('serving http at port', port)
     httpd.serve_forever()
 
 
-def start_http(event_loop2):
-    event_loop2.run_until_complete(http_server())
+def websocket_server():
+    port = 6789
+    print('serving websocket at port', port)
+    return websockets.serve(process_user_connection, '127.0.0.1', port)
+
+
+def start_http():
+    event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(event_loop)
+    event_loop.run_until_complete(http_server())
+    event_loop.run_forever()
+
+
+def start_websocket():
+    ws_event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(ws_event_loop)
+    ws_event_loop.run_until_complete(websocket_server())
+    ws_event_loop.run_forever()
 
 
 def main():
-    event_loop = asyncio.get_event_loop()
-    start_http(event_loop)
-    event_loop.run_forever()
+    t_http = threading.Thread(target=start_http)
+    t_http.daemon = True
+    t_websocket = threading.Thread(target=start_websocket)
+    t_websocket.daemon = True
+    t_http.start()
+    t_websocket.start()
+    t_http.join()
+    t_websocket.join()
 
 
 if __name__ == '__main__':
