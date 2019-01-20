@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="websocket_client.js"></script>
+    <title>Game</title>
+</head>
+<body>
+
+    <div id="websocket_status"></div>
+
+    <script>
+        var params = (new URL(document.location)).searchParams;
+
+        if (params.has("username") && params.has("password")) {
+            console.log(params.get("username"));
+            console.log(params.get("password"));
+            const websocket = new WebSocketConnection("websocket_status", params.get("username"), params.get("password"));
+        } else {
+            document.getElementById("websocket_status").innerHTML = "NO PARAMSSSS!!!!";
+        }
+    </script>
+</body>
+</html>
