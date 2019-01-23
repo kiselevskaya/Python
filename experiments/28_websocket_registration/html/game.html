@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript" src="websocket_client.js"></script>
+    <script type="text/javascript" src="game_client_logic.js"></script>
     <title>Game</title>
 </head>
 <body>
 
-    <div id="websocket_status"></div>
-    <div id="logs"></div>
+    <div id="page_content"></div>
 
     <script>
         var params = (new URL(document.location)).searchParams;
 
         if (params.has("username") && params.has("password")) {
-            const websocket = new WebSocketConnection("websocket_status", params.get("username"), params.get("password"));
+            const game = new Game("page_content");
+            const websocketConnection = new WebSocketConnection(
+                    params.get("username"),
+                    params.get("password"),
+                    game);
+            game.setWebsocketConnection(websocketConnection);
         } else {
-            document.getElementById("websocket_status").innerHTML = "Bad page request please start from index";
+            document.getElementById("page_content").innerHTML = "Bad page request please start from index";
         }
     </script>
-    <a href="/">Log off</a>
+    <a href="/"><b>Log off</b></a>
 </body>
 </html>

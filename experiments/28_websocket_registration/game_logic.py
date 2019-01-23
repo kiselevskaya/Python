@@ -80,7 +80,7 @@ class GameLogic:
     def check_user(self, username, password):
         if username in self.users:
             user = self.users[username]
-            if user.password == password:
+            if user.password == password and user.connected is not True:
                 return True
         return False
 
@@ -99,6 +99,7 @@ class GameLogic:
         if username in self.users:
             user = self.users[username]
             await user.process_websocket(websocket)
+            self.users.pop(username)
 
     async def send_to_all(self, msg):
         for key, user in self.users.items():

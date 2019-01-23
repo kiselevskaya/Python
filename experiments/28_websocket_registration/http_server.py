@@ -19,7 +19,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         if path.startswith("/register"):
             return self.process_register(path)
 
-        if path.startswith("/game"):
+        if urllib.parse.urlparse(path).path == "/game":
             return self.process_game(path)
 
         self.get_static(path)
