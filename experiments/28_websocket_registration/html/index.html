@@ -7,9 +7,21 @@
     <body>
         <div>
             <form name="register_form" action="/register" method="get">
-                User name: <input name="username" type="text" value="User 1"><br/>
+                User name: <input id="username" name="username" type="text" value="User 1"><br/>
                 <button type="submit" >Register</button>
             </form>
         </div>
+    <script>
+        function makeid() {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+          for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+          return text;
+        }
+        document.getElementById("username").value = "User " + makeid();
+    </script>
     </body>
 </html>

@@ -11,6 +11,8 @@ class WebSocketConnection {
     }.bind(this);
     this.ws.onmessage = function (event) {
         console.log(event);
+//        let logs = document.getElementById("logs")
+//        logs.innerHTML = event.data
     }
     this.ws.onerror = function (event) {
         console.log(event);

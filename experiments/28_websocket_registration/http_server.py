@@ -87,6 +87,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         self.end_headers()
         if message is not None:
             self.wfile.write(message.encode())
+        self.wfile.write("<hr/><a href=\"/\">Log off</a>".encode())
 
 
 async def process_user_connection(websocket, path):
@@ -97,6 +98,7 @@ async def process_user_connection(websocket, path):
         password = query['password'][0]
         if game_logic.check_user(username, password):
             await game_logic.process_websocket(username, websocket)
+            # await game_logic.get_list_of_users(websocket)
         print("user " + username + " logged off")
     websocket.close()
 
