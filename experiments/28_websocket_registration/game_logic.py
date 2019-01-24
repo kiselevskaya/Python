@@ -38,9 +38,15 @@ class User:
 
     async def process_income_message(self, msg):
         parsed_json = json.loads(msg)
-        print(parsed_json)
+        print(" <- (" + self.username + ")" + msg)
         if parsed_json['msg'] == 'hello':
             return await self.process_hello(parsed_json)
+        if parsed_json['msg'] == 'start_game':
+            if not self.game_logic.game_started:
+                return await self.process_start_game(parsed_json)
+            else:
+                return await self.process_game_in_progress()
+        return False
 
     async def process_hello(self, json_msg):
         if json_msg['username'] == self.username:
@@ -49,6 +55,38 @@ class User:
             return True
         else:
             return False
+
+    async def process_start_game(self, parsed_json):
+        if len(self.game_logic.get_connected_user_list()) < 2:
+            data = dict()
+            data['msg'] = 'cannot_start_game'
+            data['content'] = "not enough users on server"
+            await self.send_message(data)
+            return True
+        else:
+            self.game_logic.game_started = True
+            data = dict()
+            data['msg'] = 'start_game'
+            data['content'] = "Game was started!"
+            await self.game_logic.send_to_all(data)
+            await self.game_logic.countdown(10)
+            print("STARTING GAME!!!!")
+            return True
+
+    async def process_game_in_progress(self):
+        if len(self.game_logic.get_connected_user_list()) < 2:
+            data = dict()
+            data['msg'] = 'game_stopped'
+            data['content'] = "not enough users on server"
+            await self.send_message(data)
+            return True
+        else:
+            data = dict()
+            data['msg'] = 'not_finished'
+            data['content'] = "Game in progress, wait until it'll be finished!"
+            await self.send_message(data)
+            print("Game in progress, wait until it'll be finished!!!!")
+            return True
 
     async def send_user_list(self):
         user_list = self.game_logic.get_connected_user_list()
@@ -59,13 +97,16 @@ class User:
 
     async def send_message(self, msg):
         if self.connected:
-            await self.websocket.send(json.dumps(msg))
+            json_msg = json.dumps(msg)
+            print(" -> (" + self.username + ")" + json_msg)
+            await self.websocket.send(json_msg)
 
 
 class GameLogic:
 
     def __init__(self):
         self.users = dict()
+        self.game_started = False
 
     def add_user(self, username):
         if username in self.users:
@@ -104,6 +145,20 @@ class GameLogic:
     async def send_to_all(self, msg):
         for key, user in self.users.items():
             await user.send_message(msg)
+
+    async def countdown(self, seconds):
+        import time
+        data = dict()
+        data['msg'] = 'countdown'
+        while seconds:
+            mins, secs = divmod(seconds, 60)
+            timeformat = '{:02d}:{:02d}'.format(mins, secs)
+            data['countdown'] = timeformat
+            await self.send_to_all(data)
+            time.sleep(1)
+            seconds -= 1
+        data['countdown'] = '\nSTART!\n'
+        await self.send_to_all(data)
 
 
 if __name__ == '__main__':

@@ -7,12 +7,22 @@ class Game {
         this.user_list_div.id = "user_list";
 
         this.status_div.appendChild(this.user_list_div);
-
-        var btn = document.createElement("button");
-        btn.appendChild(document.createTextNode("Start Game"));
-
         this.status_div.appendChild(document.createElement("hr"));
-        this.status_div.appendChild(btn);
+
+
+        this.countdown = document.createElement("div");
+        this.countdown.id = "countdown";
+
+        this.status_div.appendChild(this.countdown);
+
+
+        this.btn = document.createElement("button");
+        this.btn.onclick = function(){
+            this.startGame();
+        }.bind(this);
+        this.btn.appendChild(document.createTextNode("Start Game"));
+
+        this.status_div.appendChild(this.btn);
         this.status_div.appendChild(document.createElement("hr"));
     }
 
@@ -25,6 +35,9 @@ class Game {
             let msg = JSON.parse(json_msg);
             if (msg["msg"] == "user_list") {
                 this.process_user_list(msg);
+            }
+            if (msg["msg"] == "countdown") {
+                this.process_countdown(msg);
             }
         } catch(e) {
             console.log(e);
@@ -49,5 +62,15 @@ class Game {
             str += user_list[i] + "<br/>";
         }
         this.user_list_div.innerHTML = str;
+        this.user_list = user_list;
+    }
+
+    startGame() {
+        this.wsc.send({"msg": "start_game"});
+    }
+
+    process_countdown(msg) {
+        let countdown = msg["countdown"];
+        this.countdown.innerHTML = countdown;
     }
 }
