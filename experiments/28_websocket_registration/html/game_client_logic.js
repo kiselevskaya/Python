@@ -70,6 +70,8 @@ class Game {
     }
 
     process_countdown(msg) {
+        this.btn.style.visibility='hidden';
+
         let countdown = msg["countdown"];
         this.countdown.innerHTML = countdown;
     }
