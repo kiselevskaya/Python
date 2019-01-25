@@ -36,6 +36,9 @@ class Game {
             if (msg["msg"] == "user_list") {
                 this.process_user_list(msg);
             }
+            if (msg['msg'] == "start_game") {
+                this.btn.parentNode.removeChild(this.btn);
+            }
             if (msg["msg"] == "countdown") {
                 this.process_countdown(msg);
             }
@@ -70,9 +73,25 @@ class Game {
     }
 
     process_countdown(msg) {
-        this.btn.style.visibility='hidden';
+        let seconds = msg["countdown"];
+        var minutes = Math.floor(seconds / 60);
+        seconds = seconds - minutes * 60;
 
-        let countdown = msg["countdown"];
-        this.countdown.innerHTML = countdown;
+        function str_pad_left(string,pad,length) {
+            return (new Array(length+1).join(pad)+string).slice(-length);
+        }
+
+        var finalTime = str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2);
+        this.countdown.innerHTML = finalTime;
+
+        if (msg['started']) {
+            this.process_start_game();
+        }
+    }
+
+    process_start_game() {
+        while (this.status_div.firstChild) {
+           this.status_div.removeChild(this.status_div.firstChild);
+        }
     }
 }

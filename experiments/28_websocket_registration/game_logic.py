@@ -3,6 +3,7 @@ import string
 import websockets
 import json
 import traceback
+import asyncio
 
 
 class User:
@@ -42,10 +43,7 @@ class User:
         if parsed_json['msg'] == 'hello':
             return await self.process_hello(parsed_json)
         if parsed_json['msg'] == 'start_game':
-            if not self.game_logic.game_started:
-                return await self.process_start_game(parsed_json)
-            else:
-                return await self.process_game_in_progress()
+            return await self.process_start_game()
         return False
 
     async def process_hello(self, json_msg):
@@ -56,44 +54,29 @@ class User:
         else:
             return False
 
-    async def process_start_game(self, parsed_json):
-        if len(self.game_logic.get_connected_user_list()) < 2:
-            data = dict()
-            data['msg'] = 'cannot_start_game'
-            data['content'] = "not enough users on server"
-            await self.send_message(data)
-            return True
-        else:
-            self.game_logic.game_started = True
-            data = dict()
-            data['msg'] = 'start_game'
-            data['content'] = "Game was started!"
-            await self.game_logic.send_to_all(data)
-            await self.game_logic.countdown(10)
-            print("STARTING GAME!!!!")
-            return True
+    async def process_start_game(self):
+        await self.game_logic.try_start_game(self)
+        return True
 
-    async def process_game_in_progress(self):
-        if len(self.game_logic.get_connected_user_list()) < 2:
-            data = dict()
-            data['msg'] = 'game_stopped'
-            data['content'] = "not enough users on server"
-            await self.send_message(data)
-            return True
-        else:
-            data = dict()
-            data['msg'] = 'not_finished'
-            data['content'] = "Game in progress, wait until it'll be finished!"
-            await self.send_message(data)
-            print("Game in progress, wait until it'll be finished!!!!")
-            return True
+    # async def process_game_in_progress(self):
+    #     if len(self.game_logic.get_connected_user_list()) < 2:
+    #         await self.send_data('game_stopped', 'content', "not enough users on server")
+    #         return True
+    #     else:
+    #         await self.send_data('not_finished', 'content', "Game in progress, wait until it'll be finished!")
+    #         print("Game in progress, wait until it'll be finished!!!!")
+    #         return True
 
     async def send_user_list(self):
         user_list = self.game_logic.get_connected_user_list()
+        # await self.send_data('user_list', 'user_list', list(user_list))
+        await self.game_logic.send_to_all('user_list', 'user_list', list(user_list))
+
+    async def send_data(self, msg, title, content):
         data = dict()
-        data['msg'] = 'user_list'
-        data['user_list'] = list(user_list)
-        await self.game_logic.send_to_all(data)
+        data['msg'] = msg
+        data[title] = content
+        await self.send_message(data)
 
     async def send_message(self, msg):
         if self.connected:
@@ -142,23 +125,43 @@ class GameLogic:
             await user.process_websocket(websocket)
             self.users.pop(username)
 
-    async def send_to_all(self, msg):
+    async def send_msg_to_all(self, data):
         for key, user in self.users.items():
-            await user.send_message(msg)
+            await user.send_message(data)
 
-    async def countdown(self, seconds):
-        import time
+    async def send_to_all(self, msg, title, content):
+        data = dict()
+        data['msg'] = msg
+        data[title] = content
+        for key, user in self.users.items():
+            await user.send_message(data)
+
+    async def try_start_game(self, user):
+        if len(self.get_connected_user_list()) < 2:
+            await user.send_data('cannot_start_game', 'content', "not enough users on server")
+            return False
+        elif self.game_started:
+            await user.send_data('cannot_start_game', 'content', "game already started")
+            return False
+        else:
+            self.game_started = True
+            await self.send_to_all('start_game', 'content', "Starting the Game!")
+            await self.start_countdown(3)
+             print("STARTING GAME!!!!")
+            return True
+
+    async def start_countdown(self, seconds):
         data = dict()
         data['msg'] = 'countdown'
+        data['started'] = False
         while seconds:
-            mins, secs = divmod(seconds, 60)
-            timeformat = '{:02d}:{:02d}'.format(mins, secs)
-            data['countdown'] = timeformat
-            await self.send_to_all(data)
-            time.sleep(1)
+            data['countdown'] = seconds
+            await self.send_msg_to_all(data)
+            await asyncio.sleep(1)
             seconds -= 1
-        data['countdown'] = '\nSTART!\n'
-        await self.send_to_all(data)
+        data['countdown'] = seconds
+        data['started'] = True
+        await self.send_msg_to_all(data)
 
 
 if __name__ == '__main__':
