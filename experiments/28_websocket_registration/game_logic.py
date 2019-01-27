@@ -4,6 +4,7 @@ import websockets
 import json
 import traceback
 import asyncio
+import math
 
 
 class User:
@@ -147,7 +148,7 @@ class GameLogic:
             self.game_started = True
             await self.send_to_all('start_game', 'content', "Starting the Game!")
             await self.start_countdown(3)
-             print("STARTING GAME!!!!")
+            print("STARTING GAME!!!!")
             return True
 
     async def start_countdown(self, seconds):
@@ -162,6 +163,59 @@ class GameLogic:
         data['countdown'] = seconds
         data['started'] = True
         await self.send_msg_to_all(data)
+
+
+class Muppet:
+    def __init__(self, image, image_size=50, width=600, height=600, step=60):
+        self.image = image
+        self.image_size = image_size
+        self.width = width
+        self.height = height
+        self.center = [self.width/2 - self.image_size/2, self.height/2 - self.image_size/2]
+        self.pos = [self.center[0], self.center[1]]
+        self.step = step
+        self.increment = 2*math.pi/self.step
+        self.theta = self.increment
+        self.decrease = False
+        self.graph = [[self.theta * math.cos(self.theta)], [self.theta * math.sin(self.theta)]]
+
+    def __str__(self):
+        return '{}, {}, {}'.format(self.pos[0], self.pos[1], self.image)
+
+    def get_x(self):
+        return self.pos[0]
+
+    def get_y(self):
+        return self.pos[1]
+
+    def animate(self):
+        xy = self.process_direction(self.pos[0], self.pos[1], self.graph[0], self.graph[1])
+        # vel = 5*(muppets.index(self.image)+1)
+        vel = 30
+        self.pos[0] = self.center[0] + xy[0]*vel
+        self.pos[1] = self.center[1] + xy[1]*vel
+        return self
+
+    def process_direction(self, old_x, old_y, move_x, move_y):
+        half_img = self.image/2
+
+        if (move_x > self.center[0] + self.width/2 - half_img or
+                move_y > self.center[1] + self.height/2 - half_img or
+                move_x < self.center[0] - self.width/2 + half_img or
+                move_y < self.center[1] - self.height/2 + half_img and
+                not self.decrease):
+            self.decrease = True
+        elif old_x == self.center[0] and old_y == self.center[1]:
+            self.decrease = False
+
+        if self.decrease:
+            self.theta -= self.increment
+        else:
+            self.theta += self.increment
+
+        x = move_x
+        y = move_y
+        return [x, y]
 
 
 if __name__ == '__main__':

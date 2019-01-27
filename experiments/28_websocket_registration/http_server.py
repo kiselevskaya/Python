@@ -7,6 +7,7 @@ import websockets
 import threading
 
 game_logic = GameLogic()
+muppets = ['cookie.png', 'elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png']
 
 
 class HttpHandler(BaseHTTPRequestHandler):
@@ -15,6 +16,13 @@ class HttpHandler(BaseHTTPRequestHandler):
         path = self.path
         if path == "/":
             path = "/index.html"
+
+        if path == '/style.css':
+            print(path)
+            path = '/css/style.css'
+
+        if path[1:] in muppets:
+            path = '/images' + path
 
         if path.startswith("/register"):
             return self.process_register(path)
@@ -62,9 +70,18 @@ class HttpHandler(BaseHTTPRequestHandler):
         if path == "/favicon.ico":
             mode = "rb"
         try:
-            f = open(os.getcwd() + "/html/" + path, mode)
+            try:
+                f = open(os.getcwd() + "/html/" + path, mode)
+            except IOError:
+                f = open(os.getcwd() + path, mode)
             self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
+            if path.endswith('.css'):
+                self.send_header('Content-Type', 'text/css')
+            elif path.lower().endswith(('.png', '.jpg', '.jpeg')):
+                self.send_header('Content-Type', 'text/jpg')
+                mode = 'rb'
+            else:
+                self.send_header('Content-Type', 'text/html')
             self.end_headers()
             if mode == "r":
                 self.wfile.write(f.read().encode())
