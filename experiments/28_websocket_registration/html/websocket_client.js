@@ -13,7 +13,9 @@ class WebSocketConnection {
     this.ws.onmessage = function (event) {
         if (this.debug)
             console.log(event);
-        console.log(" <- " + event.data);
+        if (JSON.parse(event.data)["msg"] != "tick") {
+            console.log(" <- " + event.data);
+        }
         game.onWebsocketMessage(event.data);
     }
     this.ws.onerror = function (event) {

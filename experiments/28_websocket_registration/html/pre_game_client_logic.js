@@ -25,12 +25,12 @@ class PreGame {
         this.status_div.appendChild(this.btn);
         this.status_div.appendChild(document.createElement("hr"));
 
-        this.container = document.createElement("div");
-        this.container.setAttribute("id", "container");
-        this.img = document.createElement("img");
-        this.img.setAttribute("src", "images/cookie.png");
-        this.img.setAttribute("id", "muppet")
-        this.container.appendChild(this.img);
+//        this.container = document.createElement("div");
+//        this.container.setAttribute("id", "container");
+//        this.img = document.createElement("img");
+//        this.img.setAttribute("src", "images/cookie.png");
+//        this.img.setAttribute("id", "muppet")
+//        this.container.appendChild(this.img);
     }
 
     setWebsocketConnection(wsc) {
@@ -100,10 +100,12 @@ class PreGame {
         while (this.status_div.firstChild) {
            this.status_div.removeChild(this.status_div.firstChild);
         }
+
         this.create_game_field();
     }
 
     create_game_field() {
-          this.status_div.appendChild(this.container);
+        this.status_div.appendChild(this.container);
     }
 }
+

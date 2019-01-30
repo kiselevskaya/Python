@@ -17,13 +17,6 @@ class HttpHandler(BaseHTTPRequestHandler):
         if path == "/":
             path = "/index.html"
 
-        if path == '/style.css':
-            print(path)
-            path = '/css/style.css'
-
-        if path[1:] in muppets:
-            path = '/images' + path
-
         if path.startswith("/register"):
             return self.process_register(path)
 
@@ -67,21 +60,26 @@ class HttpHandler(BaseHTTPRequestHandler):
 
     def get_static(self, path):
         mode = "r"
+        # print(path)
         if path == "/favicon.ico":
             mode = "rb"
+
+        if path.endswith('.css'):
+            mimetype = 'text/css'
+        elif path.lower().endswith('.png'):
+            mimetype = 'image/png'
+            mode = 'rb'
+        elif path.endswith('.js'):
+            mimetype = 'application/javascript'
+            path = '/html/' + path
+        else:
+            mimetype = 'text/html'
+            path = '/html/' + path
+
         try:
-            try:
-                f = open(os.getcwd() + "/html/" + path, mode)
-            except IOError:
-                f = open(os.getcwd() + path, mode)
+            f = open(os.getcwd() + path, mode)
             self.send_response(200)
-            if path.endswith('.css'):
-                self.send_header('Content-Type', 'text/css')
-            elif path.lower().endswith(('.png', '.jpg', '.jpeg')):
-                self.send_header('Content-Type', 'text/jpg')
-                mode = 'rb'
-            else:
-                self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Type', mimetype)
             self.end_headers()
             if mode == "r":
                 self.wfile.write(f.read().encode())
