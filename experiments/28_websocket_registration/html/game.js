@@ -12,14 +12,15 @@ class Game {
         this.container.appendChild(this.img);
         this.content_div.appendChild(this.container);
 
-        this.score_table = document.getElementById('table')
-        this.create_score_table();
+        this.score_table = document.getElementById('table');
 
         this.container.onclick = function(event) {
             let cursorX = event.pageX - this.container.offsetLeft;
             let cursorY= event.pageY - this.container.offsetTop;
             this.wsc.send({"msg": "shoot", "result":[cursorX, cursorY]});
         }.bind(this);
+
+        this.user_score = new Object();;
     }
 
 
@@ -30,8 +31,15 @@ class Game {
     onWebsocketMessage(json_msg) {
         try {
             let msg = JSON.parse(json_msg);
-            if (msg["msg"] == "tick")
+            if (msg["msg"] == "tick") {
                 this.process_tick(msg);
+            }
+            else if (msg["msg"] == "user_list"){
+                this.process_user_list(msg);
+            }
+            else if (msg["msg"] == "hit" || msg["msg"] == "miss"){
+                this.process_shoot(msg);
+            }
             else
                 console.log("unknown message " + json_msg);
         } catch(e) {
@@ -61,12 +69,36 @@ class Game {
 
     }
 
-    create_score_table(){
+    process_shoot(msg){
+        let user = msg["username"];
+        let value = this.user_score[user];
+        if (msg["msg"] == "hit"){
+            value[0] += 1;
+        } else {
+            value[1] += 1;
+        }
+        this.update_table();
+    }
+
+    process_user_list(msg) {
+        let user_set = Array.from(new Set(msg["user_list"]));
+        console.log("process_user_list_"+user_set);
+        for (let i = 0; i < user_set.length; i++) {
+            if (!(user_set[i] in this.user_score)) {
+                this.user_score[user_set[i]] = [0, 0];
+            }
+        }
+        console.log("ghghg", this.user_score);
+        this.process_score_table();
+
+    }
+
+    process_score_table(){
         let tbl = document.createElement("table");
         let tblBody = document.createElement("tbody");
-        let test_users = [['user1', 0, 0], ['user2', 0, 0], ['user3', 0, 0]];
+        let num_of_user = Object.keys(this.user_score).length;
 
-        for (let i = 0; i < (test_users.length+2); i++) {
+        for (let i = 0; i < (num_of_user+2); i++) {
             let row = document.createElement("tr");
 
             for (let j = 0; j < 3; j++) {
@@ -94,20 +126,24 @@ class Game {
                     cell.appendChild(cellText);
                     row.appendChild(cell);
                 }
-                else if (i>1 && j==0) {
-                    let cellText = document.createTextNode(test_users[i-2][0]);
-                    cell.appendChild(cellText);
-                    row.appendChild(cell);
-                }
-                else if (i>1 && j==1) {
-                    let cellText = document.createTextNode(test_users[i-2][1]);
-                    cell.appendChild(cellText);
-                    row.appendChild(cell);
-                }
-                else if (i>1 && j==2) {
-                    let cellText = document.createTextNode(test_users[i-2][2]);
-                    cell.appendChild(cellText);
-                    row.appendChild(cell);
+                else if (i>1) {
+                    for (let key in this.user_score) {
+                        if (j==0){
+                            let cellText = document.createTextNode(key);
+                            cell.appendChild(cellText);
+                            row.appendChild(cell);
+                        }
+                        if (j==1){
+                            let cellText = document.createTextNode(this.user_score[key][0]);
+                            cell.appendChild(cellText);
+                            row.appendChild(cell);
+                        }
+                        if (j==2){
+                            let cellText = document.createTextNode(this.user_score[key][1]);
+                            cell.appendChild(cellText);
+                            row.appendChild(cell);
+                        }
+                    }
                 }
             }
 
@@ -117,6 +153,13 @@ class Game {
       tbl.appendChild(tblBody);
       this.score_table.appendChild(tbl);
       tbl.setAttribute("border", "2");
+    }
+
+    update_table() {
+        while (this.score_table.firstChild) {
+            this.score_table.removeChild(this.score_table.firstChild);
+        }
+        this.process_score_table();
     }
 
 }

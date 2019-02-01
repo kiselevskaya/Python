@@ -65,9 +65,10 @@ class User:
         await self.game_logic.shoot(self, json_msg)
         return True
 
+    #
     async def send_user_list(self):
         user_list = self.game_logic.get_connected_user_list()
-        await self.send_data('user_list', 'user_list', list(user_list))
+        # await self.send_data('user_list', 'user_list', list(user_list))
         await self.game_logic.send_to_all('user_list', 'user_list', list(user_list))
 
     async def send_data(self, msg, title, content):
@@ -79,8 +80,9 @@ class User:
     async def send_message(self, msg):
         if self.connected:
             json_msg = json.dumps(msg)
-            if msg["msg"] != "tick" or msg["msg"] != "hit" or msg["msg"] != "miss":
-                print(" -> (" + self.username + ")" + json_msg)
+            if msg["msg"] != "tick":
+                if msg["msg"] != "hit" or msg["msg"] != "miss":
+                    print(" -> (" + self.username + ")" + json_msg)
             try:
                 await self.websocket.send(json_msg)
             except websockets.exceptions.ConnectionClosed as e:
