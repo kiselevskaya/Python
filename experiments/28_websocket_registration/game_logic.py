@@ -1,96 +1,10 @@
 import random
 import string
-import websockets
-import json
-import traceback
 import asyncio
 import queue
 import threading
 from muppet import *
-
-
-class User:
-    def __init__(self, username, password, game_logic):
-        self.username = username
-        self.password = password
-        self.game_logic = game_logic
-        self.websocket = None
-        self.connected = False
-
-    async def process_websocket(self, websocket):
-        self.websocket = websocket
-        print("starting processing " + self.username)
-        while True:
-            try:
-                msg = await websocket.recv()
-                correct = await self.process_income_message(msg)
-                if not correct:
-                    await self.websocket.close()
-                    break
-            except websockets.exceptions.ConnectionClosed as e:
-                traceback.print_exc()
-                break
-            except json.decoder.JSONDecodeError as e:
-                traceback.print_exc()
-                break
-            except TypeError as e:
-                traceback.print_exc()
-                break
-        self.connected = False
-        await self.send_user_list()
-        self.websocket = None
-
-    async def process_income_message(self, msg):
-        parsed_json = json.loads(msg)
-        print(" <- (" + self.username + ")" + msg)
-        if parsed_json['msg'] == 'hello':
-            return await self.process_hello(parsed_json)
-        if parsed_json['msg'] == 'start_game':
-            return await self.process_start_game()
-        if parsed_json['msg'] == 'shoot':
-            return await self.process_shoot(parsed_json)
-        return False
-
-    async def process_hello(self, json_msg):
-        if json_msg['username'] == self.username:
-            self.connected = True
-            # await self.send_user_list()
-            # mock start game
-            await self.game_logic.start_game()
-            return True
-        else:
-            return False
-
-    async def process_start_game(self):
-        await self.game_logic.try_start_game(self)
-        return True
-
-    async def process_shoot(self, json_msg):
-        await self.game_logic.shoot(self, json_msg["result"] == "hit")
-
-    #
-
-    async def send_user_list(self):
-        user_list = self.game_logic.get_connected_user_list()
-        # await self.send_data('user_list', 'user_list', list(user_list))
-        await self.game_logic.send_to_all('user_list', 'user_list', list(user_list))
-
-    async def send_data(self, msg, title, content):
-        data = dict()
-        data['msg'] = msg
-        data[title] = content
-        await self.send_message(data)
-
-    async def send_message(self, msg):
-        if self.connected:
-            json_msg = json.dumps(msg)
-            if msg["msg"] != "tick":
-                print(" -> (" + self.username + ")" + json_msg)
-            try:
-                await self.websocket.send(json_msg)
-            except websockets.exceptions.ConnectionClosed as e:
-                print(" -> ", e)
-                self.websocket.close()
+from user import *
 
 
 class GameLogic:
@@ -100,6 +14,9 @@ class GameLogic:
         self.game_started = False
         self.stop_the_game = False
         self.threads = []
+        self.score = dict()
+        self.lock = threading.Lock()
+        self.q = asyncio.Queue(maxsize=0)
 
     def add_user(self, username):
         if username in self.users:
@@ -186,13 +103,10 @@ class GameLogic:
         self.game_started = True
         self.stop_the_game = False
 
-        lock = threading.Lock()
-
-        q = queue.Queue(maxsize=0)
         num_threads = 1
 
         for i in range(num_threads):
-            thread = threading.Thread(target=self.level_thread, args=(q, lock,))
+            thread = threading.Thread(target=self.level_thread, args=())
             thread.setDaemon(True)
             thread.start()
             self.threads.append(thread)
@@ -202,7 +116,7 @@ class GameLogic:
         for i in self.threads:
             i.join()
 
-    def level_thread(self, q, lock):
+    def level_thread(self):
         print("level thread starting")
         event_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(event_loop)
@@ -214,13 +128,30 @@ class GameLogic:
         await self.send_to_all('Game Started', 'status_game', 'started')
         muppet = Muppet(muppets[0])
         while not self.stop_the_game:
+            muppet.animate()
+
+            await asyncio.sleep(0.1)
+
+            self.lock.acquire()
+            if not self.q.empty():
+                task = self.q.get_nowait()
+                user = task[0]
+                msg = task[1]
+                if msg["msg"] == "shoot":
+                    data = dict()
+                    data['username'] = user.username
+                    if muppet.check_shoot(msg["result"]):
+                        data['msg'] = "hit"
+                    else:
+                        data['msg'] = "miss"
+                    await self.send_msg_to_all(data)
+                self.q.task_done()
+            self.lock.release()
+
             data = dict()
             data['msg'] = "tick"
             data["position"] = list([muppet.get_x(), muppet.get_y()])
             data["image"] = muppet.image
-
-            muppet.animate()
-            await asyncio.sleep(0.05)
             await self.send_msg_to_all(data)
 
            # lock.acquire()
@@ -229,15 +160,10 @@ class GameLogic:
            # lock.release()
            # q.task_done()
 
-    async def shoot(self, user, hit):
-        data = dict()
-        if hit:
-            data['msg'] = "hit"
-        else:
-            data['msg'] = "miss"
-        data['username'] = user.username
-        await self.send_msg_to_all(data)
-        await self.finish_game()
+    async def shoot(self, user, shoot_msg):
+        self.lock.acquire()
+        self.q.put_nowait([user, shoot_msg])
+        self.lock.release()
 
 
 if __name__ == '__main__':

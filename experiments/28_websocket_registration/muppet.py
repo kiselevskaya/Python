@@ -76,3 +76,15 @@ class Muppet:
         move_x = self.center[0] + move_x*self.vel
         move_y = self.center[1] + move_y*self.vel
         return [move_x, move_y]
+
+    def check_shoot(self, coordinates):
+        xc = coordinates[0]
+        yc = coordinates[1]
+        half_img = self.image_size/2
+
+        selfx = self.pos[0] + half_img
+        selfy = self.pos[1] + half_img
+
+        if math.pow(selfx - xc, 2) + math.pow(selfy - yc, 2) < math.pow(half_img, 2):
+            return True
+        return False

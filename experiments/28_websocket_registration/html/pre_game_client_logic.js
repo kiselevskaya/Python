@@ -24,13 +24,6 @@ class PreGame {
 
         this.status_div.appendChild(this.btn);
         this.status_div.appendChild(document.createElement("hr"));
-
-//        this.container = document.createElement("div");
-//        this.container.setAttribute("id", "container");
-//        this.img = document.createElement("img");
-//        this.img.setAttribute("src", "images/cookie.png");
-//        this.img.setAttribute("id", "muppet")
-//        this.container.appendChild(this.img);
     }
 
     setWebsocketConnection(wsc) {

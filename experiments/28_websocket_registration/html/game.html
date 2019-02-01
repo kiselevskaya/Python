@@ -8,9 +8,27 @@
     <script type="text/javascript" src="game.js"></script>
     <title>Game</title>
 </head>
-<body>
 
-    <div id="page_content"></div>
+<body>
+    <header>
+    </header>
+
+    <main>
+    <nav>
+    <div>
+        <h2 id="level"></h2>
+    </div>
+    </nav>
+
+    <section>
+        <div id="page_content"></div>
+    </section>
+
+    <aside>
+    <div id="score-block">
+        <div id="table"></div>
+    </div>
+    </aside>
 
     <script>
         var params = (new URL(document.location)).searchParams;
@@ -27,6 +45,10 @@
             document.getElementById("page_content").innerHTML = "Bad page request please start from index";
         }
     </script>
-    <a href="/"><b>Log off</b></a>
+    </main>
+
+    <footer>
+        <a href="/"><b>Log off</b></a>
+    </footer>
 </body>
 </html>
