@@ -1,3 +1,11 @@
+
+body {
+    /*background-image: url("glasses.jpg");
+    background-position: bottom 5px right 7px;*/
+    background:url("glasses.jpg") fixed no-repeat bottom right;
+}
+
+
 #container {
     position: relative;
     width: 48%;
@@ -6,3 +14,4 @@
     box-shadow: -2px -3px 2px 3px #ace600 inset, 10px 15px 0 rgba(0, 0, 0, 0.17), 0 5px rgba(255, 255, 255, 0.32) inset;
     background: rgba(236, 255, 211, 0.9);
 }
+

@@ -5,6 +5,7 @@ class WebSocketConnection {
     this.password = password;
     this.ws = new WebSocket("ws://127.0.0.1:6789/?username=" + username + "&password=" + password);
     this.debug = false;
+    this.game = game;
     this.ws.onopen = function (event) {
         if (this.debug)
             console.log(event);
@@ -16,18 +17,22 @@ class WebSocketConnection {
         if (JSON.parse(event.data)["msg"] != "tick") {
             console.log(" <- " + event.data);
         }
-        game.onWebsocketMessage(event.data);
-    }
+        this.game.onWebsocketMessage(event.data);
+    }.bind(this);
     this.ws.onerror = function (event) {
         if (this.debug)
             console.log(event);
-        game.onWebsocketError(event);
-    };
+        this.game.onWebsocketError(event);
+    }.bind(this);
     this.ws.onclose = function (event) {
         if (this.debug)
             console.log(event);
-        game.onWebsocketClose(event);
-    };
+        this.game.onWebsocketClose(event);
+    }.bind(this);
+  }
+
+  setGame(game) {
+      this.game = game;
   }
 
   send(msg) {

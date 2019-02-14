@@ -1,10 +1,10 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from game_logic import *
 import asyncio
 import os
 import urllib
 import websockets
 import threading
+from game_logic import *
 
 game_logic = GameLogic()
 muppets = ['cookie.png', 'elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png']
@@ -22,6 +22,10 @@ class HttpHandler(BaseHTTPRequestHandler):
 
         if urllib.parse.urlparse(path).path == "/game":
             return self.process_game(path)
+
+        # if path.startswith("/new_game"):
+        if urllib.parse.urlparse(path).path == "/new_game":
+            return self.process_new_game(path)
 
         self.get_static(path)
 
@@ -50,6 +54,18 @@ class HttpHandler(BaseHTTPRequestHandler):
                 return
         return self.return_err("username or password is bad")
 
+    def process_new_game(self, path):
+        # self.get_static("/new_game.html")
+        parsed_path = urllib.parse.urlparse(path)
+        query = urllib.parse.parse_qs(parsed_path.query)
+        if 'username' in query and 'password' in query:
+            username = query['username'][0]
+            password = query['password'][0]
+            print("http "+"username"+username+" password "+password)
+            self.get_static("/new_game.html")
+            return
+        return self.return_err("username or password is bad")
+
     def redirect(self, path):
         self.send_response(303)
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -68,6 +84,9 @@ class HttpHandler(BaseHTTPRequestHandler):
             mimetype = 'text/css'
         elif path.lower().endswith('.png'):
             mimetype = 'image/png'
+            mode = 'rb'
+        elif path.lower().endswith('.jpg'):
+            mimetype = 'image/jpg'
             mode = 'rb'
         elif path.endswith('.js'):
             mimetype = 'application/javascript'

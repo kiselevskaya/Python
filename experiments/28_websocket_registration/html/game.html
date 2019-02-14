@@ -15,18 +15,23 @@
 
     <main>
     <nav>
-    <div>
-        <h2 id="level"></h2>
-    </div>
     </nav>
 
     <section>
         <div id="page_content"></div>
     </section>
 
+
+    <section>
+        <div>
+            <h2 id="level"></h2>
+        </div>
+    </section>
+
+
     <aside>
-    <div id="score-block">
-        <div id="table"></div>
+    <div>
+        <div id="score-block"></div>
     </div>
     </aside>
 
@@ -34,8 +39,8 @@
         var params = (new URL(document.location)).searchParams;
 
         if (params.has("username") && params.has("password")) {
-            <!--const game = new PreGame("page_content");-->
-            const game = new Game("page_content");
+            const game = new PreGame("page_content", params.get("username"));
+            <!--const game = new Game("page_content", params.get("username"));-->
             const websocketConnection = new WebSocketConnection(
                     params.get("username"),
                     params.get("password"),

@@ -1,10 +1,14 @@
 import random
 import string
 import asyncio
-import queue
 import threading
+import time
 from muppet import *
 from user import *
+from round import *
+
+
+end_images = ['won.png', 'game_over.png']
 
 
 class GameLogic:
@@ -14,7 +18,6 @@ class GameLogic:
         self.game_started = False
         self.stop_the_game = False
         self.threads = []
-        self.score = dict()
         self.lock = threading.Lock()
         self.q = asyncio.Queue(maxsize=0)
 
@@ -30,10 +33,10 @@ class GameLogic:
 
     def check_user(self, username, password):
         # mock for development {
-        if username not in self.users:
-            user = User(username, password, self)
-            self.users[username] = user
-            return True
+        # if username not in self.users:
+        #     user = User(username, password, self)
+        #     self.users[username] = user
+        #     return True
         # mock for development }
         if username in self.users:
             user = self.users[username]
@@ -73,10 +76,10 @@ class GameLogic:
         await self.send_msg_to_all(data)
 
     async def try_start_game(self, user):
-        if len(self.get_connected_user_list()) < 2:
-            await user.send_data('cannot_start_game', 'content', "not enough users on server")
-            return False
-        elif self.game_started:
+        # if len(self.get_connected_user_list()) < 2:
+        #     await user.send_data('cannot_start_game', 'content', "not enough users on server")
+        #     return False
+        if self.game_started:
             await user.send_data('cannot_start_game', 'content', "game already started")
             return False
         else:
@@ -103,30 +106,42 @@ class GameLogic:
         self.game_started = True
         self.stop_the_game = False
 
-        num_threads = 1
+        # num_threads = 1
 
-        for i in range(num_threads):
-            thread = threading.Thread(target=self.level_thread, args=())
-            thread.setDaemon(True)
-            thread.start()
-            self.threads.append(thread)
+        asyncio.ensure_future(self.async_level_thread())
+
+        # for i in range(num_threads):
+        #     thread = threading.Thread(target=self.level_thread, args=(asyncio.get_event_loop(),))
+        #     thread.setDaemon(True)
+        #     thread.start()
+        #     self.threads.append(thread)
 
     async def finish_game(self):
+        await self.finish_after(3)
         self.stop_the_game = True
+        self.game_started = False
+        stop_game = dict()
+        stop_game['msg'] = "stop"
+        stop_game['status'] = True
+        await self.send_msg_to_all(stop_game)
         for i in self.threads:
             i.join()
+        print("check>>", self.users)
 
-    def level_thread(self):
+    async def finish_after(self, delay):
+        await asyncio.sleep(delay)
+        return
+
+    def level_thread(self, event_loop):
         print("level thread starting")
-        event_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(event_loop)
         event_loop.run_until_complete(self.async_level_thread())
         print("level thread finished")
 
     async def async_level_thread(self):
         print("level thread started")
-        await self.send_to_all('Game Started', 'status_game', 'started')
         muppet = Muppet(muppets[0])
+        round = Round(muppet.image)
+        losers = 0
         while not self.stop_the_game:
             muppet.animate()
 
@@ -142,28 +157,62 @@ class GameLogic:
                     data['username'] = user.username
                     if muppet.check_shoot(msg["result"]):
                         data['msg'] = "hit"
+                        if round.hit(user.username):
+                            await self.send_msg_to_all(data)
+                            if round.win(user.username):
+                                await self.win_msg(user.username)
+                                # await user.disconnect()
+                                await self.finish_game()
+                            else:
+                                await self.change_level(muppet, round)
                     else:
                         data['msg'] = "miss"
-                    await self.send_msg_to_all(data)
+                        await self.send_msg_to_all(data)
+                        if round.miss(user.username):
+                            await self.lost_msg(user.username)
+                            losers += 1
+                            if losers == len([*self.users]):
+                                await self.finish_game()
+                            # await user.disconnect()
+                    # await self.send_msg_to_all(data)
                 self.q.task_done()
             self.lock.release()
 
-            data = dict()
-            data['msg'] = "tick"
-            data["position"] = list([muppet.get_x(), muppet.get_y()])
-            data["image"] = muppet.image
-            await self.send_msg_to_all(data)
-
-           # lock.acquire()
-           # if not q.empty:
-           #     data = q.get()
-           # lock.release()
-           # q.task_done()
+            if not self.stop_the_game:
+                data = dict()
+                data['msg'] = "tick"
+                data["position"] = list([muppet.get_x(), muppet.get_y()])
+                data["image"] = muppet.image
+                await self.send_msg_to_all(data)
 
     async def shoot(self, user, shoot_msg):
         self.lock.acquire()
         self.q.put_nowait([user, shoot_msg])
         self.lock.release()
+
+    async def change_level(self, muppet, round):
+        muppet.change_image()
+        level_round = dict()
+        level_round['msg'] = "round"
+        level_round['level'] = round.level
+        await self.send_msg_to_all(level_round)
+
+    async def win_msg(self, username):
+        win = dict()
+        win['msg'] = "win"
+        win['username'] = username
+        win['image'] = end_images[0]
+        await self.send_msg_to_all(win)
+        for user in [*self.users]:
+            if user != username:
+                await self.lost_msg(user)
+
+    async def lost_msg(self, username):
+        lost_round = dict()
+        lost_round['msg'] = "lost"
+        lost_round['username'] = username
+        lost_round['image'] = end_images[1]
+        await self.send_msg_to_all(lost_round)
 
 
 if __name__ == '__main__':

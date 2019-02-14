@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+
+    <div id="content"></div>
+
+<script>
+    let c = document.getElementById("content");
+    let msg = {
+        "msg": "user_list",
+        "user_list": ["User1", "User2"]
+    };
+    console.log(msg);
+
+
+    let table = document.createElement("table");
+    table.border=1;
+    let heads = [["Name", "Score",""], ["", "Hit", "Missed"]]
+
+    for (let i = 0 ; i < heads.length ; ++i) {
+        let trh = document.createElement("tr");
+        for (let u = 0 ; u < heads[i].length ; ++u) {
+            let th = document.createElement("th");
+            th.appendChild(document.createTextNode(heads[i][u]));
+            trh.appendChild(th);
+        }
+        table.appendChild(trh);
+    }
+
+    c.appendChild(table);
+
+    for(let i = 0 ; i < msg["user_list"].length ; ++i ) {
+        let user_name = msg["user_list"][i];
+        let tr = document.createElement("tr");
+        let td1 = document.createElement("td");
+        td1.appendChild(document.createTextNode(user_name));
+
+        let tdh = document.createElement("td");
+        let hitdiv = document.createElement("div");
+        hitdiv.id = user_name + "_hitdiv";
+        hitdiv.appendChild(document.createTextNode("0"));
+        tdh.appendChild(hitdiv);
+
+        let tdm = document.createElement("td");
+        let missdiv = document.createElement("div");
+        missdiv.id = user_name + "_missdiv";
+        missdiv.appendChild(document.createTextNode("0"));
+
+        tdm.appendChild(missdiv);
+
+        tr.appendChild(td1);
+        tr.appendChild(tdh);
+        tr.appendChild(tdm);
+
+        table.appendChild(tr);
+    }
+
+    function sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
+    sleep(5000).then(() => {
+        let hitmsg = {
+            "msg": "miss",
+            "username": "User2"
+        };
+
+        if (hitmsg["msg"] == "hit") {
+            let div_id = hitmsg["username"] + "_hitdiv";
+            let d = document.getElementById(div_id);
+            let c = d.innerHTML;
+            d.innerHTML = parseInt(c) + 1;
+        }
+
+        if (hitmsg["msg"] == "miss") {
+            let div_id = hitmsg["username"] + "_missdiv";
+            let d = document.getElementById(div_id);
+            let c = d.innerHTML;
+            d.innerHTML = parseInt(c) + 1;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,10 +1,12 @@
 
 class PreGame {
-    constructor(status_id) {
+    constructor(status_id, username, password, new_game_users) {
         this.status_div = document.getElementById(status_id);
 
         this.user_list_div = document.createElement("div");
         this.user_list_div.id = "user_list";
+
+        this.last_user_list = new_game_users;
 
         this.status_div.appendChild(this.user_list_div);
         this.status_div.appendChild(document.createElement("hr"));
@@ -35,12 +37,16 @@ class PreGame {
             let msg = JSON.parse(json_msg);
             if (msg["msg"] == "user_list") {
                 this.process_user_list(msg);
-            }
+            } else
             if (msg['msg'] == "start_game") {
                 this.btn.parentNode.removeChild(this.btn);
-            }
+            } else
             if (msg["msg"] == "countdown") {
                 this.process_countdown(msg);
+            } else if (msg["msg"] == "cannot_start_game") {
+                this.wsc.close();
+            } else {
+                console.log("unknown message: ", json_msg);
             }
         } catch(e) {
             console.log(e);
@@ -60,6 +66,7 @@ class PreGame {
 
     process_user_list(msg) {
         let user_list = msg["user_list"];
+        this.last_user_list = user_list;
         let str = "";
         for (let i = 0; i < user_list.length; i++) {
             str += user_list[i] + "<br/>";
@@ -98,7 +105,9 @@ class PreGame {
     }
 
     create_game_field() {
-        this.status_div.appendChild(this.container);
+        console.log("check user list_", this.last_user_list);
+        this.game = new Game("page_content", params.get("username"), this.last_user_list);
+        this.wsc.setGame(this.game);
+        this.game.setWebsocketConnection(this.wsc);
     }
 }
-

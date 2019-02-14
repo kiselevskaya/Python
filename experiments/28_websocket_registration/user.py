@@ -12,6 +12,7 @@ class User:
         self.game_logic = game_logic
         self.websocket = None
         self.connected = False
+        self.gracefully_disconnected = False
 
     async def process_websocket(self, websocket):
         self.websocket = websocket
@@ -19,12 +20,14 @@ class User:
         while True:
             try:
                 msg = await websocket.recv()
+                print("user income msg "+str(msg))
                 correct = await self.process_income_message(msg)
                 if not correct:
                     await self.websocket.close()
                     break
             except websockets.exceptions.ConnectionClosed as e:
-                traceback.print_exc()
+                if not self.gracefully_disconnected:
+                    traceback.print_exc()
                 break
             except json.decoder.JSONDecodeError as e:
                 traceback.print_exc()
@@ -52,7 +55,7 @@ class User:
             self.connected = True
             await self.send_user_list()
             # mock start game
-            await self.game_logic.start_game()
+            # await self.game_logic.start_game()
             return True
         else:
             return False
@@ -87,4 +90,8 @@ class User:
                 await self.websocket.send(json_msg)
             except websockets.exceptions.ConnectionClosed as e:
                 print(" -> ", e)
-                self.websocket.close()
+                await self.websocket.close()
+
+    async def disconnect(self):
+        self.gracefully_disconnected = True
+        await self.websocket.close()

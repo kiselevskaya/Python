@@ -6,6 +6,14 @@ import math
 muppets = ['cookie.png', 'elmo.png', 'big-bird.png', 'oscar.png', 'abby.png', 'count-von-count.png', 'bert.png', 'kermit.png', 'grover.png', 'ernie.png']
 
 
+def next_image(image):
+    global muppets
+    if muppets.index(image) < len(muppets):
+        return muppets[muppets.index(image)+1]
+    else:
+        return muppets[0]
+
+
 def next_x(theta):
     return theta * math.cos(theta)
 
@@ -37,6 +45,12 @@ class Muppet:
 
     def get_y(self):
         return self.pos[1]
+
+    def get_image(self):
+        return self.image
+
+    def change_image(self):
+        self.image = next_image(self.image)
 
     def animate(self):
         xy = self.process_direction()
