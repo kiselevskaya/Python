@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="wsc_client.js"></script>
+    <script type="text/javascript" src="game.js"></script>
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="users_block">
+            <div id="user1"></div>
+            <div id="user2"></div>
+        </div>
+
+        <div class="score">
+            <div class="score1">
+                <div id="x"></div>
+                <div id="u1choice"></div>
+                <div id="u1score"></div>
+            </div>
+
+            <div id="or"></div>
+
+            <div class="score2">
+                <div id="o"></div>
+                <div id="u2score"></div>
+                <div id="u2choice"></div>
+            </div>
+         </div>
+
+        <div id="container">
+        </div>
+    </div>
+
+    <script>
+        var params = (new URL(document.location)).searchParams;
+
+        if (params.has("username") && params.has("password")) {
+            const test = new SomeClass("wrapper", params.get("username"), params.has("password"));
+            const websocketConnection = new WebSocketConnection(
+                    params.get("username"),
+                    params.get("password"),
+                    test);
+            test.setWebsocketConnection(websocketConnection);
+        } else {
+            document.getElementById("wrapper").innerHTML = "Bad page request please start from index";
+        }
+    </script>
+
+    <footer>
+        <a href="/"><b>Log off</b></a>
+    </footer>
+</body>
+</html>
