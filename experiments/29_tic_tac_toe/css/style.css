@@ -32,11 +32,11 @@ footer {
 
 #username {
     background-color: #f4f5f6;
-    margin: 20px;
+    margin: 10px;
 }
 
 .button {
-    margin: 20px;
+    margin: 10px;
     background-color: #1ed2f4;
     padding: 5px 10px;
     text-align: center;
@@ -53,7 +53,7 @@ footer {
 #wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 30px;
+    grid-auto-rows: 25px;
     text-align: center;
 
 }
@@ -94,7 +94,7 @@ footer {
     grid-template-columns: repeat(8, 1fr);
 }
 
-.score1 {
+#score1 {
     grid-column-start: 1;
     grid-column-end: 4;
 
@@ -136,7 +136,7 @@ footer {
 }
 
 
-.score2 {
+#score2 {
     grid-column-start: 6;
     grid-column-end: 9;
 
@@ -173,8 +173,8 @@ footer {
 #container {
     grid-column-start: 2;
     grid-column-end: 3;
-    grid-row-start: 7;
-    grid-row-end: 8;
+    grid-row-start: 8;
+    grid-row-end: 9;
     grid-auto-rows: auto;
 
     display: grid;
@@ -196,4 +196,6 @@ td {
     color: #ff3333;
     text-align: center;
     padding: 0px;
+    width: 10%;
+    height: 10%;
 }

@@ -21,6 +21,8 @@ class SomeClass {
 
     this.info =  new Object();
     this.started = false;
+
+    this.beginner = true;
     }
 
     setWebsocketConnection(wsc) {
@@ -39,6 +41,9 @@ class SomeClass {
             else if (msg["msg"] == "win"){
                 this.process_win(msg);
             }
+            else if (msg["msg"] == "next"){
+                this.process_next(msg);
+            }
         } catch(e) {
             console.log(e);
             this.wsc.close();
@@ -53,7 +58,7 @@ class SomeClass {
         this.status_div.innerHTML = "Websocket closed: " + event;
     }
 
-    //////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
 
     process_user_list(msg) {
         let user_list = msg["user_list"];
@@ -81,13 +86,12 @@ class SomeClass {
         btn_o.innerHTML = 'O';
 
         btn_x.onclick = function(){
-            this.process_choice(btn_x.innerHTML, btn_o.innerHTML)
+            this.process_choice(btn_x.innerHTML, true, btn_o.innerHTML, false)
         }.bind(this);
         this.choice_x.appendChild(btn_x);
 
-
         btn_o.onclick = function(){
-            this.process_choice(btn_o.innerHTML, btn_x.innerHTML)
+            this.process_choice(btn_o.innerHTML, false, btn_x.innerHTML, true)
         }.bind(this);
         this.choice_o.appendChild(btn_o);
 
@@ -96,7 +100,7 @@ class SomeClass {
         this.choice_or.appendChild(node_or);
     }
 
-    process_choice(choice, rest) {
+    process_choice(choice, order1, rest, order2) {
         this.started = true;
         this.wsc.send({"msg": "choice", "status": this.started});
         this.clear_div(this.choice_x);
@@ -111,13 +115,13 @@ class SomeClass {
         if (this.user1.innerHTML == this.username) {
             user1_choice.innerHTML = choice;
             user2_choice.innerHTML = rest;
-            this.info[this.user1.innerHTML] = [choice, 0];
-            this.info[this.user2.innerHTML] = [rest, 0];
+            this.info[this.user1.innerHTML] = [choice, 0, order1];
+            this.info[this.user2.innerHTML] = [rest, 0, order2];
         } else {
             user2_choice.innerHTML = choice;
             user1_choice.innerHTML = rest;
-            this.info[this.user2.innerHTML] = [choice, 0];
-            this.info[this.user1.innerHTML] = [rest, 0];
+            this.info[this.user2.innerHTML] = [choice, 0, order1];
+            this.info[this.user1.innerHTML] = [rest, 0, order2];
         }
 
         this.user1_score.innerHTML = this.info[this.user1.innerHTML][1];
@@ -130,41 +134,82 @@ class SomeClass {
     }
 
     process_board(msg){
-        let board = msg["new_board"]
+        this.board = msg["new_board"]
         let container = document.getElementById('container');
-        let table = document.createElement('table');
-        for (let row = 0; row < board.length; row++){
+        this.table = document.createElement('table');
+        this.table.style.border = "1px solid black";
+        for (let row = 0; row < this.board.length; row++){
             let tr = document.createElement('tr');
-            for (let col = 0; col < board[row].length; col++){
+            for (let col = 0; col < this.board[row].length; col++){
                 let td = document.createElement('td');
-                let tn = document.createTextNode(board[row][col]);
+                let tn = document.createTextNode(this.board[row][col]);
                 td.appendChild(tn);
                 tr.appendChild(td);
+                td.style.border = "1px solid black";
                 td.onclick = function(){
                     if (this.started) {
-                        if (tn.nodeValue == "") {
+                        if (tn.nodeValue == "" && this.info[this.username][2] == this.beginner) {
                             tn.nodeValue = this.info[this.username][0];
                             this.wsc.send({"msg": "step", "user":this.username, "position": [row, col], "char": this.info[this.username][0]});
+                            if (this.beginner) {
+                                this.beginner = false;
+                            } else {
+                                this.beginner = true;
+                            }
                         }
                     }
                 }.bind(this);
             }
-            table.appendChild(tr);
+            this.table.appendChild(tr);
         }
-        container.appendChild(table);
+        container.appendChild(this.table);
+
+        this.process_computer_step();
+    }
+
+    process_computer_step() {
+        if (this.info["Computer"][2] == this.beginner && this.started){
+            console.log("Computer random step")
+            let y = Math.floor(Math.random() * this.board.length);
+            let x = Math.floor(Math.random() * this.board.length);
+            while (this.table.rows[y].cells[x].innerHTML != ""){
+                y = Math.floor(Math.random() * this.board.length);
+                x = Math.floor(Math.random() * this.board.length);
+            }
+            console.log(y, x);
+            this.table.rows[y].cells[x].innerHTML = this.info["Computer"][0];
+            this.wsc.send({"msg": "step", "user":"Computer", "position": [y, x], "char": this.info["Computer"][0]});
+
+            if (this.beginner) {
+                this.beginner = false;
+            } else {
+                this.beginner = true;
+            }
+        }
+    }
+
+    process_next(msg){
+        console.log(msg['next_player'])
+        this.process_computer_step()
     }
 
     process_win(msg){
         this.started = false
+        console.log("WIN", msg["combination"])
 
         for(let pos in msg["combination"]){
-//            board[pos[0]][pos[1]]
-            for (let row = 0; row < board.length; row++){
-                for (let col = 0; col < board[row].length; col++){
-                    if (row == pos[0] && col == [pos[1]]) {
-                        tn.colour = "yellow";
-                    }
-                }
+            let y = msg["combination"][pos][0];
+            let x = msg["combination"][pos][1];
+            this.table.rows[y].cells[x].style.fontSize = "30px";
+        }
+        let winner = this.table.rows[msg["combination"][0][0]].cells[msg["combination"][0][1]].innerHTML;
+        this.process_score(winner);
+    }
+
+    process_score(winner){
+        for (let key in this.info){
+            if (this.info[key][0] == winner) {
+                this.info[key][1] += 1;
             }
         }
     }
