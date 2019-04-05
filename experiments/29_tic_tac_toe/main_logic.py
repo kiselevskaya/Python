@@ -65,10 +65,11 @@ class MainLogic:
     async def start_game(self, msg):
         global board
         self.started = msg['status']
-        board = create_board(10)
+        board = create_board(5)
         await self.send_to_all('board', 'new_board', board)
 
     async def next_step(self, msg):
+        lst = []
         pos = msg['position']
         char = msg['char']
         board_step(board, char, pos)
@@ -76,8 +77,15 @@ class MainLogic:
             win_combination = last_step_check(board, char, pos)
             print(win_combination)
             await self.send_to_all('win', 'combination', win_combination)
+        for i in board:
+            for e in i:
+                if e == '':
+                    lst.append(e)
+        if len(lst) > 0 and len([*self.users]) == 1:
+            next_player = 'Computer'
+            await self.send_to_all('next', 'next_player', next_player)
         else:
-            if len([*self.users]) == 1:
-                next_player = 'Computer'
-                await self.send_to_all('next', 'next_player', next_player)
+            await self.send_to_all('stop', 'draw', True)
 
+    async def restart_board(self, msg):
+        await self.start_game(msg)

@@ -48,6 +48,8 @@ class User:
             return await self.process_choice(parsed_json)
         if parsed_json['msg'] == 'step':
             return await self.process_step(parsed_json)
+        if parsed_json['msg'] == 'restart':
+            return await self.process_restart_btn(parsed_json)
         return False
 
     async def process_hello(self, json_msg):
@@ -80,6 +82,9 @@ class User:
             except websockets.exceptions.ConnectionClosed as e:
                 print(" -> ", e)
                 await self.websocket.close()
+
+    async def process_restart_btn(self, json_msg):
+        await self.main_logic.restart_board(json_msg)
 
     async def disconnect(self):
         self.gracefully_disconnected = True

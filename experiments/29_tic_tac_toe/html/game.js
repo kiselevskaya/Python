@@ -44,6 +44,12 @@ class SomeClass {
             else if (msg["msg"] == "next"){
                 this.process_next(msg);
             }
+            else if (msg["msg"] == "stop"){
+                this.process_finish(msg);
+            }
+            else if (msg["msg"] == "restart"){
+                this.process_new_round(msg);
+            }
         } catch(e) {
             console.log(e);
             this.wsc.close();
@@ -107,19 +113,19 @@ class SomeClass {
         this.clear_div(this.choice_or);
         this.clear_div(this.choice_o);
 
-        let user1_choice = document.createElement("p");
-        let user2_choice = document.createElement("p");
+        this.user1_choice = document.createElement("p");
+        this.user2_choice = document.createElement("p");
         this.user1_score = document.createElement("p");
         this.user2_score = document.createElement("p");
 
         if (this.user1.innerHTML == this.username) {
-            user1_choice.innerHTML = choice;
-            user2_choice.innerHTML = rest;
+            this.user1_choice.innerHTML = choice;
+            this.user2_choice.innerHTML = rest;
             this.info[this.user1.innerHTML] = [choice, 0, order1];
             this.info[this.user2.innerHTML] = [rest, 0, order2];
         } else {
-            user2_choice.innerHTML = choice;
-            user1_choice.innerHTML = rest;
+            this.user2_choice.innerHTML = choice;
+            this.user1_choice.innerHTML = rest;
             this.info[this.user2.innerHTML] = [choice, 0, order1];
             this.info[this.user1.innerHTML] = [rest, 0, order2];
         }
@@ -127,15 +133,15 @@ class SomeClass {
         this.user1_score.innerHTML = this.info[this.user1.innerHTML][1];
         this.user2_score.innerHTML = this.info[this.user2.innerHTML][1];
 
-        this.u1choice.appendChild(user1_choice);
-        this.u2choice.appendChild(user2_choice);
+        this.u1choice.appendChild(this.user1_choice);
+        this.u2choice.appendChild(this.user2_choice);
         this.u1score.appendChild(this.user1_score);
         this.u2score.appendChild(this.user2_score);
     }
 
     process_board(msg){
         this.board = msg["new_board"]
-        let container = document.getElementById('container');
+        this.container = document.getElementById('container');
         this.table = document.createElement('table');
         this.table.style.border = "1px solid black";
         for (let row = 0; row < this.board.length; row++){
@@ -162,7 +168,7 @@ class SomeClass {
             }
             this.table.appendChild(tr);
         }
-        container.appendChild(this.table);
+        this.container.appendChild(this.table);
 
         this.process_computer_step();
     }
@@ -204,15 +210,51 @@ class SomeClass {
         }
         let winner = this.table.rows[msg["combination"][0][0]].cells[msg["combination"][0][1]].innerHTML;
         this.process_score(winner);
+        this.process_restart_button();
     }
 
     process_score(winner){
         for (let key in this.info){
             if (this.info[key][0] == winner) {
                 this.info[key][1] += 1;
+                console.log(this.user1_choice.innerHTML);
+                if (this.user1_choice.innerHTML == winner){
+                    this.user1_score.innerHTML = this.info[key][1];
+                }
+                else{
+                    this.user2_score.innerHTML = this.info[key][1];
+                }
             }
         }
     }
+
+    process_finish(msg){
+        if (msg["draw"]){
+            this.started = false;
+            this.process_restart_button();
+        }
+    }
+
+    process_restart_button(){
+        let btn_restart = document.createElement('button');
+        btn_restart.setAttribute("class", "button");
+        btn_restart.innerHTML = "RESTART";
+
+        btn_restart.onclick = function(){
+            this.process_restart(this.username);
+        }.bind(this);
+
+        this.choice_or.appendChild(btn_restart);
+    }
+
+    process_restart(){
+        this.clear_div(this.choice_or);
+        this.started = true;
+        this.beginner = true;
+        this.clear_div(this.container);
+        this.wsc.send({"msg": "restart", "status": this.started});
+    }
+
 
     clear_div(div){
         while (div.firstChild) {
