@@ -85,6 +85,7 @@ class User:
 
     async def process_restart_btn(self, json_msg):
         await self.main_logic.restart_board(json_msg)
+        return True
 
     async def disconnect(self):
         self.gracefully_disconnected = True

@@ -249,9 +249,9 @@ class SomeClass {
 
     process_restart(){
         this.clear_div(this.choice_or);
+        this.clear_div(this.container);
         this.started = true;
         this.beginner = true;
-        this.clear_div(this.container);
         this.wsc.send({"msg": "restart", "status": this.started});
     }
 
