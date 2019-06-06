@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>X_O</title>
+</head>
+<body>
+    <div id="form">
+        <form name="register_form" action="/register" method="get">
+            <h3 id="name">User name:</h3>
+            <input id="username" name="username" type="text" value="User 1"><br/>
+            <div id="button">
+                <button type="submit" class="button">Register</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function makeid() {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+          for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+          return text;
+        }
+        document.getElementById("username").value = "User " + makeid();
+    </script>
+</body>
+</html>
