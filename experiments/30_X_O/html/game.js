@@ -6,6 +6,7 @@ class Game {
     this.text = document.getElementById(text_id);
     this.user_list = user_list;
     this.process_user_list(this.user_list);
+    this.game_started = false;
     }
 
     setWebsocketConnection(wsc) {
@@ -20,6 +21,9 @@ class Game {
             }else
             if (msg["msg"] == "characters") {
                 this.process_characters(msg);
+            } else
+            if (msg["msg"] == "board") {
+                this.process_board(msg);
             } else {
                 console.log("unknown message: ", json_msg);
             }
@@ -79,6 +83,7 @@ class Game {
     }
 
     process_characters(msg) {
+        this.game_started = true;
         this.clear_div(this.text);
         this.create_user_data_table(msg);
     }
@@ -113,6 +118,33 @@ class Game {
 
             table.appendChild(tr);
         }
+    }
+
+    process_board(msg) {
+        this.board = msg["new_board"];
+
+        this.board_div = document.getElementById("field");
+
+        this.table = document.createElement("table");
+        this.table.style.border = "1px solid black";
+        this.table.style.height = "250px";
+        this.table.style.width = "250px";
+
+        for (let row = 0; row < this.board.length; row++){
+            let tr = document.createElement('tr');
+            for (let col = 0; col < this.board[row].length; col++){
+                let td = document.createElement('td');
+                let tn = document.createTextNode(this.board[row][col]);
+                td.appendChild(tn);
+                tr.appendChild(td);
+                td.style.border = "1px solid black";
+                td.onclick = function(){
+                    console.log("position:", [row, col]);
+                }.bind(this);
+            }
+            this.table.appendChild(tr);
+        }
+        this.board_div.appendChild(this.table);
     }
 
 }

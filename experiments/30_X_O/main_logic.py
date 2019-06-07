@@ -94,4 +94,10 @@ class MainLogic:
                 content[user] = [character, 0]
         await self.send_to_all('characters', 'users_data', content)
 
+        await self.create_board(10)
+
+    async def create_board(self, side):
+        print('BOARD')
+        board = create_board(side)
+        await self.send_to_all('board', 'new_board', board)
 
