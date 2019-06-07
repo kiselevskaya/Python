@@ -44,7 +44,8 @@ class Countdown {
             } else
             if (msg["msg"] == "countdown") {
                 this.process_countdown(msg);
-            } else if (msg["msg"] == "cannot_start_game") {
+            } else
+            if (msg["msg"] == "cannot_start_game") {
                 this.wsc.close();
             } else {
                 console.log("unknown message: ", json_msg);

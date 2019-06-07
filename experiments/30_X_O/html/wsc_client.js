@@ -1,11 +1,11 @@
 
 class WebSocketConnection {
-    constructor(username, password, some_object) {
+    constructor(username, password, game) {
         this.username = username;
         this.password = password;
         this.ws = new WebSocket("ws://127.0.0.1:6789/?username=" + username + "&password=" + password);
         this.debug = false;
-        this.some_object = some_object;
+        this.game = game;
         this.ws.onopen = function (event) {
             if (this.debug)
                 console.log(event);
@@ -17,17 +17,17 @@ class WebSocketConnection {
             if (JSON.parse(event.data)["msg"] != "") {
                 console.log(" <- " + event.data);
             }
-            this.some_object.onWebsocketMessage(event.data);
+            this.game.onWebsocketMessage(event.data);
         }.bind(this);
         this.ws.onerror = function (event) {
             if (this.debug)
                 console.log(event);
-            this.some_object.onWebsocketError(event);
+            this.game.onWebsocketError(event);
         }.bind(this);
         this.ws.onclose = function (event) {
             if (this.debug)
                 console.log(event);
-            this.some_object.onWebsocketClose(event);
+            this.game.onWebsocketClose(event);
         }.bind(this);
     }
 

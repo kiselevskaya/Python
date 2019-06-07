@@ -63,7 +63,6 @@ class MainLogic:
             return False
         else:
             await self.send_to_all('start_game', 'content', "Starting the Game!")
-            # self.game_started = True
             await self.start_countdown(3)
             await self.start_game()
             return True
@@ -84,4 +83,15 @@ class MainLogic:
     async def start_game(self):
         self.game_started = True
         self.stop_the_game = False
+
+    async def return_characters(self, char, username):
+        content = dict()
+        for user in [*self.users]:
+            if user == username:
+                content[user] = [char, 0]
+            else:
+                character = [ch for ch in ['X', 'O'] if ch != char]
+                content[user] = [character, 0]
+        await self.send_to_all('characters', 'users_data', content)
+
 
