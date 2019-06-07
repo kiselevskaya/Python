@@ -11,12 +11,10 @@ class Countdown {
         this.status_div.appendChild(this.user_list_div);
         this.status_div.appendChild(document.createElement("hr"));
 
-
         this.countdown = document.createElement("div");
         this.countdown.id = "countdown";
 
         this.status_div.appendChild(this.countdown);
-
 
         this.btn = document.createElement("button");
         this.btn.onclick = function(){
@@ -26,6 +24,7 @@ class Countdown {
 
         this.status_div.appendChild(this.btn);
         this.status_div.appendChild(document.createElement("hr"));
+
     }
 
     setWebsocketConnection(wsc) {
@@ -99,10 +98,7 @@ class Countdown {
     }
 
     process_start_game() {
-        while (this.status_div.firstChild) {
-           this.status_div.removeChild(this.status_div.firstChild);
-        }
-
+        this.clear_div(this.status_div);
         this.create_game_field();
     }
 
@@ -112,4 +108,11 @@ class Countdown {
         this.wsc.setGame(this.game);
         this.game.setWebsocketConnection(this.wsc);
     }
+
+    clear_div(div){
+        while (div.firstChild) {
+            div.removeChild(div.firstChild);
+        }
+    }
+
 }

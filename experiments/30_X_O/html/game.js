@@ -30,11 +30,11 @@ class Game {
     }
 
     onWebsocketError(event) {
-        this.status_div.innerHTML = "Websocket error: " + event;
+        this.text.innerHTML = "Websocket error: " + event;
     }
 
     onWebsocketClose(event) {
-        this.status_div.innerHTML = "Websocket closed: " + event;
+        this.text.innerHTML = "Websocket closed: " + event;
     }
 
     /////////////////////////////////////////////////////////////
@@ -79,9 +79,40 @@ class Game {
     }
 
     process_characters(msg) {
-        console.log("We are here");
         this.clear_div(this.text);
-        console.log("Users data: ", msg["users_data"]);
-
+        this.create_user_data_table(msg);
     }
+
+    create_user_data_table(msg) {
+        let table = document.createElement("table");
+        table.border=1;
+        this.text.appendChild(table);
+
+        for(let i = 0 ; i < Object.keys(msg["users_data"]).length ; ++i ) {
+            let user_name = Object.keys(msg["users_data"])[i];
+            let tr = document.createElement("tr");
+            let name = document.createElement("td");
+            name.appendChild(document.createTextNode(user_name));
+
+            let character = document.createElement("td");
+            let char_div = document.createElement("div");
+            char_div.id = user_name + "_char_div";
+            char_div.appendChild(document.createTextNode(msg["users_data"][user_name][0]));
+            character.appendChild(char_div);
+
+            let score = document.createElement("td");
+            let score_div = document.createElement("div");
+            score_div.id = user_name + "_score_div";
+            score_div.appendChild(document.createTextNode(msg["users_data"][user_name][1]));
+
+            score.appendChild(score_div);
+
+            tr.appendChild(name);
+            tr.appendChild(character);
+            tr.appendChild(score);
+
+            table.appendChild(tr);
+        }
+    }
+
 }
