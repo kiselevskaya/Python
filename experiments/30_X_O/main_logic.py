@@ -13,6 +13,8 @@ class MainLogic:
         self.users = dict()
         self.game_started = False
         self.stop_the_game = False
+        self.first = None
+        self.user_info = dict()
 
     def add_user(self, username):
         if username in self.users:
@@ -85,19 +87,37 @@ class MainLogic:
         self.stop_the_game = False
 
     async def return_characters(self, char, username):
-        content = dict()
         for user in [*self.users]:
             if user == username:
-                content[user] = [char, 0]
+                await self.check_first_player(char)
+                self.user_info[user] = [char, 0, self.first]
             else:
                 character = [ch for ch in ['X', 'O'] if ch != char]
-                content[user] = [character, 0]
-        await self.send_to_all('characters', 'users_data', content)
+                await self.check_first_player(character)
+                self.user_info[user] = [character, 0, self.first]
+
+        await self.send_to_all('characters', 'users_data', self.user_info)
 
         await self.create_board(10)
 
+    async def check_first_player(self, character):
+        if character == 'X':
+            self.first = True
+        else:
+            self.first = False
+        return self.first
+
     async def create_board(self, side):
-        print('BOARD')
+        global board
         board = create_board(side)
         await self.send_to_all('board', 'new_board', board)
 
+    async def process_step(self, position, username):
+        print(self.user_info)
+        self.user_info[username][2] = False
+        next_user = [user for user in[*self.user_info] if user != username]
+        self.user_info[next_user[0]][2] = True
+        await self.send_to_all('user_info', 'update', self.user_info)
+        char = self.user_info[username][0]
+        board_step(board, char, position)
+        await self.send_to_all('board_info', 'update', board)

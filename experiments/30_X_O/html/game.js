@@ -18,12 +18,14 @@ class Game {
             let msg = JSON.parse(json_msg);
             if (msg["msg"] == "user_list") {
                 this.process_user_list(msg);
-            }else
-            if (msg["msg"] == "characters") {
+            } else if (msg["msg"] == "characters") {
                 this.process_characters(msg);
-            } else
-            if (msg["msg"] == "board") {
+            } else if (msg["msg"] == "board") {
                 this.process_board(msg);
+            } else if (msg["msg"] == "user_info") {
+                this.update_user_data(msg);
+            } else if (msg["msg"] == "board_info") {
+                this.update_board_data(msg);
             } else {
                 console.log("unknown message: ", json_msg);
             }
@@ -89,9 +91,10 @@ class Game {
     }
 
     create_user_data_table(msg) {
-        let table = document.createElement("table");
-        table.border=1;
-        this.text.appendChild(table);
+        this.users_table = document.createElement("table");
+        this.users_table.border=1;
+        this.text.appendChild(this.users_table);
+        this.user_info = msg["users_data"];
 
         for(let i = 0 ; i < Object.keys(msg["users_data"]).length ; ++i ) {
             let user_name = Object.keys(msg["users_data"])[i];
@@ -116,7 +119,7 @@ class Game {
             tr.appendChild(character);
             tr.appendChild(score);
 
-            table.appendChild(tr);
+            this.users_table.appendChild(tr);
         }
     }
 
@@ -130,7 +133,7 @@ class Game {
         this.table.style.height = "250px";
         this.table.style.width = "250px";
 
-        for (let row = 0; row < this.board.length; row++){
+        for (let row = 0; row < this.board.length; row++) {
             let tr = document.createElement('tr');
             for (let col = 0; col < this.board[row].length; col++){
                 let td = document.createElement('td');
@@ -140,11 +143,27 @@ class Game {
                 td.style.border = "1px solid black";
                 td.onclick = function(){
                     console.log("position:", [row, col]);
+                    if (tn.nodeValue == "" && this.user_info[this.username][2] == true) {
+                        this.wsc.send({"msg": "step", "position": [row, col]});
+                    }
                 }.bind(this);
             }
             this.table.appendChild(tr);
         }
         this.board_div.appendChild(this.table);
+    }
+
+    update_user_data(msg) {
+        this.user_info = msg["update"];
+    }
+
+    update_board_data(msg) {
+        this.board = msg["update"];
+        for (let row = 0; row < this.board.length; row++) {
+            for (let cell = 0; cell < this.board[row].length; cell++){
+                this.table.rows[row].cells[cell].innerHTML = this.board[row][cell];
+            }
+        }
     }
 
 }

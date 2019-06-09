@@ -48,6 +48,8 @@ class User:
             return await self.process_start_game()
         if parsed_json['msg'] == 'button':
             return await self.process_characters(parsed_json)
+        if parsed_json['msg'] == 'step':
+            return await self.process_step(parsed_json)
         return False
 
     async def process_hello(self, json_msg):
@@ -86,6 +88,10 @@ class User:
 
     async def process_characters(self, json_msg):
         await self.main_logic.return_characters(json_msg['character'], self.username)
+        return True
+
+    async def process_step(self, json_msg):
+        await self.main_logic.process_step(json_msg['position'], self.username)
         return True
 
     async def disconnect(self):
