@@ -26,6 +26,8 @@ class Game {
                 this.update_user_data(msg);
             } else if (msg["msg"] == "board_info") {
                 this.update_board_data(msg);
+            } else if (msg["msg"] == "winner_info") {
+                this.process_winner_info(msg);
             } else {
                 console.log("unknown message: ", json_msg);
             }
@@ -159,11 +161,28 @@ class Game {
 
     update_board_data(msg) {
         this.board = msg["update"];
+
         for (let row = 0; row < this.board.length; row++) {
             for (let cell = 0; cell < this.board[row].length; cell++){
                 this.table.rows[row].cells[cell].innerHTML = this.board[row][cell];
             }
         }
+    }
+
+    process_winner_info(msg) {
+        let win_data = msg["data"];
+        console.log(win_data);
+        this.update_score(msg);
+
+    }
+
+    update_score(msg) {
+        let winner = msg["data"][0];
+        let div_id = winner + "_score_div";
+        let d = document.getElementById(div_id);
+        console.log("SCORE:", this.user_info[winner][1]);
+        console.log("UPDATE SCORE", "winner:", winner, "div:", div_id, "value:", d, "innerHTML:", d.innerHTML);
+        d.innerHTML = parseInt(this.user_info[winner][1]);
     }
 
 }

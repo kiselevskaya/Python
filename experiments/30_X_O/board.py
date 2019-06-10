@@ -113,5 +113,5 @@ def check_diagonally2(board, char, y, x):
 
 
 def check_win(pos_list):
-    if len(pos_list) >= 5:
+    if len(pos_list) >= 3:
         return True

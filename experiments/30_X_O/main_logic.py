@@ -13,7 +13,7 @@ class MainLogic:
         self.users = dict()
         self.game_started = False
         self.stop_the_game = False
-        self.first = None
+        self.first = False
         self.user_info = dict()
 
     def add_user(self, username):
@@ -65,7 +65,7 @@ class MainLogic:
             return False
         else:
             await self.send_to_all('start_game', 'content', "Starting the Game!")
-            await self.start_countdown(3)
+            await self.start_countdown(1)
             await self.start_game()
             return True
 
@@ -92,7 +92,7 @@ class MainLogic:
                 await self.check_first_player(char)
                 self.user_info[user] = [char, 0, self.first]
             else:
-                character = [ch for ch in ['X', 'O'] if ch != char]
+                character = [ch for ch in ['X', 'O'] if ch != char][0]
                 await self.check_first_player(character)
                 self.user_info[user] = [character, 0, self.first]
 
@@ -113,11 +113,20 @@ class MainLogic:
         await self.send_to_all('board', 'new_board', board)
 
     async def process_step(self, position, username):
-        print(self.user_info)
         self.user_info[username][2] = False
-        next_user = [user for user in[*self.user_info] if user != username]
-        self.user_info[next_user[0]][2] = True
-        await self.send_to_all('user_info', 'update', self.user_info)
         char = self.user_info[username][0]
         board_step(board, char, position)
         await self.send_to_all('board_info', 'update', board)
+
+        await self.check_last_step(char, position, username)
+
+    async def check_last_step(self, char, position, username):
+        if last_step_check(board, char, position):
+            self.user_info[username][1] += 1
+            await self.send_to_all('user_info', 'update', self.user_info)
+            win_set = last_step_check(board, char, position)
+            await self.send_to_all('winner_info', 'data', [username, win_set])
+        else:
+            next_user = [user for user in[*self.user_info] if user != username]
+            self.user_info[next_user[0]][2] = True
+            await self.send_to_all('user_info', 'update', self.user_info)
