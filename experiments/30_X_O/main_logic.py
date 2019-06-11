@@ -12,7 +12,6 @@ class MainLogic:
     def __init__(self):
         self.users = dict()
         self.game_started = False
-        self.stop_the_game = False
         self.first = False
         self.user_info = dict()
 
@@ -66,7 +65,7 @@ class MainLogic:
         else:
             await self.send_to_all('start_game', 'content', "Starting the Game!")
             await self.start_countdown(1)
-            await self.start_game()
+            self.game_started = True
             return True
 
     async def start_countdown(self, seconds):
@@ -82,35 +81,37 @@ class MainLogic:
         data['started'] = True
         await self.send_msg_to_all(data)
 
-    async def start_game(self):
-        self.game_started = True
-        self.stop_the_game = False
-
     async def return_characters(self, char, username):
         for user in [*self.users]:
             if user == username:
-                await self.check_first_player(char)
-                self.user_info[user] = [char, 0, self.first]
+                await self.user_data(user, char)
             else:
-                character = [ch for ch in ['X', 'O'] if ch != char][0]
-                await self.check_first_player(character)
-                self.user_info[user] = [character, 0, self.first]
+                character = [ch for ch in ['X', 'O'] if ch != char][0]  # rest character after choice was made
+                await self.user_data(user, character)
 
         await self.send_to_all('characters', 'users_data', self.user_info)
 
         await self.create_board(10)
 
-    async def check_first_player(self, character):
+    async def user_data(self, user, character, score=0):
         if character == 'X':
             self.first = True
         else:
             self.first = False
-        return self.first
+        self.user_info[user] = [character, score, self.first]
+        return self.user_info
 
     async def create_board(self, side):
         global board
         board = create_board(side)
         await self.send_to_all('board', 'new_board', board)
+
+    async def reset_board(self):
+        # let move def to board.py!
+        for x in range(len(board)):
+            for y in range(len(board[x])):
+                board[x][y] = ''
+        await self.send_to_all('board_info', 'update', board)
 
     async def process_step(self, position, username):
         self.user_info[username][2] = False
@@ -122,11 +123,22 @@ class MainLogic:
 
     async def check_last_step(self, char, position, username):
         if last_step_check(board, char, position):
-            self.user_info[username][1] += 1
-            await self.send_to_all('user_info', 'update', self.user_info)
-            win_set = last_step_check(board, char, position)
-            await self.send_to_all('winner_info', 'data', [username, win_set])
+            await self.process_win(char, position, username)
         else:
-            next_user = [user for user in[*self.user_info] if user != username]
-            self.user_info[next_user[0]][2] = True
+            next_user = [user for user in[*self.user_info] if user != username][0]  # user who should make next step
+            self.user_info[next_user][2] = True  # is it turn of this user to make a step
             await self.send_to_all('user_info', 'update', self.user_info)
+
+    async def process_win(self, char, position, username):
+        self.user_info[username][1] += 1    # update score
+        await self.send_to_all('user_info', 'update', self.user_info)
+
+        win_set = last_step_check(board, char, position)    # list of winning combination positions
+        await self.send_to_all('winner_info', 'data', [username, win_set])
+
+    async def process_reset(self):
+        await self.reset_board()
+        await self.send_to_all('reset', 'data', self.user_info)
+        for user in [*self.user_info]:
+            await self.user_data(user, self.user_info[user][0], self.user_info[user][1])
+        await self.send_to_all('user_info', 'update', self.user_info)

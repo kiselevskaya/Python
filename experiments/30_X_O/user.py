@@ -50,19 +50,13 @@ class User:
             return await self.process_characters(parsed_json)
         if parsed_json['msg'] == 'step':
             return await self.process_step(parsed_json)
+        if parsed_json['msg'] == 'reset_status':
+            return await self.process_reset()
         return False
 
-    async def process_hello(self, json_msg):
-        if json_msg['username'] == self.username:
-            self.connected = True
-            await self.send_user_list()
-            return True
-        else:
-            return False
-
-    async def send_user_list(self):
-        user_list = self.main_logic.get_connected_user_list()
-        await self.main_logic.send_to_all('user_list', 'user_list', list(user_list))
+    async def disconnect(self):
+        self.gracefully_disconnected = True
+        await self.websocket.close()
 
     async def send_data(self, msg, title, content):
         data = dict()
@@ -81,6 +75,18 @@ class User:
                 print(" -> ", e)
                 await self.websocket.close()
 
+    async def send_user_list(self):
+        user_list = self.main_logic.get_connected_user_list()
+        await self.main_logic.send_to_all('user_list', 'user_list', list(user_list))
+
+    async def process_hello(self, json_msg):
+        if json_msg['username'] == self.username:
+            self.connected = True
+            await self.send_user_list()
+            return True
+        else:
+            return False
+
     async def process_start_game(self):
         await self.main_logic.try_start_game(self)
         await self.send_user_list()
@@ -94,6 +100,8 @@ class User:
         await self.main_logic.process_step(json_msg['position'], self.username)
         return True
 
-    async def disconnect(self):
-        self.gracefully_disconnected = True
-        await self.websocket.close()
+    async def process_reset(self):
+        await self.main_logic.process_reset()
+        return True
+
+

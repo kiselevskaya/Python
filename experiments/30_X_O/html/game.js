@@ -28,6 +28,8 @@ class Game {
                 this.update_board_data(msg);
             } else if (msg["msg"] == "winner_info") {
                 this.process_winner_info(msg);
+            } else if (msg["msg"] == "reset") {
+                this.process_reset(msg);
             } else {
                 console.log("unknown message: ", json_msg);
             }
@@ -56,13 +58,11 @@ class Game {
         this.get_character_choice();
     }
 
-
     clear_div(div){
         while (div.firstChild) {
             div.removeChild(div.firstChild);
         }
     }
-
 
     get_character_choice() {
         let btn_x = document.createElement('button');
@@ -132,13 +132,15 @@ class Game {
 
         this.table = document.createElement("table");
         this.table.style.border = "1px solid black";
-        this.table.style.height = "250px";
-        this.table.style.width = "250px";
+//        this.table.style.height = "250px";
+//        this.table.style.width = "250px";
 
         for (let row = 0; row < this.board.length; row++) {
             let tr = document.createElement('tr');
             for (let col = 0; col < this.board[row].length; col++){
                 let td = document.createElement('td');
+                td.style.height = "20px";
+                td.style.width = "20px";
                 let tn = document.createTextNode(this.board[row][col]);
                 td.appendChild(tn);
                 tr.appendChild(td);
@@ -170,19 +172,41 @@ class Game {
     }
 
     process_winner_info(msg) {
-        let win_data = msg["data"];
-        console.log(win_data);
         this.update_score(msg);
-
+        this.win_set = msg["data"][1];
+        this.draw_win_set(this.win_set);
+        this.add_reset_button();
     }
 
     update_score(msg) {
         let winner = msg["data"][0];
-        let div_id = winner + "_score_div";
-        let d = document.getElementById(div_id);
-        console.log("SCORE:", this.user_info[winner][1]);
-        console.log("UPDATE SCORE", "winner:", winner, "div:", div_id, "value:", d, "innerHTML:", d.innerHTML);
-        d.innerHTML = parseInt(this.user_info[winner][1]);
+        let score_id = winner + "_score_div";
+        let score = document.getElementById(score_id);
+        score.innerHTML = parseInt(this.user_info[winner][1]);
+    }
+
+    draw_win_set(list) {
+        console.log("DRAW");
+        for (let p = 0; p < list.length; p++){
+            this.table.rows[list[p][0]].cells[list[p][1]].style.color = "red";
+        }
+    }
+
+    add_reset_button() {
+        this.reset = document.createElement('button');
+        this.reset.innerHTML = "RESET";
+        this.reset.onclick = function(){
+            this.wsc.send({"msg": "reset_status"});
+        }.bind(this);
+
+        this.text.appendChild(this.reset);
+    }
+
+    process_reset() {
+        this.text.removeChild(this.reset);
+        for (let p = 0; p < this.win_set.length; p++){
+            this.table.rows[this.win_set[p][0]].cells[this.win_set[p][1]].style.color = "black";
+        }
     }
 
 }
