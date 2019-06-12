@@ -28,6 +28,9 @@ class Game {
                 this.update_board_data(msg);
             } else if (msg["msg"] == "winner_info") {
                 this.process_winner_info(msg);
+            } else if (msg["msg"] == "draw") {
+                console.log("DRAW GAME OVER");
+                this.add_reset_button();
             } else if (msg["msg"] == "reset") {
                 this.process_reset(msg);
             } else {
@@ -132,8 +135,6 @@ class Game {
 
         this.table = document.createElement("table");
         this.table.style.border = "1px solid black";
-//        this.table.style.height = "250px";
-//        this.table.style.width = "250px";
 
         for (let row = 0; row < this.board.length; row++) {
             let tr = document.createElement('tr');
@@ -147,7 +148,7 @@ class Game {
                 td.style.border = "1px solid black";
                 td.onclick = function(){
                     console.log("position:", [row, col]);
-                    if (tn.nodeValue == "" && this.user_info[this.username][2] == true) {
+                    if (tn.nodeValue == ""&& this.user_info[this.username][2] == true) {
                         this.wsc.send({"msg": "step", "position": [row, col]});
                     }
                 }.bind(this);
@@ -186,7 +187,6 @@ class Game {
     }
 
     draw_win_set(list) {
-        console.log("DRAW");
         for (let p = 0; p < list.length; p++){
             this.table.rows[list[p][0]].cells[list[p][1]].style.color = "red";
         }
@@ -204,8 +204,10 @@ class Game {
 
     process_reset() {
         this.text.removeChild(this.reset);
-        for (let p = 0; p < this.win_set.length; p++){
-            this.table.rows[this.win_set[p][0]].cells[this.win_set[p][1]].style.color = "black";
+        if (this.win_set) {
+            for (let p = 0; p < this.win_set.length; p++){
+                this.table.rows[this.win_set[p][0]].cells[this.win_set[p][1]].style.color = "black";
+            }
         }
     }
 

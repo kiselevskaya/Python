@@ -91,7 +91,7 @@ class MainLogic:
 
         await self.send_to_all('characters', 'users_data', self.user_info)
 
-        await self.create_board(10)
+        await self.create_board(2)
 
     async def user_data(self, user, character, score=0):
         if character == 'X':
@@ -114,7 +114,7 @@ class MainLogic:
         await self.send_to_all('board_info', 'update', board)
 
     async def process_step(self, position, username):
-        self.user_info[username][2] = False
+        self.user_info[username][2] = False  # is it turn of this user to make a step
         char = self.user_info[username][0]
         board_step(board, char, position)
         await self.send_to_all('board_info', 'update', board)
@@ -122,8 +122,11 @@ class MainLogic:
         await self.check_last_step(char, position, username)
 
     async def check_last_step(self, char, position, username):
+        steps_list = list(filter(lambda x: x == "", [lst for sublist in board for lst in sublist]))  # steps left
         if last_step_check(board, char, position):
             await self.process_win(char, position, username)
+        elif not len(steps_list):
+            await self.process_draw()
         else:
             next_user = [user for user in[*self.user_info] if user != username][0]  # user who should make next step
             self.user_info[next_user][2] = True  # is it turn of this user to make a step
@@ -135,6 +138,9 @@ class MainLogic:
 
         win_set = last_step_check(board, char, position)    # list of winning combination positions
         await self.send_to_all('winner_info', 'data', [username, win_set])
+
+    async def process_draw(self):
+        await self.send_to_all('draw', 'restart', True)
 
     async def process_reset(self):
         await self.reset_board()
