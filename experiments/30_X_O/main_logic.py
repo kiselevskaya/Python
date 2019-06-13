@@ -18,6 +18,8 @@ class MainLogic:
     def add_user(self, username):
         if username in self.users:
             return None
+        if 'Computer' in [*self.users] and not self.game_started:
+            self.users.pop('Computer')
         if len(self.users) < 2:
             password = self.generate_password(username)
             user = User(username, password, self)
@@ -40,12 +42,18 @@ class MainLogic:
             user = self.users[username]
             await user.process_websocket(websocket)
             self.users.pop(username)
+            print('LOG OFF ', [*self.users])
+            await self.send_to_all('log_off', 'user_list', [*self.users])
+            self.get_connected_user_list()
             if len(self.users) == 0:
                 await user.disconnect()
         else:
             print("Bad connection from not exist user " + username)
 
     def get_connected_user_list(self):
+        if len([*self.users]) == 1 and 'Computer' not in [*self.users]:
+            self.add_user('Computer')
+        #     restart all game
         return [*self.users]
 
     async def send_to_all(self, msg_name, title, content):
@@ -56,7 +64,8 @@ class MainLogic:
 
     async def send_msg_to_all(self, data):
         for key, user in self.users.items():
-            await user.send_message(data)
+            if user != 'Computer':
+                await user.send_message(data)
 
     async def try_start_game(self, user):
         if self.game_started:
@@ -91,7 +100,7 @@ class MainLogic:
 
         await self.send_to_all('characters', 'users_data', self.user_info)
 
-        await self.create_board(2)
+        await self.create_board(10)
 
     async def user_data(self, user, character, score=0):
         if character == 'X':

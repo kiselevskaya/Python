@@ -33,6 +33,8 @@ class Game {
                 this.add_reset_button();
             } else if (msg["msg"] == "reset") {
                 this.process_reset(msg);
+            } else if (msg["msg"] == "log_off"){
+                this.process_log_off(msg);
             } else {
                 console.log("unknown message: ", json_msg);
             }
@@ -52,7 +54,13 @@ class Game {
 
     /////////////////////////////////////////////////////////////
 
-    process_user_list(user_list) {
+    process_log_off(msg) {
+        this.clear_div(this.board_div);
+        this.user_list = msg["user_list"];
+        this.process_user_list();
+    }
+
+    process_user_list() {
         this.clear_div(this.text);
         this.users = document.createElement("p");
         this.users.innerHTML = this.user_list;
