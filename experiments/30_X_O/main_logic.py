@@ -42,9 +42,8 @@ class MainLogic:
             user = self.users[username]
             await user.process_websocket(websocket)
             self.users.pop(username)
-            print('LOG OFF ', [*self.users])
-            await self.send_to_all('log_off', 'user_list', [*self.users])
             self.get_connected_user_list()
+            await self.send_to_all('log_off', 'user_list', [*self.users])
             if len(self.users) == 0:
                 await user.disconnect()
         else:
@@ -53,7 +52,6 @@ class MainLogic:
     def get_connected_user_list(self):
         if len([*self.users]) == 1 and 'Computer' not in [*self.users]:
             self.add_user('Computer')
-        #     restart all game
         return [*self.users]
 
     async def send_to_all(self, msg_name, title, content):
@@ -97,16 +95,16 @@ class MainLogic:
             else:
                 character = [ch for ch in ['X', 'O'] if ch != char][0]  # rest character after choice was made
                 await self.user_data(user, character)
-
         await self.send_to_all('characters', 'users_data', self.user_info)
 
         await self.create_board(10)
 
     async def user_data(self, user, character, score=0):
-        if character == 'X':
-            self.first = True
-        else:
-            self.first = False
+        logged_off = [x for x in [*self.user_info] if x not in [*self.users]]
+        if logged_off:
+            self.user_info.pop(logged_off[0])
+
+        self.first = (True if character == 'X' else False)
         self.user_info[user] = [character, score, self.first]
         return self.user_info
 
@@ -157,3 +155,6 @@ class MainLogic:
         for user in [*self.user_info]:
             await self.user_data(user, self.user_info[user][0], self.user_info[user][1])
         await self.send_to_all('user_info', 'update', self.user_info)
+
+
+#   register_page1 + start + register_page2 + choice_page1 + log_off_page2 = wrong output

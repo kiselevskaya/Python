@@ -138,9 +138,7 @@ class Game {
 
     process_board(msg) {
         this.board = msg["new_board"];
-
         this.board_div = document.getElementById("field");
-
         this.table = document.createElement("table");
         this.table.style.border = "1px solid black";
 
