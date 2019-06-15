@@ -52,8 +52,6 @@ class Game {
         this.text.innerHTML = "Websocket closed: " + event;
     }
 
-    /////////////////////////////////////////////////////////////
-
     process_log_off(msg) {
         this.clear_div(this.board_div);
         this.user_list = msg["user_list"];
@@ -162,6 +160,11 @@ class Game {
             this.table.appendChild(tr);
         }
         this.board_div.appendChild(this.table);
+
+        if ("Computer" in this.user_info && this.user_info["Computer"][2]) {
+            this.wsc.send({"msg": "computer_step", "first": "Computer"});
+        }
+
     }
 
     update_user_data(msg) {

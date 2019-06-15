@@ -11,14 +11,15 @@ from board import *
 class MainLogic:
     def __init__(self):
         self.users = dict()
-        self.game_started = False
+        self.started = False
         self.first = False
         self.user_info = dict()
+        self.board_side = 10
 
     def add_user(self, username):
         if username in self.users:
             return None
-        if 'Computer' in [*self.users] and not self.game_started:
+        if 'Computer' in [*self.users] and not self.started:
             self.users.pop('Computer')
         if len(self.users) < 2:
             password = self.generate_password(username)
@@ -66,13 +67,12 @@ class MainLogic:
                 await user.send_message(data)
 
     async def try_start_game(self, user):
-        if self.game_started:
+        if self.started:
             await user.send_data('cannot_start_game', 'content', "game already started")
             return False
         else:
             await self.send_to_all('start_game', 'content', "Starting the Game!")
-            await self.start_countdown(1)
-            self.game_started = True
+            await self.start_countdown(3)
             return True
 
     async def start_countdown(self, seconds):
@@ -84,11 +84,13 @@ class MainLogic:
             await self.send_msg_to_all(data)
             await asyncio.sleep(1)
             seconds -= 1
+        self.started = True
         data['countdown'] = seconds
         data['started'] = True
         await self.send_msg_to_all(data)
 
     async def return_characters(self, char, username):
+        self.started = False
         for user in [*self.users]:
             if user == username:
                 await self.user_data(user, char)
@@ -97,7 +99,7 @@ class MainLogic:
                 await self.user_data(user, character)
         await self.send_to_all('characters', 'users_data', self.user_info)
 
-        await self.create_board(10)
+        await self.create_board(self.board_side)
 
     async def user_data(self, user, character, score=0):
         logged_off = [x for x in [*self.user_info] if x not in [*self.users]]
@@ -114,10 +116,8 @@ class MainLogic:
         await self.send_to_all('board', 'new_board', board)
 
     async def reset_board(self):
-        # let move def to board.py!
-        for x in range(len(board)):
-            for y in range(len(board[x])):
-                board[x][y] = ''
+        global board
+        board = [['' for y in x] for x in board]
         await self.send_to_all('board_info', 'update', board)
 
     async def process_step(self, position, username):
@@ -128,15 +128,28 @@ class MainLogic:
 
         await self.check_last_step(char, position, username)
 
+    async def process_computer_step(self, username=None):
+        steps_list = []
+        for x in range(len(board)):
+            for y in range(len(board[x])):
+                if not board[x][y]:
+                    steps_list.append([x, y])   # list of possible steps
+        step = random.choice(steps_list)
+        await self.process_step(step, username)
+
     async def check_last_step(self, char, position, username):
-        steps_list = list(filter(lambda x: x == "", [lst for sublist in board for lst in sublist]))  # steps left
+        steps_left = list(filter(lambda x: x == "", [lst for sublist in board for lst in sublist]))  # steps left
         if last_step_check(board, char, position):
             await self.process_win(char, position, username)
-        elif not len(steps_list):
+        elif not len(steps_left):
             await self.process_draw()
         else:
             next_user = [user for user in[*self.user_info] if user != username][0]  # user who should make next step
             self.user_info[next_user][2] = True  # is it turn of this user to make a step
+
+            if next_user == "Computer":
+                await self.process_computer_step(next_user)
+
             await self.send_to_all('user_info', 'update', self.user_info)
 
     async def process_win(self, char, position, username):
@@ -155,6 +168,3 @@ class MainLogic:
         for user in [*self.user_info]:
             await self.user_data(user, self.user_info[user][0], self.user_info[user][1])
         await self.send_to_all('user_info', 'update', self.user_info)
-
-
-#   register_page1 + start + register_page2 + choice_page1 + log_off_page2 = wrong output

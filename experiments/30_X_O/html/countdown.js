@@ -13,18 +13,9 @@ class Countdown {
 
         this.countdown = document.createElement("div");
         this.countdown.id = "countdown";
-
         this.status_div.appendChild(this.countdown);
 
-        this.btn = document.createElement("button");
-        this.btn.onclick = function(){
-            this.startGame();
-        }.bind(this);
-        this.btn.appendChild(document.createTextNode("Start Game"));
-
-        this.status_div.appendChild(this.btn);
-        this.status_div.appendChild(document.createElement("hr"));
-
+        this.add_start_button();
     }
 
     setWebsocketConnection(wsc) {
@@ -36,15 +27,11 @@ class Countdown {
             let msg = JSON.parse(json_msg);
             if (msg["msg"] == "user_list") {
                 this.process_user_list(msg);
-            } else
-            if (msg['msg'] == "start_game") {
-                console.log('Starting game in progress!')
-                this.btn.parentNode.removeChild(this.btn);
-            } else
-            if (msg["msg"] == "countdown") {
+            } else if (msg['msg'] == "start_game") {
+                this.started = true;
+            } else if (msg["msg"] == "countdown") {
                 this.process_countdown(msg);
-            } else
-            if (msg["msg"] == "cannot_start_game") {
+            } else if (msg["msg"] == "cannot_start_game") {
                 this.wsc.close();
             } else {
                 console.log("unknown message: ", json_msg);
@@ -63,8 +50,6 @@ class Countdown {
         this.status_div.innerHTML = "Websocket closed: " + event;
     }
 
-    //
-
     process_user_list(msg) {
         let user_list = msg["user_list"];
         this.last_user_list = user_list;
@@ -76,11 +61,27 @@ class Countdown {
         this.user_list = user_list;
     }
 
+    add_start_button() {
+        if (!this.started) {
+            this.div_btn = document.createElement("div");
+            this.btn = document.createElement("button");
+            this.btn.onclick = function(){
+                this.startGame();
+            }.bind(this);
+            this.btn.appendChild(document.createTextNode("Start Game"));
+            this.div_btn.appendChild(this.btn)
+
+            this.status_div.appendChild(this.div_btn);
+        }
+    }
+
     startGame() {
         this.wsc.send({"msg": "start_game"});
     }
 
     process_countdown(msg) {
+        this.clear_div(this.div_btn);
+
         let seconds = msg["countdown"];
         var minutes = Math.floor(seconds / 60);
         seconds = seconds - minutes * 60;

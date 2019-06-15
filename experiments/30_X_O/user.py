@@ -48,6 +48,8 @@ class User:
             return await self.process_start_game()
         if parsed_json['msg'] == 'button':
             return await self.process_characters(parsed_json)
+        if parsed_json['msg'] == 'computer_step':
+            return await self.process_computer_step(parsed_json)
         if parsed_json['msg'] == 'step':
             return await self.process_step(parsed_json)
         if parsed_json['msg'] == 'reset_status':
@@ -88,12 +90,16 @@ class User:
             return False
 
     async def process_start_game(self):
-        await self.main_logic.try_start_game(self)
+        await self.main_logic.try_start_game(self.username)
         await self.send_user_list()
         return True
 
     async def process_characters(self, json_msg):
         await self.main_logic.return_characters(json_msg['character'], self.username)
+        return True
+
+    async def process_computer_step(self, json_msg):
+        await self.main_logic.process_computer_step(json_msg['first'])
         return True
 
     async def process_step(self, json_msg):
