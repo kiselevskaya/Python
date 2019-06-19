@@ -128,12 +128,17 @@ class MainLogic:
 
         await self.check_last_step(char, position, username)
 
-    async def process_computer_step(self, username=None):
+    async def process_computer_step(self, position, username=None):
+        previous_pos = position
+        print(previous_pos)
+
         steps_list = []
         for x in range(len(board)):
             for y in range(len(board[x])):
                 if not board[x][y]:
                     steps_list.append([x, y])   # list of possible steps
+
+##################################################################################################
         step = random.choice(steps_list)
         await self.process_step(step, username)
 
@@ -148,7 +153,7 @@ class MainLogic:
             self.user_info[next_user][2] = True  # is it turn of this user to make a step
 
             if next_user == "Computer":
-                await self.process_computer_step(next_user)
+                await self.process_computer_step(position, next_user)
 
             await self.send_to_all('user_info', 'update', self.user_info)
 
