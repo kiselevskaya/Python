@@ -6,6 +6,8 @@ import asyncio
 import threading
 from user import *
 from board import *
+# from board_as_class import *
+# board = Board()
 
 
 class MainLogic:
@@ -15,6 +17,8 @@ class MainLogic:
         self.first = False
         self.user_info = dict()
         self.board_side = 10
+        self.win_length = 5
+        # self.field = None
 
     def add_user(self, username):
         if username in self.users:
@@ -100,6 +104,7 @@ class MainLogic:
         await self.send_to_all('characters', 'users_data', self.user_info)
 
         await self.create_board(self.board_side)
+        # await self.create_board(self.board_side, self.win_length)
 
     async def user_data(self, user, character, score=0):
         logged_off = [x for x in [*self.user_info] if x not in [*self.users]]
@@ -110,21 +115,28 @@ class MainLogic:
         self.user_info[user] = [character, score, self.first]
         return self.user_info
 
+    # async def create_board(self, side, length):
     async def create_board(self, side):
         global board
         board = create_board(side)
         await self.send_to_all('board', 'new_board', board)
+        # self.field = board.create_board(side, length)
+        # await self.send_to_all('board', 'new_board', self.field)
 
     async def reset_board(self):
         global board
         board = [['' for y in x] for x in board]
         await self.send_to_all('board_info', 'update', board)
+        # self.field = board.reset_board()
+        # await self.send_to_all('board_info', 'update', self.field)
 
     async def process_step(self, position, username):
         self.user_info[username][2] = False  # is it turn of this user to make a step
         char = self.user_info[username][0]
         board_step(board, char, position)
         await self.send_to_all('board_info', 'update', board)
+        # board.make_step(char, position[0], position[1])
+        # await self.send_to_all('board_info', 'update', self.field)
 
         await self.check_last_step(char, position, username)
 
@@ -137,13 +149,12 @@ class MainLogic:
             for y in range(len(board[x])):
                 if not board[x][y]:
                     steps_list.append([x, y])   # list of possible steps
-
-##################################################################################################
         step = random.choice(steps_list)
         await self.process_step(step, username)
 
     async def check_last_step(self, char, position, username):
         steps_left = list(filter(lambda x: x == "", [lst for sublist in board for lst in sublist]))  # steps left
+        # if board.check_win(char, position[0], position[1]):
         if last_step_check(board, char, position):
             await self.process_win(char, position, username)
         elif not len(steps_left):

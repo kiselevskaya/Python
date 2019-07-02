@@ -1,7 +1,8 @@
+import re
 
 
 class Board:
-    def __init__(self, side=15, win_length=5):
+    def __init__(self, side=5, win_length=3):
         self.side = side
         self.board = []
         self.center = self.side//2
@@ -9,7 +10,7 @@ class Board:
         self.radius = (self.win_length*2-1)//2
 
     def create_board(self):
-        self.board = [['' for y in range(self.side)] for x in range(self.side)]
+        self.board = [['' for x in range(self.side)] for y in range(self.side)]
         return self.board
 
     def get_field(self):
@@ -19,72 +20,61 @@ class Board:
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def make_step(self, ch='x', x=7, y=7):
-        self.board[x][y] = ch*(self.board[x][y] == '')
+    def make_step(self, ch, y, x):
+        self.board[x][y] = ch*(self.board[y][x] == '')
         return self.board
 
-    def get_possibilities(self, x=None, y=None):
-        # all positions in row, column or diagonals in certain radius
-        xs = list(i for i in range(x-self.radius, (x+self.radius)+1) if 0 <= i < self.side)
+    def reset_board(self):
+        self.board = [['' for x in y] for y in self.board]
+        return self.board
+
+    def directions(self, y=None, x=None):
+        # all positions in row, column
         ys = list(i for i in range(y-self.radius, (y+self.radius)+1) if 0 <= i < self.side)
-        dxy1 = list(zip(xs, ys))
-        dxy2 = list(zip(xs, ys[::-1]))
+        xs = list(i for i in range(x-self.radius, (x+self.radius)+1) if 0 <= i < self.side)
 
-        horizontal = []
-        vertical = []
-        diagonally = []
-        diagonally2 = []
-        for u in ys:
-            horizontal.append([self.board[x][u], [x, u]])
-        for v in xs:
-            vertical.append([self.board[v][y], [v, y]])
-        for i in dxy1:
-            diagonally.append([self.board[i[0]][i[1]], [i[0], i[1]]])
-        for i in dxy2:
-            diagonally2.append([self.board[i[0]][i[1]], [i[0], i[1]]])
-
+        horizontal = list([self.board[y][u], [y, u]] for u in xs)
+        vertical = list([self.board[v][x], [v, x]] for v in ys)
         # each line contains a nested list with elements of character and position eg. [['x', [3, 2]],...]
-        return [horizontal, vertical, diagonally, diagonally2]
+        output = [horizontal, vertical]+self.get_diagonals(y, x)
+        return output
 
-    def get_check_line(self, line=None):
-        # returns string of characters in the checking line to further comparison with patterns
-        # return ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
-        return ''.join(map(lambda x: '0' if x == '' else 'x', list(line[i][0] for i in range(len(line)))))
+    def get_diagonals(self, y, x):
+        diagonally = [[self.board[y][x], [y, x]]]
+        diagonally2 = [[self.board[y][x], [y, x]]]
+        y0, x0 = y, x
+        # go left and up
+        while y-1 >= 0 and x-1 >= 0 and (y-1 >= y0-self.radius and x-1 >= x0-self.radius):
+            y, x = y-1, x-1
+            diagonally.insert(0, [self.board[y][x], [y, x]])
+        # go right and down
+        y, x = y0, x0
+        while y+1 < len(self.board) and x+1 < len(self.board) and (y+1 <= y0+self.radius and x+1 <= x0+self.radius):
+            y, x = y+1, x+1
+            diagonally.append([self.board[y][x], [y, x]])
+        # go right and up
+        y, x = y0, x0
+        while y-1 >= 0 and x+1 < len(self.board) and (y-1 >= y0-self.radius and x+1 <= x0+self.radius):
+            y, x = y-1, x+1
+            diagonally2.insert(0, [self.board[y][x], [y, x]])
+        # go left and down
+        y, x = y0, x0
+        while y+1 < len(self.board) and x-1 >= 0 and (y+1 <= y0+self.radius and x-1 >= x0-self.radius):
+            y, x = y+1, x-1
+            diagonally2.append([self.board[y][x], [y, x]])
+        return [diagonally, diagonally2]
 
-    def best_lines(self, x=None, y=None, patterns=None, ch=None):
-        all_best = []
-        for line in self.get_possibilities(x, y):
-            all_best.append(self.max_line_value(self.get_check_line(line), patterns)*(not 0))
-        # get index of max val in all best which will be the index of line in self.get_possibilities
-        # so could be extracted line of positions for best step
-        return all_best
-
-    def max_line_value(self, check_line, patterns=None):
-        all_match = []
-        for pattern in patterns:
+    def check_win(self, ch, y, x):
+        for line in self.directions(y, x):
+            print(line)
+            txt = ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
             try:
-                ''.join(check_line).index(''.join(pattern['pattern']))
-                all_match.append(pattern)
-            except ValueError:
+                pattern = ch*self.win_length
+                win_indexes = (re.search(r"{}{}*".format(pattern, ch), txt).span())
+                print('WIN', list(line[i][1] for i in range(win_indexes[0], win_indexes[1])))
+                return list(line[i][1] for i in range(win_indexes[0], win_indexes[1]))
+            except AttributeError:
                 continue
-        try:
-            return list(p for p in patterns if p['value'] == max(list(i['value'] for i in all_match)))
-        except ValueError:
-            return False
-
-
-pre_patterns = [{'value': 10000, 'pattern': ['xxxxx']},
-                {'value': 1000, 'pattern': ['0xxxx0']},
-                {'value': 500, 'pattern': ['xxxx0']},
-                {'value': 400, 'pattern': ['x0xxx', 'xx0xx']},
-                {'value': 100, 'pattern': ['00xxx000']},
-                {'value': 80, 'pattern': ['00xxx00']},
-                {'value': 75, 'pattern': ['0xxx00']},
-                {'value': 50, 'pattern': ['0xxx0', 'xxx00']},
-                {'value': 25, 'pattern': ['x0xx0', 'xx0x0', 'x00xx']},
-                {'value': 10, 'pattern': ['000xx000']},
-                {'value': 5, 'pattern': ['0xx0']}
-                ]
 
 
 board = Board()
@@ -111,8 +101,5 @@ board.make_step('', 3, 3)
 board.make_step('o', 3, 4)
 print(board.get_field())
 print()
-# print(board.get_possibilities(3, 2)[1])
-# print(board.get_check_line(board.get_possibilities(3, 2)[1]))
-print(board.best_lines(3, 2, pre_patterns))
-
+board.check_win('x', 1, 2)
 
