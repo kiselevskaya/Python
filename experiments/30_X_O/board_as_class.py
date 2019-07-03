@@ -8,6 +8,7 @@ class Board:
         self.center = self.side//2
         self.win_length = win_length
         self.radius = (self.win_length*2-1)//2
+        self.potential_steps = []
 
     def create_board(self):
         self.board = [['' for x in range(self.side)] for y in range(self.side)]
@@ -21,7 +22,7 @@ class Board:
         return "%s(%r)" % (self.__class__, self.__dict__)
 
     def make_step(self, ch, y, x):
-        self.board[x][y] = ch*(self.board[y][x] == '')
+        self.board[y][x] = ch*(self.board[y][x] == '')
         return self.board
 
     def reset_board(self):
@@ -76,30 +77,108 @@ class Board:
             except AttributeError:
                 continue
 
+    def get_possibilities(self, ch, y, x):
+        for line in self.directions(y, x):
+            txt = ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
+            d = re.sub('[x]', '1', txt)
+            d = re.sub('[o]', '2', d)
+            print(d, (list(line[i][1] for i in range(len(line)) if line[i][0] == '')))
+            self.potential_steps += (list(line[i][1] for i in range(len(line)) if line[i][0] == ''))
+            # try:
+            #     # output = re.search(r"[^o]{5}[^o]*", txt).span() if ch == 'x' else re.search(r"[^x]{5}[^x]*", txt).span()
+            #     if ch == 'x':
+            #         pos_idx = re.search(r"[^o]{5}[^o]*", txt).span()
+            #         quantity = len(re.findall(r'[x]', txt))
+            #     else:
+            #         pos_idx = re.search(r"[^x]{5}[^x]*", txt).span()
+            #         quantity = len(re.findall(r'[o]', txt))
+            #     print(txt, pos_idx)
+            #     possible_steps = list(line[i][1] for i in range(len(line)))
+            #     print(possible_steps)
+            # except AttributeError:
+            #     continue
+        print(self.potential_steps)
+
+    # def get_comparison(self, txt, line):
+    #     empty_steps = []
+    #     for i in range(len(line)):
+    #         if line[i][0] == 0:
+    #             empty_steps.append(line[i][1])
+    #     print(empty_steps)
+    #     return empty_steps
+
+    def get_value(self):
+        # check just on first possible step in all which are in potential steps list
+        # 1. get directions
+        check_pattern = []
+        y = self.potential_steps[0][0]
+        x = self.potential_steps[0][1]
+        for line in self.directions(y, x):
+            txt = ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
+            txt = re.sub('[x]', '1', txt)
+            txt = re.sub('[o]', '2', txt)
+            check_pattern.append(txt)
+        check_pattern = '|'.join(check_pattern)
+        print('Compare this with patterns to get value', check_pattern)
+        # if no math:
+        # if (y <=1 and x <= 1) or (y >= len(self.board)-2 and x >= len(self.board)-2): value = 3
+        # elif y*x == 0 or y = -x or x == -y: value = 2
+        # else: value = 1
+        return check_pattern
+
 
 board = Board()
+
+
+class Computer:
+    def __init__(self, ch='x'):
+        self.attack = []
+        self.defense = []
+        self.y = board.center
+        self.x = board.center
+        self.ch = ch
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
+    def make_step(self, ch=None, y=None, x=None):
+        if ch or y or x is not None: self.ch, self.y, self.x = ch, y, x
+        board.make_step(self.ch, self.y, self.x)
+
+    def step_analise(self):
+        board.get_possibilities(self.ch, self.y, self.x)
+
+
 field = board.create_board()
 print(repr(board))
-print()
-board.make_step('o', 1, 4)
-board.make_step('', 2, 3)
-board.make_step('x', 3, 2)
-board.make_step('x', 4, 1)
-
-board.make_step('', 0, 2)
-board.make_step('', 1, 2)
-board.make_step('o', 2, 2)
-board.make_step('', 4, 2)
-
-board.make_step('x', 1, 0)
-board.make_step('x', 2, 1)
-board.make_step('o', 4, 3)
-
-board.make_step('x', 3, 0)
-board.make_step('', 3, 1)
-board.make_step('', 3, 3)
-board.make_step('o', 3, 4)
 print(board.get_field())
 print()
-board.check_win('x', 1, 2)
+
+ai = Computer()
+ai.make_step()
+print(board.get_field())
+ai.step_analise()
+print()
+
+board.make_step('o', 2, 1)
+print(board.get_field())
+board.get_possibilities('o', 2, 1)
+# board.make_step('', 2, 3)
+# board.make_step('o', 3, 2)
+# board.make_step('o', 4, 1)
+#
+# board.make_step('', 0, 2)
+# board.make_step('', 1, 2)
+# board.make_step('', 4, 2)
+#
+# board.make_step('o', 1, 0)
+# board.make_step('x', 2, 1)
+# board.make_step('o', 4, 3)
+#
+# board.make_step('o', 3, 0)
+# board.make_step('', 3, 1)
+# board.make_step('', 3, 3)
+# board.make_step('o', 3, 4)
+print()
+print(board.get_value())
 
