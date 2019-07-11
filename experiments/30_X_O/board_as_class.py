@@ -7,6 +7,7 @@ import re
 pattern = Patterns()
 compare_with = pattern.get_patterns()
 
+
 class Board:
     def __init__(self, side=5, win_length=3):
         self.side = side
@@ -29,6 +30,7 @@ class Board:
 
     def make_step(self, ch, y, x):
         self.board[y][x] = ch*(self.board[y][x] == '')
+        self.get_possibilities(ch, y, x)
         return self.board
 
     def reset_board(self):
@@ -84,16 +86,18 @@ class Board:
 
     def get_possibilities(self, ch, y, x):
         for line in self.directions(y, x):
-            self.potential_steps += (list(line[i][1] for i in range(len(line)) if line[i][0] == ''))
+            self.potential_steps += (list(line[i][1] for i in range(len(line)) if line[i][0] == '' and line[i][1] not in self.potential_steps))
         try:
             self.potential_steps.pop(self.potential_steps.index([y, x]))
         except ValueError:
             print('Not in list')
-        print(self.potential_steps)
+        return self.potential_steps
 
     def get_value(self):
-        check_pattern, result = [], [[], []]
+        # values = [[{'value': 5, 'pos': [1, 2]},...{...}],[{'value': 10, 'pos': [3, 4]},...{...}]] first list for 'X' second - for 'O'
+        values = [[], []]
         # check by example just on first possible step in all which are in potential steps list
+        print('Potential steps: ', self.potential_steps)
         for j in range(len(self.potential_steps)):
             y = self.potential_steps[j][0]
             x = self.potential_steps[j][1]
@@ -103,44 +107,25 @@ class Board:
                 txt = ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
                 txt = re.sub('[x]', '1', txt)
                 txt = re.sub('[o]', '2', txt)
-                check_pattern.append(txt)
-                print('Compare this with patterns to get value', check_pattern)
-                for i in range(len(self.compare_patterns(txt, y, x))):
-                    if len(self.compare_patterns(txt, y, x)[i]) != 0:
-                        result[i] += self.compare_patterns(txt, y, x)[i]
-        print(result)
-        # if no math:
-        # if (y <=1 and x <= 1) or (y >= len(self.board)-2 and x >= len(self.board)-2): value = 3
-        # elif y*x == 0 or y = -x or x == -y: value = 2
-        # else: value = 1
-        return result
-
-    def compare_patterns(self, txt, y, x):
-        x_value, o_value = [], []
-        for i in range(len(compare_with[1])):
-            if re.match(compare_with[1][i], txt):
-                print(re.match(compare_with[1][i], txt))
-                print('value: {}, pos: {}, pattern: {}'.format(compare_with[0][i], [y, x], compare_with[1][i]))
-                x_value.append([compare_with[0][i], [y, x]])
-            elif re.match(compare_with[2][i], txt):
-                print(re.match(compare_with[2][i], txt))
-                print('value: {}, pos: {}, pattern: {}'.format(compare_with[0][i], [y, x], compare_with[2][i]))
-                o_value.append([compare_with[0][i], [y, x]])
-        return [x_value, o_value]
+                for k in range(len(compare_with[1])):
+                    if re.match(compare_with[1][k], txt):
+                        values[0].append([compare_with[0][k], [y, x]])
+                    if re.match(compare_with[2][k], txt):
+                        values[1].append([compare_with[0][k], [y, x]])
+        return values
 
 
 board = Board()
-
+import random
 
 class Computer:
     def __init__(self, ch='x'):
-        self.attack = []
-        self.defense = []
+        self.attack = None
+        self.defense = None
         self.y = board.center
         self.x = board.center
         self.ch = ch
-        self.defense = []
-        self.attack = []
+        self.radius = board.radius
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
@@ -149,9 +134,46 @@ class Computer:
         if ch or y or x is not None: self.ch, self.y, self.x = ch, y, x
         board.make_step(self.ch, self.y, self.x)
 
-    def step_analise(self):
-        # should compare patterns and return position to make best step
-        board.get_possibilities(self.ch, self.y, self.x)
+    def get_next_step(self):
+        if self.ch == 'x':
+            self.attack = self.best_option(board.get_value()[0])
+            self.defense = self.best_option(board.get_value()[1])
+        else:
+            self.attack = self.best_option(board.get_value()[1])
+            self.defense = self.best_option(board.get_value()[0])
+        print('Best po for attack: ', self.attack)
+        print('Best pos for defence: ', self.defense)
+        for pos in self.attack[0]:
+            if pos in self.defense[0]:
+                return pos
+            elif self.attack[0][1] < self.defense[0][1]:
+                return random.choice(self.defense[0])
+            else:
+                return random.choice(self.attack[0])
+
+    def best_option(self, val_pos):
+        max_value = max(list(i[0] for i in val_pos))
+        print('Max value: ', max_value)
+        max_val_pos = list(e[1] for e in val_pos if e[0] == max_value)
+        print('Positions for max value: ', max_val_pos)
+
+        occurrences = lambda s, lst: (i for i, e in enumerate(lst) if e == s)
+
+        repeat = list(list(occurrences(i, max_val_pos)) for i in max_val_pos)
+        print('Current index pos repeats in indexes: ', repeat)
+        frequency = max(list(len(list(occurrences(i, max_val_pos))) for i in max_val_pos))
+        print('Max frequency for positions with max value', frequency)
+
+        #   list of indexes with more frequent position
+        best_pos_index = list(set(sum(list(j for j in repeat if len(j) == frequency), [])))
+        print('List of indexes with more frequent position: ', best_pos_index)
+
+        best_pos = list()
+        for pos in list(max_val_pos[i] for i in best_pos_index):
+            if pos not in best_pos:
+                best_pos.append(pos)
+        print('List of pos for best next step: ', best_pos)
+        return [best_pos, max_value]
 
 
 field = board.create_board()
@@ -159,7 +181,6 @@ field = board.create_board()
 ai = Computer()
 ai.make_step()
 print(board.get_field())
-ai.step_analise()
 print()
 
 board.make_step('x', 1, 2)
@@ -167,4 +188,4 @@ board.make_step('o', 2, 1)
 print(board.get_field())
 board.get_possibilities('o', 2, 1)
 print()
-print(board.get_value())
+print(ai.get_next_step())
