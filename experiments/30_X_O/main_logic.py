@@ -7,10 +7,6 @@ import asyncio
 from user import *
 from board_as_class import *
 
-board_side = 15
-win_length = 5
-board = Board(board_side, win_length)
-
 
 class MainLogic:
     def __init__(self):
@@ -128,16 +124,10 @@ class MainLogic:
 
         await self.check_last_step(char, position, username)
 
-    async def process_computer_step(self, position, username=None):
-        previous_pos = position
-        print(previous_pos)
-
-        steps_list = []
-        for x in range(len(self.field)):
-            for y in range(len(self.field[x])):
-                if not self.field[x][y]:
-                    steps_list.append([x, y])   # list of possible steps
-        step = random.choice(steps_list)
+    async def process_computer_step(self, username=None):
+        char = self.user_info[username][0]
+        print('CHAR: ', char)
+        step = ai.get_next_step(char)
         await self.process_step(step, username)
 
     async def check_last_step(self, char, position, username):
@@ -151,7 +141,7 @@ class MainLogic:
             self.user_info[next_user][2] = True  # is it turn of this user to make a step
 
             if next_user == "Computer":
-                await self.process_computer_step(position, next_user)
+                await self.process_computer_step(next_user)
 
             await self.send_to_all('user_info', 'update', self.user_info)
 

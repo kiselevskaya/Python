@@ -2,6 +2,7 @@
 
 from patterns import *
 import re
+import random
 
 
 pattern = Patterns()
@@ -30,7 +31,7 @@ class Board:
 
     def make_step(self, ch, y, x):
         self.board[y][x] = ch*(self.board[y][x] == '')
-        self.get_possibilities(ch, y, x)
+        self.get_possibilities(y, x)
         return self.board
 
     def reset_board(self):
@@ -73,7 +74,6 @@ class Board:
 
     def check_win(self, ch, y, x):
         for line in self.directions(y, x):
-            print(line)
             txt = ''.join(map(lambda z: '0' if z == '' else z, list(line[i][0] for i in range(len(line)))))
             try:
                 pattern = ch*self.win_length
@@ -84,7 +84,7 @@ class Board:
                 continue
         return False
 
-    def get_possibilities(self, ch, y, x):
+    def get_possibilities(self, y, x):
         for line in self.directions(y, x):
             self.potential_steps += (list(line[i][1] for i in range(len(line)) if line[i][0] == '' and line[i][1] not in self.potential_steps))
         try:
@@ -105,51 +105,72 @@ class Board:
                 indx = [i for i in range(len(line)) if line[i][1] == [y, x]][0]
                 line[indx][0] = '7'
                 txt = ''.join(map(lambda x: '0' if x == '' else x, list(line[i][0] for i in range(len(line)))))
-                txt = re.sub('[x]', '1', txt)
-                txt = re.sub('[o]', '2', txt)
+                txt = re.sub('[X]', '1', txt)
+                txt = re.sub('[O]', '2', txt)
                 for k in range(len(compare_with[1])):
                     if re.match(compare_with[1][k], txt):
                         values[0].append([compare_with[0][k], [y, x]])
+                    elif y <= board.radius and x <= board.radius:
+                        values[0].append([3, [y, x]])
+                    elif y >= (board.side-board.radius) and x >= (board.side-board.radius):
+                        values[0].append([3, [y, x]])
+                    elif abs(y) == abs(x) or y*x == 0:
+                        values[0].append([2, [y, x]])
+                    else:
+                        values[0].append([1, [y, x]])
+
                     if re.match(compare_with[2][k], txt):
                         values[1].append([compare_with[0][k], [y, x]])
+                    elif y <= board.radius and x <= board.radius:
+                        values[1].append([3, [y, x]])
+                    elif y >= (board.side-board.radius) and x >= (board.side-board.radius):
+                        values[1].append([3, [y, x]])
+                    elif abs(y) == abs(x) or y*x == 0:
+                        values[1].append([2, [y, x]])
+                    else:
+                        values[1].append([1, [y, x]])
         return values
 
 
-board = Board()
-import random
+board_side = 15
+win_length = 5
+board = Board(board_side, win_length)
+
 
 class Computer:
-    def __init__(self, ch='x'):
+    def __init__(self):
         self.attack = None
         self.defense = None
-        self.y = board.center
-        self.x = board.center
-        self.ch = ch
         self.radius = board.radius
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def make_step(self, y=None, x=None, ch=None):
-        if ch or y or x is not None: self.ch, self.y, self.x = ch, y, x
-        board.make_step(self.ch, self.y, self.x)
+    def get_next_step(self, ch):
+        if len(board.potential_steps) == 0:
+            return [board.center, board.center]
+        values = board.get_value()
+        print('VALUES: ', values)
+        if ch == 'X':
 
-    def get_next_step(self):
-        if self.ch == 'x':
-            self.attack = self.best_option(board.get_value()[0])
-            self.defense = self.best_option(board.get_value()[1])
+            self.attack = self.best_option(values[0])
+            self.defense = self.best_option(values[1])
         else:
-            self.attack = self.best_option(board.get_value()[1])
-            self.defense = self.best_option(board.get_value()[0])
+            self.attack = self.best_option(values[1])
+            self.defense = self.best_option(values[0])
         print('Best po for attack: ', self.attack)
         print('Best pos for defence: ', self.defense)
         for pos in self.attack[0]:
-            if pos in self.defense[0]:
-                return pos
-            elif self.attack[0][1] < self.defense[0][1]:
-                return random.choice(self.defense[0])
+            if self.attack[1] < self.defense[1]:
+                if pos in self.defense[0]:
+                    return pos
+                else:
+                    return random.choice(self.defense[0])
             else:
-                return random.choice(self.attack[0])
+                if pos in self.defense[0]:
+                    return pos
+                else:
+                    return random.choice(self.attack[0])
 
     def best_option(self, val_pos):
         max_value = max(list(i[0] for i in val_pos))
@@ -176,16 +197,10 @@ class Computer:
         return [best_pos, max_value]
 
 
-field = board.create_board()
-
 ai = Computer()
-ai.make_step()
-print(board.get_field())
-print()
 
-board.make_step('x', 1, 2)
-board.make_step('o', 2, 1)
-print(board.get_field())
-board.get_possibilities('o', 2, 1)
-print()
-print(ai.get_next_step())
+
+# field = board.create_board()
+# print(board.get_field())
+# board.make_step('X', 5, 5)
+# print(ai.get_next_step('O'))
