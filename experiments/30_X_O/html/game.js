@@ -152,7 +152,7 @@ class Game {
                 td.style.border = "1px solid black";
                 td.onclick = function(){
                     console.log("position:", [row, col]);
-                    if (tn.nodeValue == ""&& this.user_info[this.username][2] == true) {
+                    if (tn.nodeValue == "" && this.user_info[this.username][2] == true) {
                         this.wsc.send({"msg": "step", "position": [row, col]});
                     }
                 }.bind(this);

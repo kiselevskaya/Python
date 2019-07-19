@@ -117,6 +117,8 @@ class MainLogic:
         await self.send_to_all('board_info', 'update', self.field)
 
     async def process_step(self, position, username):
+        if not board.check_step(position[0], position[1]):
+            return
         self.user_info[username][2] = False  # is it turn of this user to make a step
         char = self.user_info[username][0]
         board.make_step(char, position[0], position[1])
@@ -126,7 +128,7 @@ class MainLogic:
 
     async def process_computer_step(self, username=None):
         char = self.user_info[username][0]
-        print('CHAR: ', char)
+        # print('CHAR: ', char)
         step = ai.get_next_step(char)
         await self.process_step(step, username)
 
@@ -140,10 +142,10 @@ class MainLogic:
             next_user = [user for user in[*self.user_info] if user != username][0]  # user who should make next step
             self.user_info[next_user][2] = True  # is it turn of this user to make a step
 
-            if next_user == "Computer":
+            if next_user == 'Computer':
                 await self.process_computer_step(next_user)
 
-            await self.send_to_all('user_info', 'update', self.user_info)
+        await self.send_to_all('user_info', 'update', self.user_info)
 
     async def process_win(self, char, position, username):
         self.user_info[username][1] += 1    # update score
@@ -161,3 +163,6 @@ class MainLogic:
         for user in [*self.user_info]:
             await self.user_data(user, self.user_info[user][0], self.user_info[user][1])
         await self.send_to_all('user_info', 'update', self.user_info)
+        if self.user_info['Computer'][0] == 'X':
+            await self.process_computer_step('Computer')
+

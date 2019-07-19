@@ -29,13 +29,17 @@ class Board:
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
+    def check_step(self, y, x):
+        return True if self.board[y][x] == '' else False
+
     def make_step(self, ch, y, x):
-        self.board[y][x] = ch*(self.board[y][x] == '')
+        self.board[y][x] = ch
         self.get_possibilities(y, x)
         return self.board
 
     def reset_board(self):
         self.board = [['' for x in y] for y in self.board]
+        self.potential_steps = []
         return self.board
 
     def directions(self, y=None, x=None):
@@ -78,7 +82,7 @@ class Board:
             try:
                 pattern = ch*self.win_length
                 win_indexes = (re.search(r"{}{}*".format(pattern, ch), txt).span())
-                print('WIN', list(line[i][1] for i in range(win_indexes[0], win_indexes[1])))
+                # print('WIN', list(line[i][1] for i in range(win_indexes[0], win_indexes[1])))
                 return list(line[i][1] for i in range(win_indexes[0], win_indexes[1]))
             except AttributeError:
                 continue
@@ -97,7 +101,7 @@ class Board:
         # values = [[{'value': 5, 'pos': [1, 2]},...{...}],[{'value': 10, 'pos': [3, 4]},...{...}]] first list for 'X' second - for 'O'
         values = [[], []]
         # check by example just on first possible step in all which are in potential steps list
-        print('Potential steps: ', self.potential_steps)
+        # print('Potential steps: ', self.potential_steps)
         for j in range(len(self.potential_steps)):
             y = self.potential_steps[j][0]
             x = self.potential_steps[j][1]
@@ -150,16 +154,15 @@ class Computer:
         if len(board.potential_steps) == 0:
             return [board.center, board.center]
         values = board.get_value()
-        print('VALUES: ', values)
+        # print('VALUES: ', values)
         if ch == 'X':
-
             self.attack = self.best_option(values[0])
             self.defense = self.best_option(values[1])
         else:
             self.attack = self.best_option(values[1])
             self.defense = self.best_option(values[0])
-        print('Best po for attack: ', self.attack)
-        print('Best pos for defence: ', self.defense)
+        # print('Best po for attack: ', self.attack)
+        # print('Best pos for defence: ', self.defense)
         for pos in self.attack[0]:
             if self.attack[1] < self.defense[1]:
                 if pos in self.defense[0]:
@@ -174,26 +177,26 @@ class Computer:
 
     def best_option(self, val_pos):
         max_value = max(list(i[0] for i in val_pos))
-        print('Max value: ', max_value)
+        # print('Max value: ', max_value)
         max_val_pos = list(e[1] for e in val_pos if e[0] == max_value)
-        print('Positions for max value: ', max_val_pos)
+        # print('Positions for max value: ', max_val_pos)
 
         occurrences = lambda s, lst: (i for i, e in enumerate(lst) if e == s)
 
         repeat = list(list(occurrences(i, max_val_pos)) for i in max_val_pos)
-        print('Current index pos repeats in indexes: ', repeat)
+        # print('Current index pos repeats in indexes: ', repeat)
         frequency = max(list(len(list(occurrences(i, max_val_pos))) for i in max_val_pos))
-        print('Max frequency for positions with max value', frequency)
+        # print('Max frequency for positions with max value', frequency)
 
         #   list of indexes with more frequent position
         best_pos_index = list(set(sum(list(j for j in repeat if len(j) == frequency), [])))
-        print('List of indexes with more frequent position: ', best_pos_index)
+        # print('List of indexes with more frequent position: ', best_pos_index)
 
         best_pos = list()
         for pos in list(max_val_pos[i] for i in best_pos_index):
             if pos not in best_pos:
                 best_pos.append(pos)
-        print('List of pos for best next step: ', best_pos)
+        # print('List of pos for best next step: ', best_pos)
         return [best_pos, max_value]
 
 
