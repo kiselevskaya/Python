@@ -1,7 +1,7 @@
 
 
 def brain_luck(code, input):
-    input_lst = [ord(l) for l in list(input)]
+    input_lst = decode_utf(input)
     code_index, input_index, work_on, i = 0, 0, 0, 0
     output, open_brackets, close_brackets, data = [], [], [], []
 
@@ -65,7 +65,30 @@ def brain_luck(code, input):
     return output
 
 
-print(brain_luck(',+[-.,+]', 'Codewars' + chr(255)))    # 'Codewars'
+def decode_utf(input):
+    out = []
+    for i in input.split(", "):
+        try:
+            j = i.encode('utf-8').decode('utf-8', 'replace')
+        except Exception as e:
+            # print(e)
+            j = i.decode('utf-8', 'replace')
+        try:
+            out.append(int(j))
+        except Exception as e:
+            # print(e)
+            out.append([ord(l) for l in list(j)])
+    flat_list = []
+    _ = [flat_list.extend(item) if isinstance(item, list) else flat_list.append(item) for item in out if item]
 
+    return flat_list
+
+
+print(brain_luck('++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.', ''))
+print(brain_luck(',+[-.,+]', 'Codewars' + chr(255)))    # 'Codewars'
 print(brain_luck(',>,<[>[->+>+<<]>>[-<<+>>]<<<-]>>.', chr(8) + chr(9)))   # chr(72)
 
+# print(brain_luck(',+[-.,+]', tk + chr(255)))
+# print(brain_luck(<None given>, '11, 11, 2(, 3\x1f, 5\r, 8\xf2, =\xc5, E}, R\x08, gK, '))  # '1, 1, 2, 3, 5, 8, 13, 21, 34, 55'
+# check = '11, 11, 2(, 3\x1f, 5\r, 8\xf2, =\xc5, E}, R\x08, gK, '
+# print(decode_utf(check))
