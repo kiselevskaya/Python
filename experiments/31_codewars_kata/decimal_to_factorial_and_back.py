@@ -4,6 +4,7 @@ import math
 
 
 def dec2FactString(nb):
+    extended_numbers = list('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
     output = ''
     rest = nb
     # find the number, factorial of which is the closest to the given number
@@ -12,29 +13,27 @@ def dec2FactString(nb):
         max_factorial += 1
     else:
         max_factorial -= 1
-        print('factorial ', max_factorial, ' is ', math.factorial(max_factorial))
     # find the maximum multiplier for each factorial and add to output
-    for factor in range(max_factorial, 0, -1):
+    for number in range(max_factorial, -1, -1):
         subtractions = []
-        for multiplier in range(0, factor+1):
-            if rest - multiplier*math.factorial(factor) >= 0:
-                subtractions.append(rest - multiplier*math.factorial(factor))
+        for multiplier in range(0, number+1):
+            if rest - multiplier*math.factorial(number) >= 0:
+                subtractions.append(rest - multiplier*math.factorial(number))
         rest = min(subtractions)
-        output += str(subtractions.index(min(subtractions)))
+        output += extended_numbers[subtractions.index(min(subtractions))]
         subtractions = []
-
     return output
 
 
 def factString2Dec(string):
-    number, n = 0, 0
-    for i in list(string)[::-1]:
-        number += int(i)*math.factorial(n)
-        n += 1
-    return number
+    extended_numbers = list('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    output, number = 0, 0
+    for multiplier in list(string)[::-1]:
+        multiplier = extended_numbers.index(multiplier)
+        output += multiplier*math.factorial(number)
+        number += 1
+    return output
 
 
-# print(factString2Dec("341010"))
+print(factString2Dec("341010"))
 print(dec2FactString(463))
-# test.assert_equals(dec2FactString(463), "341010")
-# test.assert_equals(factString2Dec("341010"), 463)
