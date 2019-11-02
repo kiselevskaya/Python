@@ -53,22 +53,53 @@
     † For incrementing sequences, 0 should come after 9, and not before 1, as in 7890.
     ‡ For decrementing sequences, 0 should come after 1, and not before 9, as in 3210.
 
-04_smallest_code_interpreter
-    Inspired from real-world Brainf**k, we want to create an interpreter of that language which will support the following instructions
-        (the machine memory or 'data' should behave like a potentially infinite array of bytes, initialized to 0):
+                04_smallest_code_interpreter
+                    Inspired from real-world Brainf**k, we want to create an interpreter of that language which will support the following instructions
+                        (the machine memory or 'data' should behave like a potentially infinite array of bytes, initialized to 0):
 
-    > increment the data pointer (to point to the next cell to the right).
-    < decrement the data pointer (to point to the next cell to the left).
-    + increment (increase by one, truncate overflow: 255 + 1 = 0) the byte at the data pointer.
-    - decrement (decrease by one, treat as unsigned byte: 0 - 1 = 255 ) the byte at the data pointer.
-    . output the byte at the data pointer.
-    , accept one byte of input, storing its value in the byte at the data pointer.
-    [ if the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching ] command.
-    ] if the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching [ command.
-    The function will take in input...
+                    > increment the data pointer (to point to the next cell to the right).
+                    < decrement the data pointer (to point to the next cell to the left).
+                    + increment (increase by one, truncate overflow: 255 + 1 = 0) the byte at the data pointer.
+                    - decrement (decrease by one, treat as unsigned byte: 0 - 1 = 255 ) the byte at the data pointer.
+                    . output the byte at the data pointer.
+                    , accept one byte of input, storing its value in the byte at the data pointer.
+                    [ if the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching ] command.
+                    ] if the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching [ command.
+                    The function will take in input...
 
-    the program code, a string with the sequence of machine instructions,
-    the program input, a string, eventually empty, that will be interpreted as an array of bytes using each character's ASCII code and will be consumed by the , instruction
-    ... and will return ...
+                    the program code, a string with the sequence of machine instructions,
+                    the program input, a string, eventually empty, that will be interpreted as an array of bytes using each character's ASCII code and will be consumed by the , instruction
+                    ... and will return ...
 
-    the output of the interpreted code (always as a string), produced by the . instruction.
+                    the output of the interpreted code (always as a string), produced by the . instruction.
+
+05_decimal_to_factorial_and_back
+    Coding decimal numbers with factorials is a way of writing out numbers in a base system that depends on factorials, rather than powers of numbers.
+    In this system, the last digit is always 0 and is in base 0!.
+    The digit before that is either 0 or 1 and is in base 1!. The digit before that is either 0, 1, or 2 and is in base 2!.
+    More generally, the nth-to-last digit is always 0, 1, 2, ..., or n and is in base n!.
+    Example :
+        decimal number 463 is coded as "341010":
+        463 (base 10) = 3×5! + 4×4! + 1×3! + 0×2! + 1×1! + 0×0!
+    If we are limited to digits 0...9 the biggest number we can code is 10! - 1.
+    So we extend 0..9 with letters A to Z. With these 36 digits we can code up to
+        36! − 1 = 37199332678990121746799944815083519999999910 (base 10)
+    We will code two functions. The first one will code a decimal number and return a string with the factorial representation : dec2FactString(nb)
+    The second one will decode a string with a factorial representation and produce the decimal representation : factString2Dec(str).
+    Given numbers will be positive.
+    Note
+        You have tests with Big Integers in Clojure, Julia, Python, Ruby, Haskell, Ocaml, Racket but not with Java and others where the number "nb" in "dec2FactString(nb)" is at most a long.
+
+06_going_to_zero_or_to_infinity
+    Consider the following numbers (where n! is factorial(n)):
+        u1 = (1 / 1!) * (1!)
+        u2 = (1 / 2!) * (1! + 2!)
+        u3 = (1 / 3!) * (1! + 2! + 3!)
+        un = (1 / n!) * (1! + 2! + 3! + ... + n!)
+    Which will win: 1 / n! or (1! + 2! + 3! + ... + n!)?
+    Are these numbers going to 0 because of 1/n! or to infinity due to the sum of factorials or to another number?
+    Task
+    Calculate (1 / n!) * (1! + 2! + 3! + ... + n!) for a given n, where n is an integer greater or equal to 1.
+    To avoid discussions about rounding, return the result truncated to 6 decimal places, for example:
+        1.0000989217538616 will be truncated to 1.000098
+        1.2125000000000001 will be truncated to 1.2125
