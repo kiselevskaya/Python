@@ -18,18 +18,21 @@ class Warrior(object):
     def training(self, trainer):
         if self.level >= trainer[2]:
             self.set_experience(self.experience+trainer[1])
-            self.achievements.append(trainer[0])
+            self.set_achievements(trainer[0])
             return trainer[0]
         else:
             return "Not strong enough"
 
+    def set_achievements(self, new_achievement):
+        self.achievements.append(new_achievement)
+
     def battle(self, enemy_level):
         if enemy_level not in range(1, 101):
             return "Invalid level"
-        elif self.ranks.index(self.rank) < self.ranks.index(self.ranks[enemy_level//10]) and self.level+5 <= enemy_level:
+        elif self.ranks.index(self.rank) < enemy_level//10 and self.level+5 <= enemy_level:
             return "You've been defeated"
         elif enemy_level > self.level:
-            self.set_experience(20*(enemy_level-self.level)**2)
+            self.set_experience(self.experience+20*(enemy_level-self.level)**2)
             return "An intense fight"
         elif self.level == enemy_level:
             self.set_experience(self.experience+10)
@@ -42,10 +45,9 @@ class Warrior(object):
 
     def set_experience(self, exp):
         self.experience = exp
-        if self.experience//100 > 100:
-            self.level = 100
-        else:
-            self.level = self.experience//100
+        if self.experience > 10000:
+            self.experience = 10000
+        self.level = self.experience//100
         self.rank = self.ranks[self.experience//1000]
 
 
