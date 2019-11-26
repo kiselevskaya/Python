@@ -17,14 +17,11 @@ def who_is_winner(pieces_position_list):
         x = list(row_counter.keys()).index(column)
         row_counter[column] -= 1
         board.make_step(who, y, x)
-        board.directions(y, x)
         if board.check_win(who, y, x, steps_counter) == 'Y':
             return 'Yellow'
         elif board.check_win(who, y, x, steps_counter) == 'R':
             return 'Red'
-        elif not board.check_win(who, y, x, steps_counter) and (steps_counter == 42 or i == len(pieces_position_list)-1):
-            return 'Draw'
-    return 'Something goes wrong'
+    return 'Draw'
 
 
 class Board:
@@ -51,10 +48,10 @@ class Board:
         return self.board
 
     def directions(self, y, x):
-        row = list(i for i in range(y-self.radius, (y+self.radius)+1) if 0 <= i < self.height)
-        column = list(i for i in range(x-self.radius, (x+self.radius)+1) if 0 <= i < self.width)
-        horizontal = list([self.board[y][u], [y, u]] for u in column)
-        vertical = list([self.board[v][x], [v, x]] for v in row)
+        row = list(i for i in range(x-self.radius, (x+self.radius)+1) if 0 <= i < self.width)
+        column = list(i for i in range(y-self.radius, (y+self.radius)+1) if 0 <= i < self.height)
+        horizontal = list([self.board[y][u], [y, u]] for u in row)
+        vertical = list([self.board[v][x], [v, x]] for v in column)
         # each line contains a nested list with elements of character and position eg. [['x', [3, 2]],...]
         output = [horizontal, vertical]+self.get_diagonals(y, x)
         return output
@@ -93,7 +90,6 @@ class Board:
                 try:
                     pattern = colour*self.win_length
                     win_indexes = (re.search(r"{}{}*".format(pattern, colour), txt).span())
-                    # return list(line[i][1] for i in range(win_indexes[0], win_indexes[1]))
                     return colour
                 except AttributeError:
                     continue
