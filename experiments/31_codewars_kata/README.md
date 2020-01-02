@@ -218,3 +218,10 @@
     In C++, the actions can be accessed by get_action(i)(unsigned int num) where i chooses the function (and therefore can range from 0 to 4) and num is its argument.
     In python ACTIONS() returns a list of lambdas.
     In Golang Actions() retruns a function slice []func(int) int
+
+13_permutations
+    In this kata you have to create all permutations of an input string and remove duplicates, if present. This means, you have to shuffle all letters from the input in all possible orders.
+    Examples:
+        permutations('a'); # ['a']
+        permutations('ab'); # ['ab', 'ba']
+        permutations('aabb'); # ['aabb', 'abab', 'abba', 'baab', 'baba', 'bbaa']
