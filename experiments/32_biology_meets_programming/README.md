@@ -54,3 +54,38 @@ approximate_pattern_matching:
 
 approximate_pattern_count:
     This function computes the number of occurrences of <pattern> in <text> with at most <d> mismatches.
+
+
+
+
+# score_motifs.py
+
+get_count:
+    Function takes a list of strings <motifs> as input and returns the count matrix of <motifs> (as a dictionary of lists)
+
+    Input:  a set of k-mers (string) motifs
+    Output: dictionary of lists with counted motif nucleotides
+
+
+profile_matrix:
+    Profile matrix is the number of occurrences of the i-th nucleotide (each nucleotide at each position of k-mer)
+        divided by t, the number of nucleotides in the column (the number of k-mers in motifs);
+        (divide each element of the count matrix by the number of rows in the count matrix)
+
+    Input:  A list of k-mers motifs
+    Output: the profile matrix of motifs, as a dictionary of lists
+
+
+get_consensus:
+    Consensus string is a string of most popular nucleotides in each column of the motif matrix
+
+    Input:  A list of k-mers motifs
+    Output: Consensus string
+
+
+get_score:
+    Compare the i-th nucleotide of each k-mer of motifs with i-th nucleotide of consensus string
+
+    Input:  A list of k-mers motifs
+    Output: number of all mismatches
+
