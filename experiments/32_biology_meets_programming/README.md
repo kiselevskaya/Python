@@ -1,7 +1,6 @@
 
 
-# symbol_array.py
-
+#   symbol_array.py
 
 symbol_array:
     Input: Genome text as <genome> and <symbol> for eg. 'G'(guanine), 'C' (cytosine), 'A', 'T'
@@ -32,7 +31,7 @@ minimum_skew:
 
 
 
-# humming_distance.py
+#   humming_distance.py
 
 We say that position i in k-mers p and q is a mismatch if the symbols at position i of the two strings are not the same.
 The total number of mismatches between strings p and q is called the Hamming distance between these strings.
@@ -58,7 +57,7 @@ approximate_pattern_count:
 
 
 
-# score_motifs.py
+#   score_motifs.py
 
 get_count:
     Function takes a list of strings <motifs> as input and returns the count matrix of <motifs> (as a dictionary of lists)
@@ -88,4 +87,22 @@ get_score:
 
     Input:  A list of k-mers motifs
     Output: number of all mismatches
+
+
+
+
+#   probability.py
+
+probability:
+    Generating a random string based on a profile matrix by selecting the i-th nucleotide in the string with the probability corresponding to that nucleotide in the i-th column of the profile matrix.
+    The probability that a profile matrix will produce a given string is given by the product of individual nucleotide probabilities.
+
+
+profile_most_probable_kmer:
+    Profile-most Probable k-mer Problem: Find a Profile-most probable k-mer in a string.
+        Input: A string <text>, an integer <k>, and a 4 x <k> matrix Profile.
+        Output: A Profile-most probable k-mer in <text>.
+
+
+http://www.mrgraeme.co.uk/greedy-motif-search/
 

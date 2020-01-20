@@ -3,31 +3,48 @@
 # Input:  a set of k-mers (string) motifs
 # Output: dictionary of lists with counted motif nucleotides
 
-def get_count(motifs):      # can be modify to profile_matrix(motifs)
-    count = {}  # initializing the count dictionary
+# def get_count(motifs):      # can be modify to profile_matrix(motifs)
+#     count = {}  # initializing the count dictionary
+#
+#     # initializing and use the profile dictionary instead of counts to modify the function to get profile_matrix of motifs
+#     # profile = {}
+#
+#     k = len(motifs[0])
+#
+#     #   counts = {'A':[]} --> counts = {'A':[0, 0, 0, 0, 0, 0], 'C':[]}
+#     for symbol in "ACGT":
+#         count[symbol] = []
+#         # profile[symbol] = []
+#
+#         # counts = {'A':[0, 0, 0, 0, 0, 0]} -> counts = {'A':[0, 0, 0, 0, 0, 0], 'C':[0, 0, 0, 0, 0, 0]} ...
+#         for j in range(k):
+#             count[symbol].append(0)
+#             # profile[symbol].append(0)
+#
+#     t = len(motifs)
+#     for i in range(t):
+#         for j in range(k):
+#             symbol = motifs[i][j]  # 'A'
+#             count[symbol][j] += 1
+#             # profile[symbol][j] += float(1/t)
+#         #   counts = {'A':[1, 1, 0, 0, 0, 1], 'C':[0, 0, 1, 0, 0, 0], 'G':[0, 0, 0, 1, 0, 0], 'T':[0, 0, 0, 0, 1, 0]}
+#
+#     return count
 
-    # initializing and use the profile dictionary instead of counts to modify the function to get profile_matrix of motifs
-    # profile = {}
 
+def get_count(motifs):
+    count = {}
     k = len(motifs[0])
-
-    #   counts = {'A':[]} --> counts = {'A':[0, 0, 0, 0, 0, 0], 'C':[]}
     for symbol in "ACGT":
         count[symbol] = []
-        # profile[symbol] = []
-
-        # counts = {'A':[0, 0, 0, 0, 0, 0]} -> counts = {'A':[0, 0, 0, 0, 0, 0], 'C':[0, 0, 0, 0, 0, 0]} ...
         for j in range(k):
             count[symbol].append(0)
-            # profile[symbol].append(0)
 
     t = len(motifs)
     for i in range(t):
         for j in range(k):
-            symbol = motifs[i][j]  # 'A'
+            symbol = motifs[i][j]
             count[symbol][j] += 1
-            # profile[symbol][j] += float(1/t)
-        #   counts = {'A':[1, 1, 0, 0, 0, 1], 'C':[0, 0, 1, 0, 0, 0], 'G':[0, 0, 0, 1, 0, 0], 'T':[0, 0, 0, 0, 1, 0]}
 
     return count
 
@@ -36,7 +53,7 @@ def profile_matrix(motifs):
     t = len(motifs)
     profile = get_count(motifs)
     for key in profile:
-        profile[key] = [counts/t for counts in profile[key]]
+        profile[key] = [float(round(counts/t, 1)) for counts in profile[key]]
     return profile
 
 
@@ -77,4 +94,4 @@ if len(motifs[0]) == 1:
         motifs[i] = list(motifs[i][0])
 
 
-print(get_score(motifs))
+# print(get_score(motifs))
