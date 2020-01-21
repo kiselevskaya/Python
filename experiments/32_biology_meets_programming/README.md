@@ -104,5 +104,22 @@ profile_most_probable_kmer:
         Output: A Profile-most probable k-mer in <text>.
 
 
-http://www.mrgraeme.co.uk/greedy-motif-search/
+
+
+#   greedy_motif_search
+
+    Greedy algorithms select the “most attractive” alternative at each iteration.
+         For example, a greedy algorithm in chess might attempt to capture an opponent’s most valuable piece at every move.
+         Yet anyone who has played chess knows that a strategy looking only one move ahead will likely produce disastrous results.
+    In general, most greedy algorithms typically fail to find an exact solution of the problem; instead,
+    they are often fast heuristics that trade accuracy for speed in order to find an approximate solution.
+
+
+greedy_motif_search:
+    Used get_score(motifs), get_count(motifs), profile_matrix(motifs), and get_consensus(motifs) functions.
+    Used profile_most_probable_pattern(text, k, profile) and probability(text, profile) functions here.
+
+    Input:  A list of k-mers <dna>, and integers <k> and <t> (where <t> is the number of k-mers in <dna>)
+    Output: greedy_motif_search(dna, k, t)
+    http://www.mrgraeme.co.uk/greedy-motif-search/
 
