@@ -8,7 +8,7 @@ def greedy_motif_search(dna, k, t):
     best_motifs = []
     for i in range(0, t):
         best_motifs.append(dna[i][0:k])
-    n = len(dna[0])   # 12
+    n = len(dna[0])
     for e in range(n-k+1):
         motifs = []
         motifs.append(dna[0][e:e+k])
@@ -20,12 +20,10 @@ def greedy_motif_search(dna, k, t):
     return best_motifs
 
 
-k = 3
-t = 5
 dna = ['GGCGTTCAGGCA', 'AAGAATCAGTCA', 'CAAGGAGTTCGC', 'CACGTCAATCAC', 'CAATAATATTCG']
+#   output ['CAG', 'CAG', 'CAA', 'CAA', 'CAA']
 
-
-print(greedy_motif_search(dna, k, t))
+# print(greedy_motif_search(dna, 3, 5))
 
 
 dna_for_test1 = ['GAGGCGCACATCATTATCGATAACGATTCGCCGCATTGCC',
@@ -36,6 +34,6 @@ dna_for_test1 = ['GAGGCGCACATCATTATCGATAACGATTCGCCGCATTGCC',
                  'TCTGTTGTTGCTAACACCGTTAAAGGCGGCGACGGCAACT',
                  'AAGCGGCCAACGTAGGCGCGGCTTGGCATCTCGGTGTGTG',
                  'AATTGAAAGGCGCATCTTACTCTTTTCGCTTTCAAAAAAA']
-# ['GAGGC', 'TCATC', 'TCGGC', 'GAGTC', 'GCAGC', 'GCGGC', 'GCGGC', 'GCATC']
+#   output ['GAGGC', 'TCATC', 'TCGGC', 'GAGTC', 'GCAGC', 'GCGGC', 'GCGGC', 'GCATC']
 
 # print(greedy_motif_search(dna_for_test1, 5, 8))

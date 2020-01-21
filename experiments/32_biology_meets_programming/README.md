@@ -83,7 +83,7 @@ get_consensus:
 
 
 get_score:
-    Compare the i-th nucleotide of each k-mer of motifs with i-th nucleotide of consensus string
+    Compare the i-th nucleotide of each k-mer of motifs with i-th nucleotide of consensus string.
 
     Input:  A list of k-mers motifs
     Output: number of all mismatches
@@ -122,4 +122,20 @@ greedy_motif_search:
     Input:  A list of k-mers <dna>, and integers <k> and <t> (where <t> is the number of k-mers in <dna>)
     Output: greedy_motif_search(dna, k, t)
     http://www.mrgraeme.co.uk/greedy-motif-search/
+
+
+
+
+#   Entropy
+
+    Entropy is a measure of the uncertainty of a probability distribution.
+    The entropy of the completely conserved third column of the profile matrix in the figure in the first step is 0,
+    which is the minimum possible entropy.
+    On the other hand, a column with equally-likely nucleotides (all probabilities equal to 1/4)
+     has maximum possible entropy 4 · 1/4 · log2 (1/4) = 2. In general, the more conserved the column, the smaller its entropy.
+
+
+entropy:
+     Compute the entropy of the motif matrix.
+
 
