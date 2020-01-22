@@ -60,10 +60,6 @@ def profile_matrix(motifs):
 # consensus string
 #  most popular nucleotides in each column (the same position of each k_mer) of the motif matrix (ties are broken arbitrarily)
 def get_consensus(motifs):
-    # if len(motifs[0]) == 1:
-    #     for i in range(len(motifs)):
-    #         motifs[i] = list(motifs[i][0])
-
     k = len(motifs[0])
     count = get_count(motifs)
 

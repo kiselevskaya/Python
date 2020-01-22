@@ -139,3 +139,14 @@ entropy:
      Compute the entropy of the motif matrix.
 
 
+
+
+#   count_with_pseudocounts.py
+
+
+count_with_pseudocounts:
+    Function takes a list of strings <motifs> as input and returns the count matrix of <motifs> with pseudocounts (added a small number) as a dictionary of lists.
+
+
+profile_with_pseudocounts:
+    Function takes a list of strings <motifs> as input and returns the profile matrix of <motifs> with pseudocounts as a dictionary of lists.
