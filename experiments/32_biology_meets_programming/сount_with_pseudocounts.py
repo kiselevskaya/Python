@@ -1,6 +1,4 @@
 
-from decimal import Decimal
-
 
 def count_with_pseudocounts(motifs):
     count = {}
@@ -25,12 +23,10 @@ def count_with_pseudocounts(motifs):
 def profile_with_pseudocounts(motifs):
     profile = count_with_pseudocounts(motifs)
     sums = [sum(row) for row in zip(*profile.values())]
-    print(profile, sums)
     for key in profile:
         profile[key] = [x/y for x, y in zip(profile[key], sums)]
     return profile
 
 
 motifs = ['AACGTA', 'CCCGTT', 'CACCTT', 'GGATTA', 'TTCCGG']
-print(profile_with_pseudocounts(motifs))
-print(2/9)
+# print(profile_with_pseudocounts(motifs))

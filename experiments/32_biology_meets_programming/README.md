@@ -150,3 +150,12 @@ count_with_pseudocounts:
 
 profile_with_pseudocounts:
     Function takes a list of strings <motifs> as input and returns the profile matrix of <motifs> with pseudocounts as a dictionary of lists.
+
+
+
+
+#   greedy_with_pseudocounts.py
+
+
+greedy_motif_search_with_pseudocounts:
+    Function takes a list of strings <dna> followed by integers <k> and <t> and returns the result of running greedy_motif_search, where each profile matrix is generated with pseudocounts.
