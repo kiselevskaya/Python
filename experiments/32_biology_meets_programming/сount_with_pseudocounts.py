@@ -7,16 +7,13 @@ def count_with_pseudocounts(motifs):
         count[symbol] = []
         for j in range(k):
             count[symbol].append(0)
-
     t = len(motifs)
     for i in range(t):
         for j in range(k):
             symbol = motifs[i][j]
             count[symbol][j] += 1
-
     for key in count:
         count[key] = list(map(lambda x: x+1, count[key]))
-
     return count
 
 
@@ -28,5 +25,7 @@ def profile_with_pseudocounts(motifs):
     return profile
 
 
-motifs = ['AACGTA', 'CCCGTT', 'CACCTT', 'GGATTA', 'TTCCGG']
-# print(profile_with_pseudocounts(motifs))
+# if __name__ == '__main__':
+#     motifs = ['AACGTA', 'CCCGTT', 'CACCTT', 'GGATTA', 'TTCCGG']
+#     print(count_with_pseudocounts(motifs))
+#     print(profile_with_pseudocounts(motifs))

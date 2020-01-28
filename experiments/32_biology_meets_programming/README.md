@@ -159,3 +159,25 @@ profile_with_pseudocounts:
 
 greedy_motif_search_with_pseudocounts:
     Function takes a list of strings <dna> followed by integers <k> and <t> and returns the result of running greedy_motif_search, where each profile matrix is generated with pseudocounts.
+
+
+
+
+#   randomized_motif_search.py
+    Call randomized_motif_search(dna, k, t) N times, storing the best-scoring set of motifs resulting from this algorithm in a variable called best_motifs
+
+
+motifs:
+    Takes a profile matrix <profile> corresponding to a list of strings <dna> as input and returns a list of the profile-most probable k-mers in each string from <dna>
+
+
+random_motifs:
+    Uses random.randint to choose a random k-mer from each of t different strings <dna>, and returns a list of <t> strings.
+
+
+randomized_motif_search:
+    The code stops running as soon as the score of the motifs that we generate stops improving.
+    It can be dangerous to use such a loop, since it could lead to an infinite loop in which a program never terminates.
+    However, in this particular case, the motif score must eventually stop improving, so that function must eventually terminate.
+
+
