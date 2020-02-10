@@ -202,3 +202,15 @@ weighted_die(probabilities):
 profile_generated_string(text, profile, k):
     Range over all possible k-mers in Text, computing the probability of each one and placing this probability into a dictionary.
     Normalize these probabilities using the normalize(probabilities) function, and then return the result of rolling a weighted die over this dictionary to produce a k-mer.
+
+
+gibbs_sampler(dna, k, t, N):
+    randomly select k-mers Motifs = (Motif1, …, Motift) in each string from Dna
+    ﻿BestMotifs ← Motifs
+    for j ← 1 to N
+        i ← randomly generated integer between 1 and t
+        Profile ← profile matrix formed from all strings in Motifs except for Motif_i
+        Motif_i ← Profile-randomly generated k-mer in the i-th string
+        if Score(Motifs) < Score(BestMotifs)
+            BestMotifs ← Motifs
+    return BestMotifs

@@ -32,7 +32,7 @@ def random_motifs(dna, k, t):
 
 def randomized_motif_search(dna, k, t):
     motifs_set = random_motifs(dna, k, t)
-    best_motifs = motifs_set
+    best_motifs = list(motifs_set)
     while True:
         prof = profile_with_pseudocounts(motifs_set)
         motifs_set = motifs(dna, prof)
