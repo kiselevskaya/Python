@@ -20,6 +20,12 @@ reverse_complement.py
         The output is a string that is a reverse complement of the given pattern.
 
 
+pattern_matching.py
+    pattern_matching(genome, pattern)
+        Slides through the genome and if finds a match with the pattern remembers index of started position.
+        The output is a list of integers specifying all starting positions.
+
+
 #   symbol_array.py
 
 symbol_array:
