@@ -1,5 +1,19 @@
 
 
+pattern_count.py
+    pattern_count(text, pattern)
+        Counts how many times the given pattern appears in the text.
+        The output is an integer.
+
+    frequency_map(text, k)
+        Slides through the text and counts all patterns length k.
+        The output is a dictionary where keys are patterns and values are their count.
+
+    frequent_words(text, k)
+        Finds the most frequent patterns in the frequency_map dictionary.
+        The output is a string of the most common patterns.
+
+
 #   symbol_array.py
 
 symbol_array:
