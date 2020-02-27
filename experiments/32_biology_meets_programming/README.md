@@ -14,6 +14,12 @@ pattern_count.py
         The output is a string of the most common patterns.
 
 
+reverse_complement.py
+    reverse_complement(pattern)
+        Writes the complement of each nucleotide in the pattern into a string, then reversing the resulting string.
+        The output is a string that is a reverse complement of the given pattern.
+
+
 #   symbol_array.py
 
 symbol_array:
