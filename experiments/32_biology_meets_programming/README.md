@@ -46,6 +46,35 @@ clump_finding.py
         The output is a list of k length strings, each of that appears t times on some l length part of the genome.
 
 
+pattern_to_number_and_back.py
+    pattern_to_number(pattern)
+        We need to form different possible combinations using bases. There are 4 bases - A, C, G, T.
+        These are 4 different possibilities for each position.
+        'k' in the k-mer indicates the number of positions. In this question, the k-mer is of length 6.
+        Hence the total possible k-mers are 4^6 = 4096.
+        For finding the index of the required pattern, it is mentioned to arrange the bases lexically.
+        So, A is assigned 0, C is assigned 1, G is assigned 2 and T is assigned 3. So, the number sequence would look like,
+        0 - AAAAAA ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [0*(4^1)] + [0*(4^0)])
+        1 - AAAAAC ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [0*(4^1)] + [1*(4^0)])
+        2 - AAAAAG ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [0*(4^1)] + [2*(4^0)])
+        3 - AAAAAT ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [0*(4^1)] + [3*(4^0)])
+        4 - AAAACA ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [1*(4^1)] + [0*(4^0)])
+        5 - AAAACC ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [1*(4^1)] + [1*(4^0)])
+        6 - AAAACG ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [1*(4^1)] + [2*(4^0)])
+        7 - AAAACT ([0*(4^5)] + [0*(4^4)] + [0*(4^3)] + [0*(4^2)] + [1*(4^1)] + [3*(4^0)])
+
+    number_to_pattern(number, k)
+        To go backward from a base-anything number, you divide the final number (5437  in this case) by the base, 4,  k = 7 times, keeping track of the remainder: ﻿﻿
+        5437 / 4 = 1359 R 1
+        1359 / 4 = 339 R 3
+        339 / 4 = 84 R 3
+        84 / 4 = 21 R 0
+        21/4 = 5 R 1
+        5/4 = 1 R 1
+        1/4 = 0 R 1
+        Take the remainders from the bottom up and you get: 1110331, corresponding lexicographically to ﻿CCCAGGC
+
+
 #   symbol_array.py
 
 symbol_array:
