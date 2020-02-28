@@ -3,6 +3,7 @@
 from pattern_count import frequency_map
 from pattern_matching import *
 import unittest
+import os
 
 
 def clump_finding(genome, k, l, t):
@@ -93,7 +94,8 @@ class TestClumpFinding(unittest.TestCase):
         self.assertCountEqual(a, b)
 
     def test_clump_finding_1_3(self):
-        e_coli = open('E_coli.txt', 'r')
+        data_dir = os.getcwd()+'\\text_files'
+        e_coli = open(data_dir+'\\E_coli.txt', 'r')
         genome = e_coli.readlines()[0]
         e_coli.close()
         k, l, t = 9, 500, 3

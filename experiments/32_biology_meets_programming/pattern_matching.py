@@ -1,6 +1,7 @@
 
 
 import unittest
+import os
 
 
 def pattern_matching(pattern, genome):
@@ -33,7 +34,8 @@ class TestPatternMatching(unittest.TestCase):
 
     def test_pattern_matching_3(self):
         pattern = 'ATGATCAAG'
-        cholerae = open('vibrio_cholerae_genome.txt', 'r')
+        data_dir = os.getcwd()+'\\text_files'
+        cholerae = open(data_dir+'\\vibrio_cholerae_genome.txt', 'r')
         genome = cholerae.readlines()[0]
         cholerae.close()
         output = [116556, 149355, 151913, 152013, 152394, 186189, 194276, 200076, 224527, 307692, 479770, 610980, 653338, 679985, 768828, 878903, 985368]
