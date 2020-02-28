@@ -11,7 +11,7 @@ pattern_count.py
 
     frequent_words(text, k)
         Finds the most frequent patterns in the frequency_map dictionary.
-        The output is a string of the most common patterns.
+        The output is a list of the most common patterns.
 
 
 reverse_complement.py
@@ -21,9 +21,21 @@ reverse_complement.py
 
 
 pattern_matching.py
-    pattern_matching(genome, pattern)
+    pattern_matching(pattern, genome)
         Slides through the genome and if finds a match with the pattern remembers index of started position.
         The output is a list of integers specifying all starting positions.
+
+
+clump_finding.py
+    clump_finding(genome, k, l, t)
+        Task: Slides a window of fixed length L along the genome, looking for a region where a k-mer appears t times in short succession.
+        Solution:
+        Using frequency_map(text, k) function slides through the genome and counts all patterns length k.
+        Remembers all patterns that appears t or more times through the genome in a list variable words.
+        Using pattern_matching(pattern, genome) function for each pattern in words create list of integers specifying all starting positions of the pattern.
+        Slides through the pattern matching list of indexes checks if pattern appears t times on length l.
+        If got positive result (remembers it in output variable) or checked all possibilities, breaks the loop to the next pattern.
+        The output is a list of k length strings, each of that appears t times on any l length part of the genome.
 
 
 #   symbol_array.py
