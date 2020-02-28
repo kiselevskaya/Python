@@ -41,6 +41,12 @@ class TestPatternToNumberAndBack(unittest.TestCase):
         pattern = 'CCCATTC'
         self.assertEqual(number_to_pattern(number, k), pattern)
 
+    def test_number_to_pattern_2(self):
+        number = 5437
+        k = 8
+        pattern = 'ACCCATTC'
+        self.assertEqual(number_to_pattern(number, k), pattern)
+
 
 if __name__ == '__main__':
     unittest.main()
