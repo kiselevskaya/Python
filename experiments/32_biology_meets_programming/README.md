@@ -34,8 +34,16 @@ clump_finding.py
         Remembers all patterns that appears t or more times through the genome in a list variable words.
         Using pattern_matching(pattern, genome) function for each pattern in words create list of integers specifying all starting positions of the pattern.
         Slides through the pattern matching list of indexes checks if pattern appears t times on length l.
-        If got positive result (remembers it in output variable) or checked all possibilities, breaks the loop to the next pattern.
-        The output is a list of k length strings, each of that appears t times on any l length part of the genome.
+        If gets positive result (remembers patter in variable output) or all possibilities are checked, function breaks the loop to the next pattern.
+        The output is a list of k length strings, each of that appears t times on some l length part of the genome.
+
+    clump_finding_efficient(genome, k, l, t)
+        Task: Slides a window of fixed length L along the genome, looking for a region where a k-mer appears t times in short succession.
+        Solution:
+        Slides through the text and remember each pattern length k as key in a dictionary with a list of all starting positions as a value.
+        For each key (pattern) with the length of value t or more slides through the value (matching list of indexes) checks if the pattern appears t times on length l.
+        If gets positive result (remembers patter in variable patters) or all possibilities are checked, function breaks the loop to the next pattern.
+        The output is a list of k length strings, each of that appears t times on some l length part of the genome.
 
 
 #   symbol_array.py
