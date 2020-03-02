@@ -3,7 +3,7 @@ class WebSocketConnection {
     constructor(username, password, game) {
         this.username = username;
         this.password = password;
-        this.ws = new WebSocket("ws://127.0.0.1:6789/?username=" + username + "&password=" + password);
+        this.ws = new WebSocket("ws://192.168.1.22:6789/?username=" + username + "&password=" + password);
         this.debug = false;
         this.game = game;
         this.ws.onopen = function (event) {

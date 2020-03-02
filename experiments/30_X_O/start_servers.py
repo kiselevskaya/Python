@@ -17,7 +17,7 @@ class HttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path
         if path == "/":
-            path = "/index.html"
+            path = "/weight_for_weight.html"
 
         if path.startswith("/register"):
             return self.process_register_form(path)
@@ -120,8 +120,8 @@ async def process_wsc_connection(websocket, path):
 
 
 def http_server():
-    port = 8081
-    httpd = HTTPServer(('localhost', port), HttpHandler)
+    port = 80
+    httpd = HTTPServer(('0.0.0.0', port), HttpHandler)
     print('serving http at port', port)
     httpd.serve_forever()
 
@@ -129,7 +129,7 @@ def http_server():
 def websocket_server():
     port = 6789
     print('serving websocket at port', port)
-    return websockets.serve(process_wsc_connection, '127.0.0.1', port)
+    return websockets.serve(process_wsc_connection, '0.0.0.0', port)
 
 
 def start_http():
