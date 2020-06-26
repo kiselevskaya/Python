@@ -13,12 +13,13 @@ class Machine:
         self.cmd = None
         self.commands = {}
         for act in range(len(self.actions)):
-            self.commands[act] = len(self.actions)-1
+            self.commands[act] = random.randint(0, len(self.actions)-1)
 
     def command(self, cmd, num):
         self.cmd = cmd
-        print('{} command applying on number {} gives result {}'.format(cmd, num, self.actions[self.cmd](num)))
-        return self.actions[self.commands[cmd]](num)
+        if self.cmd not in self.commands.keys():
+            self.commands[self.cmd] = random.randint(0, len(self.actions)-1)
+        return self.actions[self.commands[self.cmd]](num)
 
     def response(self, res):
         if not res:
@@ -38,7 +39,6 @@ for i in range(0, 20):
     machine.response(r == 0)
 
 assert machine.command(0, random.randint(0, 100)) == 0, 'Should be 0'
-
 tests = [(0, 100, 101, "Should apply the num + 1 action to the command 0"),
          (1, 100, 0, "Should apply the num * 0 action to the command 1"),
          (2, 100, 50, "Should apply the num / 2 action to the command 2"),
@@ -57,3 +57,4 @@ print('THIRD********************************************************************
 for t in tests:
     num = machine.command(t[0], t[1])
     assert num == t[2], [t[3], 'num {} is not {}'.format(num, t[2])]
+
