@@ -1,7 +1,6 @@
 
-'''Given an image represented by an NxM matrix, where each pixel in the image is 4 bytes, write a method to rotate the image by 90 degree.
-    Can you do it in place?
 
+'''Given an image represented by an NxM matrix, where each pixel in the image is 4 bytes, write a method to rotate the image by 90 degree.
     Let N be image width, M - image height
 '''
 
@@ -35,6 +34,10 @@ def represent_image(matrix):
             print(matrix[i][j], end=' ')
         print()
     print('-'*2*len(matrix[0]))
+
+
+'''Given an image represented by an NxN matrix, where each pixel in the image is 4 bytes, write a method to rotate the image by 90 degree.
+'''
 
 
 # Suggested solution (anti-clockwise)
@@ -78,40 +81,40 @@ if __name__ == '__main__':
 
     # Test case 3
     matrix3 = [[1, 2, 3, 4],
-            [5, 6, 7, 8],
-            [9, 10, 11, 12],
-            [13, 14, 15, 16]]
+               [5, 6, 7, 8],
+               [9, 10, 11, 12],
+               [13, 14, 15, 16]]
     represent_image(matrix3)
     rotated = rotate_image_clockwise(matrix3, False)
     represent_image(rotated)
 
     # Test case 4
     matrix4 = [[1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9]]
+               [4, 5, 6],
+               [7, 8, 9]]
     represent_image(matrix4)
     rotated = rotate_image_clockwise(matrix4, False)
     represent_image(rotated)
 
     # Test case 5
     matrix5 = [[1, 2],
-            [4, 5]]
+               [4, 5]]
     represent_image(matrix5)
     rotated = rotate_image_clockwise(matrix5, False)
     represent_image(rotated)
 
     # Test case 6
     matrix6 = [[1, 2, 3],
-            [5, 6, 7],
-            [9, 10, 11],
-            [13, 14, 15]]
+               [5, 6, 7],
+               [9, 10, 11],
+               [13, 14, 15]]
     represent_image(matrix6)
     rotated = rotate_image_clockwise(matrix6, False)
     represent_image(rotated)
 
     # Test case 7
     matrix7 = [[1, 2, 3, 4],
-            [5, 6, 7, 8]]
+               [5, 6, 7, 8]]
     represent_image(matrix7)
     rotated = rotate_image_clockwise(matrix7, False)
     represent_image(rotated)
