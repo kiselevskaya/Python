@@ -34,5 +34,8 @@ class LinkedList:
     def output(self):   # prints all nodes values
         current = self.head
         while current is not None:
-            print(current.data)
+            if current.next is None:
+                print(current.data, end='   ')
+            else:
+                print(current.data, end='->')
             current = current.next
