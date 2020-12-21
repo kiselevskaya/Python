@@ -2,6 +2,11 @@
 **Linked Lists**
 
 
+**linked_list.py**
+
+    Contains class LinkedList with append, length and output methods and class Node to make a single linked list node.
+
+
 **01_remove_duplicates.py**
 
     Write code to remove duplicates from an unsorted linked list.
@@ -20,3 +25,9 @@
     Example:
     Input: the node c from the linked list a->b->c->d->f
     Result: nothing is returned, but the new linked list looks like  a->b->d->f
+
+
+**04_partition_list.py**
+
+    Write the code to partition a linked list around a value x,
+    such that all nodes less than x come before all nodes greater than or equal to x.
