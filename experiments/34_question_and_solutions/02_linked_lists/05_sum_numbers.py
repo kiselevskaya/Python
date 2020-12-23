@@ -101,7 +101,7 @@ def sum_reversed_lists_recursively(node1, node2, rest=0, output=LinkedList()):
 
 
 ########################################################################################################################
-def prepare_lists(first, second):
+def sum_lists_recursively(first, second):
     if first.head is None and second.head is None:
         return
     diff = first.length() - second.length()
@@ -110,6 +110,7 @@ def prepare_lists(first, second):
     elif diff > 0:
         make_length_equal(second, diff)
     output = LinkedList()
+    write_the_sum(first.head, second.head, output)
     return output
 
 
@@ -123,6 +124,18 @@ def insert_before(node, linked):
     node.next = linked.head
     linked.head = node
     return linked
+
+
+def write_the_sum(node1, node2, output=LinkedList()):
+    if node1.next is None and node2.next is None:
+        node = Node((node1.data + node2.data) % 10)
+        output.append(node)
+    else:
+        mid_sum = node1.data + node2.data
+        write_the_sum(node1.next, node2.next, output)
+        full_sum = mid_sum+(node1.next.data + node2.next.data)//10
+        node = Node(full_sum % 10)
+        insert_before(node, output)
 
 
 ########################################################################################################################
@@ -159,7 +172,7 @@ if __name__ == '__main__':
 
     print(70*'*', '\n', 'Set 4')
     first4 = LinkedList()
-    for n in Node(6), Node(1), Node(7), 0:
+    for n in Node(6), Node(1), Node(7), Node(6):
         first4.append(n)
     first4.output(), print('First number')
     second4 = LinkedList()
@@ -200,10 +213,8 @@ if __name__ == '__main__':
 
     # Test 6
     print(70*'*', '\n', 'Test 6')
-    print('6->4->6->5   Expected result of Set 4')
-    prepare_lists(first4, second4)
-    first4.output(), print()
-    second4.output()
-
+    print('6->4->7>-1   Expected result of Set 4')
+    sum_list = sum_lists_recursively(first4, second4)
+    sum_list.output(), print('Result')
 
 
