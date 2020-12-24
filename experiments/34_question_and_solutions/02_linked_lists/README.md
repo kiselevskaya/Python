@@ -56,3 +56,8 @@
     EXAMPLE
     Input: A->B->C->D->E->C->[the same as earlier]
     Output: C
+
+
+**07_palindrome.py**
+
+    Implement a function to check if a linked list is a palindrome.
