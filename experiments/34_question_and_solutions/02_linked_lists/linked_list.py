@@ -1,4 +1,4 @@
-# 01_remove_duplicates.py
+# linked_list.py
 
 
 class Node:
