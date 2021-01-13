@@ -33,6 +33,15 @@ class Stack:
     def peek(self):
         return self.top.data
 
+    def output(self):
+        current = self.top
+        while current is not None:
+            if current.next is None:
+                print(current.data, end='   ')
+            else:
+                print(current.data, end='->')
+            current = current.next
+
 
 class SetOfStacks:
 
@@ -59,19 +68,6 @@ class SetOfStacks:
             self.stacks.pop()
             self.index -= 1
 
-    # def shift(self, index):
-    #     stack = self.stacks[index]
-    #     return
-
-    # def pop_at(self, index):
-    #     print('{} popped from stack {}'.format(self.stacks[index].pop(), index))
-    #     if self.stacks[index].top is None:
-    #         print('Stack {} is empty'.format(index))
-    #         self.stacks.pop(index)
-    #         return
-    #     if len(self.stacks)-1 <= index+1:
-    #         self.shift(index+1)
-
     def peek(self):
         try:
             return self.stacks[self.index].peek()
@@ -79,27 +75,48 @@ class SetOfStacks:
             print(e)
             return
 
+    def print_stack(self, index):
+        return self.stacks[index].output()
+
+    def shift(self, index, node):
+        if node.next is None:
+            self.stacks[index-1].push(node.data)
+            if self.stacks[index].size == 1:
+                self.stacks.pop(index)
+            else:
+                self.stacks[index].size -= 1
+                self.stacks[index].top = self.stacks[index].top.next
+            return
+        else:
+            value = node.data
+            self.shift(index, node.next)
+            node.next.data = value
+        return
+
+    def pop_at(self, index):
+        print('{} popped from stack {}'.format(self.stacks[index].pop(), index))
+        if self.stacks[index].top is None:
+            print('Stack {} is empty'.format(index))
+            self.stacks.pop(index)
+            return
+        while index+1 <= len(self.stacks)-1:
+            index += 1
+            self.shift(index, self.stacks[index].top)
+
+
+def represent(set_of_stacks):
+    length = len(set_of_stacks.stacks)
+    print('Number of stacks ', length)
+    for i in range(length):
+        set_of_stacks.print_stack(i)
+    print()
+
 
 if __name__ == '__main__':
     stacks = SetOfStacks()
-    stacks.push(1)
-    stacks.push(2)
-    stacks.push(3)
-    stacks.push(4)
-    stacks.push(5)
-    stacks.pop()
-    stacks.pop()
-    stacks.pop()
-    stacks.push(6)
-    stacks.push(7)
-    stacks.push(8)
-    stacks.push(9)
-    stacks.push(10)
-    stacks.push(11)
-    # stacks.pop_at(1)
-    # stacks.pop_at(0)
-    # stacks.pop_at(0)
-    # stacks.pop_at(0)
-    # stacks.pop_at(0)
+    for i in range(16):
+        stacks.push(i)
+    represent(stacks)
 
-
+    stacks.pop_at(0)
+    represent(stacks)
