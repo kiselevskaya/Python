@@ -1,17 +1,17 @@
 ** Stacks and Queues**
 
 
-stack.py
+**stack.py**
 
     LIFO(last-in first-out) ordering
 
 
-list_as_stacks.py
+**list_as_stacks.py**
 
     Describe how you could use a single array to implement three stacks.
 
 
-list_as_stacks_flexible.py
+**list_as_stacks_flexible.py**
 
     Describe how you could use a single array to implement three stacks.
 
@@ -20,13 +20,13 @@ list_as_stacks_flexible.py
     Also design array to be circular, such that the final stack may start at the end of the array and wrap to the beginning.
 
 
-stack_with_min.py
+**stack_with_min.py**
 
     Design a stack which, in addition to push and pop, also has a function min which returns the minimum element?
     Push, pop and min should all operate in O(1) time.
 
 
-set_of_stacks.py
+**set_of_stacks.py**
 
     Imagine a (literal) stack of plates. If the stack gets too high, it might topple.
     Therefore, in real life, we would like to start a new stack when the previous stack exceeds some threshold.
@@ -40,7 +40,7 @@ set_of_stacks.py
     Implement a function popAt(int index) which performs a pop operation on a specific sub-stack.
 
 
-towers_of_hanoi.py
+**towers_of_hanoi.py**
 
     Classic problem of the Towers of Hanoi.
     Have 3 towers and N disks of different sizes which can slide onto any tower.
@@ -52,13 +52,23 @@ towers_of_hanoi.py
     Write a program to move the disks from the first tower to the last using stacks.
 
 
-my_queue.py
+**my_queue.py**
 
     Implement a MyQueue class which implements a queue using two stacks.
 
 
-ascending_order.py
+**ascending_order.py**
 
     Write a program to sort a stack in ascending order (with biggest item on top).
     You may use additional stacks to hold items, but you may not copy the elements into any other data structure (such as an array).
-    The stack supports the following operations: push, pop, peek, and isEmpty.
+    The stack supports the following operations: push, pop, check_room, and isEmpty.
+
+
+**adopt_animal.py**
+
+    An animal shelter holds only dogs and cats, and operates on strictly 'first in, first out' basis.
+    People must adopt either the 'oldest' (based on arrival time) of all animals at the shelter,
+        or they can select whether they would prefer a dog or a cat (and will receive the oldest animal of that type).
+    They cannot select which specific animal they would like.
+    Create the data structure to maintain this system and implement operations such as enqueue, dequeueAny, dequeueDog and dequeueCat.
+    You can use the built-in LinkedList data structure.
