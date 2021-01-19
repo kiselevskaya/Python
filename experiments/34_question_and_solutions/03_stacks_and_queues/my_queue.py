@@ -61,7 +61,7 @@ class MyQueue:
 
     def peek(self):
         self.shift()
-        self.oldest.peek()
+        return self.oldest.peek()
 
     def content(self):
         print('Newest stack:', end=' '), self.newest.output()

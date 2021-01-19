@@ -29,6 +29,9 @@ class Stack:
     def peek(self):
         return self.top.data
 
+    def isEmpty(self):
+        return self.size == 0
+
     def output(self):
         if self.size == 0:
             print('<-', end='  ')
@@ -71,19 +74,36 @@ class AscendingOrder:
         print()
 
 
+def sorting(unsorted):
+    result = Stack()
+    while not unsorted.isEmpty():
+        temporary = unsorted.pop()
+        while not result.isEmpty() and result.peek() > temporary:
+            unsorted.push(result.pop())
+        result.push(temporary)
+    return result
+
+
 if __name__ == '__main__':
     import random
     test_array = [round(random.random(), 2) for i in range(8)]
-    ordered = AscendingOrder()
 
-    print('Test ascending order while push the data\n')
+    unsorted = Stack()
     for i in test_array:
-        ordered.push(i)
-        print(ordered.peek(), '\n')
+        unsorted.push(i)
+    unsorted.output()
+    unsorted = sorting(unsorted)
+    unsorted.output()
 
-    print('Test popping')
-    ordered.pop()
-    print(ordered.peek())
-    ordered.pop()
-    print(ordered.peek())
+    # ordered = AscendingOrder()
+    # print('Test ascending order while push the data\n')
+    # for i in test_array:
+    #     ordered.push(i)
+    #     print(ordered.peek(), '\n')
+    #
+    # print('Test popping')
+    # ordered.pop()
+    # print(ordered.peek())
+    # ordered.pop()
+    # print(ordered.peek())
 
