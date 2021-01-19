@@ -50,3 +50,8 @@ towers_of_hanoi.py
     (2) A disk is slid off the top of one tower onto the next tower.
     (3) A disk can only be placed on top of a larger disk.
     Write a program to move the disks from the first tower to the last using stacks.
+
+
+my_queue.py
+
+    Implement a MyQueue class which implements a queue using two stacks.
