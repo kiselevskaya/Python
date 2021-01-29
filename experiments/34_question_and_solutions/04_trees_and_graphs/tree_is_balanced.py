@@ -34,6 +34,8 @@ def tree_balanced():
     return root
 
 
+# O(N^2)
+
 def get_height(root):
     if root is None:
         return 0
@@ -50,8 +52,34 @@ def tree_is_balanced(root):
         return tree_is_balanced(root.left) and tree_is_balanced(root.right)
 
 
+# O(N) time, O(log N) space
+
+def height(root):
+    if root is None:
+        return 0
+
+    left = height(root.left)
+    if left == -1:
+        return -1
+
+    right = height(root.right)
+    if right == -1:
+        return -1
+
+    diff = abs(left - right)
+    if diff > 1:
+        return -1
+    else:
+        return max(left, right) + 1
+
+
+def is_balanced(root):
+    return False if height(root) == -1 else True
+
+
 if __name__ == '__main__':
     # test for balanced tree
-    assert tree_is_balanced(tree_balanced()) is True, "Should return True as tree is balanced"
+    assert is_balanced(tree_balanced()) is True, "Should return True as tree is balanced"
     # test for unbalanced tree
-    assert tree_is_balanced(tree_unbalanced()) is False, "Should return False as tree is unbalanced"
+    assert is_balanced(tree_unbalanced()) is False, "Should return False as tree is unbalanced"
+
