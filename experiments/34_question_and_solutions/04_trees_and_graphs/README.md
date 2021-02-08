@@ -27,3 +27,9 @@
 **is_binary_search_tree.py**
 
     Implement a function to check if binary tree is a binary search tree.
+
+
+**.py**
+
+    Write an algorithm to find the 'next' node (i.e., in-order successor) of a given node in a binary search tree.
+    You may assume that each node has a link to its parent.
