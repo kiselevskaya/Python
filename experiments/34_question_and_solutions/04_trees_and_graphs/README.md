@@ -40,3 +40,12 @@
     Design an algorithm and write code to find the first common ancestor of two nodes in a binary tree.
     Avoid storing additional nodes in a data structure.
     Note: This is not necessary a binary search tree.
+
+
+**subtree.py**
+
+    You have two very large binary trees: T1, with millions of nodes, and T2, with hundreds of nodes.
+    Create an algorithm to decide if T2 is a subtree of T1.
+
+    A tree T2 is a subtree of T1 if there exists a node n in T1 such that the subtree of n is identical to T2.
+    That is, if you cut off the tree at node n, the two trees would be identical.
