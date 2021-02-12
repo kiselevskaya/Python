@@ -49,3 +49,10 @@
 
     A tree T2 is a subtree of T1 if there exists a node n in T1 such that the subtree of n is identical to T2.
     That is, if you cut off the tree at node n, the two trees would be identical.
+
+
+**path_sum_is_value.py**
+
+    You are given a binary tree in which each node contains a value.
+    Design an algorithm to print all paths which sum to a given value.
+    Note that path can start or end anywhere in the tree.
