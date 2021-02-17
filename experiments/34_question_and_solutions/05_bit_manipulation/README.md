@@ -8,14 +8,14 @@
                                         = 00010100
 
 | 	Bitwise OR  	          x | y       10011100
-                                        & 00110100
+                                        | 00110100
                                         = 10111100
 
 ~ 	Bitwise NOT 	          ~x        ~ 11001011
                                         = 00110100
 
 ^ 	Bitwise XOR 	          x ^ y       10011100
-                                        & 00110100
+                                        ^ 00110100
                                         = 10101000
 
 '>>	Bitwise right shift 	  x>>       >> 1001110
@@ -44,10 +44,9 @@
     If the number cannot be represented accurately in binary with at most 32 characters, print "ERROR".
 
 
-**03 .py**
+**03 same_one_bits.py**
 
-    Given a positive integer,
-    print the next smallest and the next largest number that have the same number of 1 bits in their binary representation.
+    Given a positive integer, print the next smallest and the next largest number that have the same number of 1 bits in their binary representation.
 
 
 **04 .py**
