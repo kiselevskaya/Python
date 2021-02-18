@@ -49,12 +49,16 @@
     Given a positive integer, print the next smallest and the next largest number that have the same number of 1 bits in their binary representation.
 
 
-**04 .py**
+**04**
 
     Explain what the following code does: ((n & (n-1)) == 0)
+    
+    Will never be True.
+    For A and B, if any has at least one bit 1 than A & B also will contain bit 1, as 00 & 01 = 01, 01 & 01 = 01.
+    Even if n is 0 n-1 will be -1, so it is impossible to get 0.
 
 
-**05 .py**
+**05 bits_to_convert.py**
 
     Write the function to determine the number of bits required to convert integer A to integer B.
     EXAMPLE
