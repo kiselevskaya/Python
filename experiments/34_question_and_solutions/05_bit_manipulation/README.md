@@ -53,6 +53,14 @@
 
     Explain what the following code does: ((n & (n-1)) == 0)
 
+    n = 1 (01 & 00) == 0 True; n**0
+    n = 2 (10 & 01) == O True; n**1
+    n = 3 (11 & 10) == 0 False;
+    n = 4 (100 & 011) == 0 True; n**2
+    n and (n-1) should not share 1, it is possible only when n**(2*k)
+    n**3 (1000 & 0111) == 0 True;
+    n**4 (10000 & 01111) == 0 True
+
 
 **05 bits_to_convert.py**
 
@@ -62,7 +70,7 @@
     Output: 2
 
 
-**06 .py**
+**06 swap_even_odd.py**
 
     Write a program to swap odd and even bits in an integer with as few instruction as possible
     (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swaped, and so on).
