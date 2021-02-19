@@ -76,12 +76,12 @@
     (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swaped, and so on).
 
 
-**07 .py**
+**07 missing_number.py**
 
     An array A contains all the integers from 0 to n, except for one number which is missing.
-    In this problem, we cannot access an entire integer in A with a single operation .
-    The elements in A are represented in binary, and the only operation we can use  to access them is
-    " fetch the jth bit of A[i]", which takes constant time.
+    In this problem, we cannot access an entire integer in A with a single operation.
+    The elements in A are represented in binary, and the only operation we can use to access them is
+    "fetch the jth bit of A[i]", which takes constant time.
     Write code to find the missing integer. Can you do it in O(n) time?
 
 
