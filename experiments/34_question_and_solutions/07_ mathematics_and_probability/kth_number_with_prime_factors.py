@@ -62,5 +62,10 @@ def kth_number(k):
 
 
 if __name__ == '__main__':
-    print(kth_number(5))
+    assert kth_number(5) == 15, f'Test 1: expected result 15, actual result {kth_number(5)}'
+    assert kth_number(0) == 1, f'Test 2: expected result 1, actual result {kth_number(0)}'
+    assert kth_number(1) == 3, f'Test 3:  expected result 3, actual result {kth_number(1)}'
+    assert kth_number(10) == 45, f'Test 4:  expected result 45, actual result {kth_number(10)}'
+    assert kth_number(12) == 63, f'Test 5:  expected result 63, actual result {kth_number(12)}'
+    assert kth_number(13) == 75, f'Test 6:  expected result 75, actual result {kth_number(13)}'
 
