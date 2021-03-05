@@ -40,7 +40,6 @@
     Given a two-dimensional graph with points on it, find a best_line which passes the most number of points.
 
 
-**07 .py**
+**07 kth_number_with_prime_factors.py**
 
     Design algorithm to find the kth number such that the only prime factors are 3, 5, 7.
-
