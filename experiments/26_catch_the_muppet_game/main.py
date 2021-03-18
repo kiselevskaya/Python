@@ -41,8 +41,8 @@ class Muppet(object):
 
     def animate(self):
         xy = graph_direction(self.pos[0], self.pos[1], theta * math.cos(theta), theta * math.sin(theta))
-        # vel = 5*(muppets.index(self.image)+1)
-        vel = 30
+        vel = 0.05*(muppets.index(self.image)+1)
+        # vel = 30
         self.pos[0] = center[0] + xy[0]*vel
         self.pos[1] = center[1] + xy[1]*vel
         return self
