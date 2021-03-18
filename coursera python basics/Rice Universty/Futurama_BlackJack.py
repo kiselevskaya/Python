@@ -6,17 +6,17 @@ import random
 # load card sprite - 936x384 - source: jfitz.com
 CARD_SIZE = (72, 96)
 CARD_CENTER = (36, 48)
-card_images = simplegui.load_image("https://www.dropbox.com/s/547gkk5ixwnz863/Futurama_Deck.png?dl=1")
+card_images = simplegui.load_image("https://www.dropbox.com/s/eau13fd8bpf7vxq/Futurama_Deck.png?dl=1")
 
 CARD_BACK_SIZE = (72, 96)
 CARD_BACK_CENTER = (36, 48)
 #card_back = simplegui.load_image("http://storage.googleapis.com/codeskulptor-assets/card_jfitz_back.png")
-card_back = simplegui.load_image("https://www.dropbox.com/s/ig2g73arl7laf12/Deck_back.png?dl=1")
+card_back = simplegui.load_image("https://www.dropbox.com/s/hpg6n00k5wlmika/Deck_back.png?dl=1")
 
 background_size = (830, 600)
 background_center = (415, 300)
     #background = simplegui.load_image("https://www.dropbox.com/s/hxwclrhfdveqg3j/planet_express.jpg?dl=1")
-background = simplegui.load_image("https://www.dropbox.com/s/7tds2vvhiaydgrr/Planet_Express.png?dl=1")
+background = simplegui.load_image("https://www.dropbox.com/s/4ejm4y8ex2ofvs8/Planet_Express.png?dl=1")
     #background = simplegui.load_image("https://www.dropbox.com/s/nxjtf613zpt6e7b/RedDwarfPlanet.png?dl=1")
     #background = simplegui.load_image("https://www.dropbox.com/s/u5ztanit5okwn6h/01acv04_038.png?dl=1")
     #background = simplegui.load_image("https://www.dropbox.com/s/hmf4lpy2wbsqoxl/Leela.png?dl=1")
@@ -31,11 +31,11 @@ background = simplegui.load_image("https://www.dropbox.com/s/7tds2vvhiaydgrr/Pla
 
 bender_size = (120, 153)
 bender_centre = (60, 76.5)
-bender = simplegui.load_image("https://www.dropbox.com/s/ptdmfz357q3guj9/bender_nibbler.png?dl=1")
+bender = simplegui.load_image("https://www.dropbox.com/s/3iyxcq0m4h4sy7b/bender_nibbler.png?dl=1")
 
 the_botfather_size = (100, 167)
 the_botfather_centre = (50, 83.5)
-the_botfather = simplegui.load_image("https://www.dropbox.com/s/wzs4peloqwo43pl/Botfather.png?dl=1")
+the_botfather = simplegui.load_image("https://www.dropbox.com/s/vquyxrklagpz6cx/Botfather.png?dl=1")
 
 # initialize some useful global variables
 in_play = False
