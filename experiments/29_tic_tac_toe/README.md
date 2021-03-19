@@ -39,10 +39,7 @@
 
 **start_servers.py**
 
-    Starts http server at port <8080> websoket at port 6789.
+    Starts http server at port <8080>, websoket at port 6789.
     Class HttpHandler to exchange messages between two different users (possible on different machines) by one central server.
-        From main HTML page contained register form redirect user to a game field, updates board, score.
-        Also responsiable for running favicon icon, css style.
-    Processes websocket connection: check if user connected (in users list) starts connection (message exchange), else prints user was logged off.
-    
-    
+        From main HTML page which contains register form redirect user to a game field, updates board and score.
+    Processes websocket connection: check if user connected (in users list) - starts connection (message exchange), else prints 'logged off'.
